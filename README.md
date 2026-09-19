@@ -100,7 +100,7 @@ npm run validate:week21
 npm run test:week21
 ```
 
-## Week 22 task status — applied
+## Week 22 task status — applied and marked done
 
 Week 22 adds the adversarial fixture foundation required to test dangerous
 architectural defects instead of only validating successful examples.
@@ -131,6 +131,8 @@ npm run enrich:week22
 npm run validate:week22
 npm run test:week22
 ```
+**Task completion:** Week 22 enrichment is complete and marked done in this README.
+
 
 ## Week 3–4 task status
 
