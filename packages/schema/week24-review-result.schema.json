@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/CRAJKUMARSINGH/Advocate-Chambers/blob/main/packages/schema/week24-review-result.schema.json",
+  "title": "Week 24 anonymized professional review result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "status",
+    "reviewStatus",
+    "packSignature",
+    "plansInPack",
+    "requiredIndependentReviewers",
+    "reviewerSlots",
+    "completedReviewers",
+    "plansReviewed",
+    "findings",
+    "disagreements",
+    "acceptance"
+  ],
+  "properties": {
+    "version": { "const": "week24.professional-review.v1" },
+    "status": { "enum": ["REVIEW_REQUIRED", "PASS", "BLOCKED"] },
+    "reviewStatus": { "enum": ["PENDING_EXTERNAL_REVIEW", "COMPLETE"] },
+    "packSignature": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "plansInPack": { "const": 25 },
+    "requiredPlanMix": { "type": "object" },
+    "requiredIndependentReviewers": { "const": 2 },
+    "reviewerSlots": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["reviewerId", "status"],
+        "properties": {
+          "reviewerId": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["PENDING", "COMPLETE"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "completedReviewers": { "type": "integer", "minimum": 0, "maximum": 2 },
+    "plansReviewed": { "type": "integer", "minimum": 0, "maximum": 25 },
+    "usableAgreement": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+    "criticalDefectsAcceptedAsUsable": { "type": ["integer", "null"], "minimum": 0 },
+    "criticalFindingsReproducible": { "type": ["boolean", "null"] },
+    "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "disagreements": { "type": "array", "items": { "$ref": "#/$defs/disagreement" } },
+    "acceptance": { "type": "object" },
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "reportSignature": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "required": ["reviewerId", "blindedCaseId", "classification", "confidence"],
+      "properties": {
+        "reviewerId": { "type": "string", "minLength": 1 },
+        "blindedCaseId": { "type": "string", "pattern": "^BLIND-[0-9]{3}$" },
+        "classification": { "enum": ["usable", "not_usable", "uncertain"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "softwareFindingReproduced": { "type": ["boolean", "null"] },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "disagreement": {
+      "type": "object",
+      "required": ["blindedCaseId", "reviewerA", "reviewerB", "critical", "resolution"],
+      "properties": {
+        "blindedCaseId": { "type": "string", "pattern": "^BLIND-[0-9]{3}$" },
+        "reviewerA": { "type": "string", "minLength": 1 },
+        "reviewerB": { "type": "string", "minLength": 1 },
+        "critical": { "type": "boolean" },
+        "resolution": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    }
+  }
+}

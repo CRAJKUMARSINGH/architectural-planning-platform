@@ -1,0 +1,908 @@
+{
+  "acceptance": {
+    "allFindingsCarryRuleEvidenceGeometryCorrection": true,
+    "allKnownDefectsDetected": true,
+    "minimumFixtureCountMet": true,
+    "noValidBaselineFalsePositives": true,
+    "zeroDangerousFalseNegatives": true
+  },
+  "benchmark": {
+    "affectedGeometryAccuracy": 1.0,
+    "criticalDefects": 30,
+    "dangerousFalseNegatives": 0,
+    "detectedDefects": 30,
+    "falseNegatives": 0,
+    "falsePositives": 0,
+    "fixtureCount": 30,
+    "groupCounts": {
+      "incomplete": 5,
+      "invalid": 25,
+      "valid": 1
+    },
+    "missedDefects": 0,
+    "mutationCoverage": {
+      "furniture": 3,
+      "geometry": 1,
+      "levels": 2,
+      "openings": 5,
+      "routes": 2,
+      "site": 4
+    },
+    "ruleIdAccuracy": 1.0,
+    "suggestedCorrectionCompleteness": 1.0,
+    "validBaselineFindingCount": 0
+  },
+  "falseNegativeReport": {
+    "dangerousFalseNegatives": 0,
+    "missedFixtureIds": [],
+    "status": "PASS"
+  },
+  "falsePositiveReport": {
+    "findingRuleIds": [],
+    "status": "PASS",
+    "validBaselineFindingCount": 0
+  },
+  "fixtureSchemaVersion": "week23.adversarial-case.v1",
+  "reportSignature": "6fb50ceb0f95461ee99a994b581efcac502e8ba4a94ca58742c3137465e2d7ac",
+  "results": [
+    {
+      "actualRuleId": "ACCESS.ROUTE.CONTINUITY",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "FF-ROOM-01",
+        "ROUTE-FF-ROOM-01"
+      ],
+      "category": "reachability",
+      "errors": [],
+      "evidence": {
+        "connected": false,
+        "routeId": "ROUTE-FF-ROOM-01",
+        "spaceId": "FF-ROOM-01"
+      },
+      "expectedRuleId": "ACCESS.ROUTE.CONTINUITY",
+      "fixtureId": "ADV-001",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-001-inaccessible-first-floor-room.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "routes.0.connected"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Connect the room to a valid internal route from an entry or vertical connector.",
+      "suggestedCorrectionComplete": true,
+      "title": "Inaccessible first-floor room"
+    },
+    {
+      "actualRuleId": "OPENING.WALL.INTERSECTION",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "DOOR-FF-ROOM-01",
+        "FF-ROOM-01"
+      ],
+      "category": "opening",
+      "errors": [],
+      "evidence": {
+        "openingId": "DOOR-FF-ROOM-01",
+        "opensInto": "wall"
+      },
+      "expectedRuleId": "OPENING.WALL.INTERSECTION",
+      "fixtureId": "ADV-002",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-002-door-into-wall.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "openings.0.opensInto"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Move the opening to a real wall break and verify both sides of the opening.",
+      "suggestedCorrectionComplete": true,
+      "title": "Door opening into a wall"
+    },
+    {
+      "actualRuleId": "OPENING.PRIVATE.ACCESS",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "DOOR-FF-ROOM-01",
+        "FF-ROOM-01"
+      ],
+      "category": "opening",
+      "errors": [],
+      "evidence": {
+        "openingId": "DOOR-FF-ROOM-01",
+        "sideBKind": "private-room"
+      },
+      "expectedRuleId": "OPENING.PRIVATE.ACCESS",
+      "fixtureId": "ADV-003",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-003-door-to-private-room.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "openings.0.sideBKind"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Connect the room to a public or circulation space, not through a private or locked room.",
+      "suggestedCorrectionComplete": true,
+      "title": "Door opening into a private room"
+    },
+    {
+      "actualRuleId": "FURNITURE.ROUTE.CLEARANCE",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "FURNITURE-01",
+        "FF-ROOM-01"
+      ],
+      "category": "furniture",
+      "errors": [],
+      "evidence": {
+        "blocksRoute": true,
+        "furnitureId": "FURNITURE-01"
+      },
+      "expectedRuleId": "FURNITURE.ROUTE.CLEARANCE",
+      "fixtureId": "ADV-004",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-004-corridor-blocked-by-furniture.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "furniture.0.blocksRoute"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Relocate or resize the furniture so the required route and clearances remain open.",
+      "suggestedCorrectionComplete": true,
+      "title": "Corridor blocked by furniture"
+    },
+    {
+      "actualRuleId": "OPENING.SWING.CLEARANCE",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "DOOR-FF-ROOM-01",
+        "FF-ROOM-01"
+      ],
+      "category": "opening",
+      "errors": [],
+      "evidence": {
+        "openingId": "DOOR-FF-ROOM-01",
+        "swingConflict": true
+      },
+      "expectedRuleId": "OPENING.SWING.CLEARANCE",
+      "fixtureId": "ADV-005",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-005-door-swing-blocks-route.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "openings.0.swingConflict"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Reverse or relocate the door swing so the route and required clearance remain usable.",
+      "suggestedCorrectionComplete": true,
+      "title": "Door swing blocks circulation"
+    },
+    {
+      "actualRuleId": "STAIR.LANDING.REQUIRED",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "STAIR-01"
+      ],
+      "category": "stairs",
+      "errors": [],
+      "evidence": {
+        "landing": false,
+        "stairId": "STAIR-01"
+      },
+      "expectedRuleId": "STAIR.LANDING.REQUIRED",
+      "fixtureId": "ADV-006",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-006-stair-without-landing.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "stairs.0.landing"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Add and dimension a valid landing at the stair approach and discharge.",
+      "suggestedCorrectionComplete": true,
+      "title": "Stair without landing"
+    },
+    {
+      "actualRuleId": "ACCESS.VERTICAL.CONTINUITY",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "VERTICAL-01"
+      ],
+      "category": "vertical-access",
+      "errors": [],
+      "evidence": {
+        "connected": false,
+        "connectorId": "VERTICAL-01",
+        "fromLevel": "GF",
+        "toLevel": "FF"
+      },
+      "expectedRuleId": "ACCESS.VERTICAL.CONTINUITY",
+      "fixtureId": "ADV-007",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-007-disconnected-second-floor.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "verticalConnectors.0.connected"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Connect the vertical connector to valid routes on both levels.",
+      "suggestedCorrectionComplete": true,
+      "title": "Disconnected second floor"
+    },
+    {
+      "actualRuleId": "OPENING.EXTERNAL.LANDING",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "DOOR-EXTERNAL-01",
+        "GF-ENTRY"
+      ],
+      "category": "opening",
+      "errors": [],
+      "evidence": {
+        "external": true,
+        "landing": false,
+        "openingId": "DOOR-EXTERNAL-01"
+      },
+      "expectedRuleId": "OPENING.EXTERNAL.LANDING",
+      "fixtureId": "ADV-008",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-008-invalid-external-door.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "openings.4.landing"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Add an intentional porch, balcony, stair, ramp, or landing for the external door.",
+      "suggestedCorrectionComplete": true,
+      "title": "Invalid external door"
+    },
+    {
+      "actualRuleId": "SITE.FIRE.ACCESS",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "site.fireAccess"
+      ],
+      "category": "fire-access",
+      "errors": [],
+      "evidence": {
+        "fireAccess": {
+          "status": "missing"
+        }
+      },
+      "expectedRuleId": "SITE.FIRE.ACCESS",
+      "fixtureId": "ADV-009",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-009-missing-fire-access.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "site.fireAccess.status"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Provide verified fire-appliance access, turning, approach, and discharge geometry.",
+      "suggestedCorrectionComplete": true,
+      "title": "Missing fire access"
+    },
+    {
+      "actualRuleId": "SITE.SETBACKS",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "site.buildingEnvelope"
+      ],
+      "category": "site",
+      "errors": [],
+      "evidence": {
+        "buildingEnvelope": [
+          0,
+          10,
+          90,
+          90
+        ],
+        "margins": {
+          "east": 10,
+          "north": 10,
+          "south": 10,
+          "west": 0
+        },
+        "plotBounds": [
+          0,
+          0,
+          100,
+          100
+        ],
+        "setbacks": {
+          "east": 5,
+          "north": 5,
+          "south": 5,
+          "west": 5
+        }
+      },
+      "expectedRuleId": "SITE.SETBACKS",
+      "fixtureId": "ADV-010",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-010-invalid-setback.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "site.buildingEnvelope.0"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Move the building envelope inside the required setbacks and confirm the rule pack.",
+      "suggestedCorrectionComplete": true,
+      "title": "Invalid setback"
+    },
+    {
+      "actualRuleId": "DAYLIGHT.OPENINGS",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "FF-DAYLIGHT-01"
+      ],
+      "category": "daylight",
+      "errors": [],
+      "evidence": {
+        "spaceId": "FF-DAYLIGHT-01",
+        "windowCount": 0
+      },
+      "expectedRuleId": "DAYLIGHT.OPENINGS",
+      "fixtureId": "ADV-011",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-011-poor-daylight.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "windows.0.hostSpace"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Provide a compliant daylight opening or record an approved alternative strategy.",
+      "suggestedCorrectionComplete": true,
+      "title": "Poor daylight"
+    },
+    {
+      "actualRuleId": "VENTILATION.OPENINGS",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "FF-VENT-01"
+      ],
+      "category": "ventilation",
+      "errors": [],
+      "evidence": {
+        "spaceId": "FF-VENT-01",
+        "windowCount": 0
+      },
+      "expectedRuleId": "VENTILATION.OPENINGS",
+      "fixtureId": "ADV-012",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-012-poor-ventilation.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "windows.1.hostSpace"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Provide a compliant ventilation opening or record a designed mechanical strategy.",
+      "suggestedCorrectionComplete": true,
+      "title": "Poor ventilation"
+    },
+    {
+      "actualRuleId": "WET-AREA.COORDINATION",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "WET-AREA-01",
+        "GF-WET-01"
+      ],
+      "category": "wet-area",
+      "errors": [],
+      "evidence": {
+        "coordination": {
+          "status": "missing"
+        },
+        "wetAreaId": "WET-AREA-01"
+      },
+      "expectedRuleId": "WET-AREA.COORDINATION",
+      "fixtureId": "ADV-013",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-013-wet-area-coordination.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "wetAreas.0.coordination.status"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Coordinate shafts, drainage, falls, waterproofing, ventilation, and the MEP layout.",
+      "suggestedCorrectionComplete": true,
+      "title": "Wet-area coordination failure"
+    },
+    {
+      "actualRuleId": "ACCESS.SERVING.DOOR",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "FF-ROOM-01"
+      ],
+      "category": "reachability",
+      "errors": [],
+      "evidence": {
+        "servingDoor": false,
+        "spaceId": "FF-ROOM-01"
+      },
+      "expectedRuleId": "ACCESS.SERVING.DOOR",
+      "fixtureId": "ADV-014",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-014-room-without-serving-door.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "openings.0.hostSpace"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Add a serving door that connects the room to a valid circulation or exterior access path.",
+      "suggestedCorrectionComplete": true,
+      "title": "Room without serving door"
+    },
+    {
+      "actualRuleId": "SITE.SERVICE.ACCESS",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "site.serviceAccess"
+      ],
+      "category": "service-access",
+      "errors": [],
+      "evidence": {
+        "serviceAccess": {
+          "status": "missing"
+        }
+      },
+      "expectedRuleId": "SITE.SERVICE.ACCESS",
+      "fixtureId": "ADV-015",
+      "fixturePath": "tests/fixtures/adversarial/defective/ADV-015-missing-service-access.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "site.serviceAccess.status"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/defective/../valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Provide a deliberate service entry, route, loading point, and service-zone geometry.",
+      "suggestedCorrectionComplete": true,
+      "title": "Missing service access"
+    },
+    {
+      "actualRuleId": "ACCESS.ROUTE.CONTINUITY",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "FF-DAYLIGHT-01",
+        "ROUTE-FF-ROOM-01"
+      ],
+      "category": "routes",
+      "errors": [],
+      "evidence": {
+        "connected": false,
+        "routeId": "ROUTE-FF-ROOM-01",
+        "spaceId": "FF-DAYLIGHT-01"
+      },
+      "expectedRuleId": "ACCESS.ROUTE.CONTINUITY",
+      "fixtureId": "ADV-016",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "routes.0.spaceId",
+        "routes.0.connected"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Connect the room to a valid internal route from an entry or vertical connector.",
+      "suggestedCorrectionComplete": true,
+      "title": "Disconnected daylight-room route"
+    },
+    {
+      "actualRuleId": "OPENING.WALL.INTERSECTION",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "DOOR-GF-WET-01",
+        "GF-WET-01"
+      ],
+      "category": "openings",
+      "errors": [],
+      "evidence": {
+        "openingId": "DOOR-GF-WET-01",
+        "opensInto": "wall"
+      },
+      "expectedRuleId": "OPENING.WALL.INTERSECTION",
+      "fixtureId": "ADV-017",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "openings.3.opensInto"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Move the opening to a real wall break and verify both sides of the opening.",
+      "suggestedCorrectionComplete": true,
+      "title": "Wet-area door opens into wall"
+    },
+    {
+      "actualRuleId": "OPENING.PRIVATE.ACCESS",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "DOOR-FF-DAYLIGHT-01",
+        "FF-DAYLIGHT-01"
+      ],
+      "category": "openings",
+      "errors": [],
+      "evidence": {
+        "openingId": "DOOR-FF-DAYLIGHT-01",
+        "sideBKind": "locked-room"
+      },
+      "expectedRuleId": "OPENING.PRIVATE.ACCESS",
+      "fixtureId": "ADV-018",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "openings.1.sideBKind"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Connect the room to a public or circulation space, not through a private or locked room.",
+      "suggestedCorrectionComplete": true,
+      "title": "Daylight-room door opens to a locked room"
+    },
+    {
+      "actualRuleId": "FURNITURE.ROUTE.CLEARANCE",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "FURNITURE-01",
+        "FF-DAYLIGHT-01"
+      ],
+      "category": "furniture",
+      "errors": [],
+      "evidence": {
+        "blocksRoute": true,
+        "furnitureId": "FURNITURE-01"
+      },
+      "expectedRuleId": "FURNITURE.ROUTE.CLEARANCE",
+      "fixtureId": "ADV-019",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "furniture.0.spaceId",
+        "furniture.0.blocksRoute"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Relocate or resize the furniture so the required route and clearances remain open.",
+      "suggestedCorrectionComplete": true,
+      "title": "Furniture blocks the daylight-room route"
+    },
+    {
+      "actualRuleId": "OPENING.SWING.CLEARANCE",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "DOOR-FF-VENT-01",
+        "FF-VENT-01"
+      ],
+      "category": "openings",
+      "errors": [],
+      "evidence": {
+        "openingId": "DOOR-FF-VENT-01",
+        "swingConflict": true
+      },
+      "expectedRuleId": "OPENING.SWING.CLEARANCE",
+      "fixtureId": "ADV-020",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "openings.2.swingConflict"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Reverse or relocate the door swing so the route and required clearance remain usable.",
+      "suggestedCorrectionComplete": true,
+      "title": "Ventilation-room door swing blocks route"
+    },
+    {
+      "actualRuleId": "STAIR.LANDING.REQUIRED",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "STAIR-01"
+      ],
+      "category": "levels",
+      "errors": [],
+      "evidence": {
+        "landing": false,
+        "stairId": "STAIR-01"
+      },
+      "expectedRuleId": "STAIR.LANDING.REQUIRED",
+      "fixtureId": "ADV-021",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "stairs.0.landing"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Add and dimension a valid landing at the stair approach and discharge.",
+      "suggestedCorrectionComplete": true,
+      "title": "Second stair has no landing"
+    },
+    {
+      "actualRuleId": "ACCESS.VERTICAL.CONTINUITY",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "VERTICAL-01"
+      ],
+      "category": "levels",
+      "errors": [],
+      "evidence": {
+        "connected": false,
+        "connectorId": "VERTICAL-01",
+        "fromLevel": "GF",
+        "toLevel": "FF"
+      },
+      "expectedRuleId": "ACCESS.VERTICAL.CONTINUITY",
+      "fixtureId": "ADV-022",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "verticalConnectors.0.connected"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Connect the vertical connector to valid routes on both levels.",
+      "suggestedCorrectionComplete": true,
+      "title": "Vertical connector loses first-floor connection"
+    },
+    {
+      "actualRuleId": "OPENING.EXTERNAL.LANDING",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "DOOR-EXTERNAL-01",
+        "GF-ENTRY"
+      ],
+      "category": "openings",
+      "errors": [],
+      "evidence": {
+        "external": true,
+        "landing": false,
+        "openingId": "DOOR-EXTERNAL-01"
+      },
+      "expectedRuleId": "OPENING.EXTERNAL.LANDING",
+      "fixtureId": "ADV-023",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "openings.4.landing"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Add an intentional porch, balcony, stair, ramp, or landing for the external door.",
+      "suggestedCorrectionComplete": true,
+      "title": "External entry loses its landing"
+    },
+    {
+      "actualRuleId": "SITE.FIRE.ACCESS",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "site.fireAccess"
+      ],
+      "category": "site",
+      "errors": [],
+      "evidence": {
+        "fireAccess": {
+          "status": "unverified"
+        }
+      },
+      "expectedRuleId": "SITE.FIRE.ACCESS",
+      "fixtureId": "ADV-024",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "site.fireAccess.status"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Provide verified fire-appliance access, turning, approach, and discharge geometry.",
+      "suggestedCorrectionComplete": true,
+      "title": "Fire access is not verified"
+    },
+    {
+      "actualRuleId": "SITE.SERVICE.ACCESS",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "site.serviceAccess"
+      ],
+      "category": "site",
+      "errors": [],
+      "evidence": {
+        "serviceAccess": {
+          "status": "missing"
+        }
+      },
+      "expectedRuleId": "SITE.SERVICE.ACCESS",
+      "fixtureId": "ADV-025",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "invalid",
+      "mutationPaths": [
+        "site.serviceAccess.status"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Provide a deliberate service entry, route, loading point, and service-zone geometry.",
+      "suggestedCorrectionComplete": true,
+      "title": "Service access is explicitly missing"
+    },
+    {
+      "actualRuleId": "INPUT.MISSING.ROUTES",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "routes"
+      ],
+      "category": "routes",
+      "errors": [],
+      "evidence": {
+        "missingField": "routes"
+      },
+      "expectedRuleId": "INPUT.MISSING.ROUTES",
+      "fixtureId": "ADV-026",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "incomplete",
+      "mutationPaths": [
+        "routes"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Supply the routes collection before running architectural validation.",
+      "suggestedCorrectionComplete": true,
+      "title": "Incomplete input has no route collection"
+    },
+    {
+      "actualRuleId": "INPUT.MISSING.OPENINGS",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "openings"
+      ],
+      "category": "openings",
+      "errors": [],
+      "evidence": {
+        "missingField": "openings"
+      },
+      "expectedRuleId": "INPUT.MISSING.OPENINGS",
+      "fixtureId": "ADV-027",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "incomplete",
+      "mutationPaths": [
+        "openings"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Supply the openings collection before running architectural validation.",
+      "suggestedCorrectionComplete": true,
+      "title": "Incomplete input has no opening collection"
+    },
+    {
+      "actualRuleId": "INPUT.MISSING.WINDOWS",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "windows"
+      ],
+      "category": "geometry",
+      "errors": [],
+      "evidence": {
+        "missingField": "windows"
+      },
+      "expectedRuleId": "INPUT.MISSING.WINDOWS",
+      "fixtureId": "ADV-028",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "incomplete",
+      "mutationPaths": [
+        "windows"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Supply the windows collection before running architectural validation.",
+      "suggestedCorrectionComplete": true,
+      "title": "Incomplete input has no window collection"
+    },
+    {
+      "actualRuleId": "INPUT.MISSING.FURNITURE",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "furniture"
+      ],
+      "category": "furniture",
+      "errors": [],
+      "evidence": {
+        "missingField": "furniture"
+      },
+      "expectedRuleId": "INPUT.MISSING.FURNITURE",
+      "fixtureId": "ADV-029",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "incomplete",
+      "mutationPaths": [
+        "furniture"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Supply the furniture collection before running architectural validation.",
+      "suggestedCorrectionComplete": true,
+      "title": "Incomplete input has no furniture collection"
+    },
+    {
+      "actualRuleId": "INPUT.MISSING.SITE",
+      "affectedGeometryCorrect": true,
+      "affectedObjects": [
+        "site"
+      ],
+      "category": "site",
+      "errors": [],
+      "evidence": {
+        "missingField": "site"
+      },
+      "expectedRuleId": "INPUT.MISSING.SITE",
+      "fixtureId": "ADV-030",
+      "fixturePath": "tests/fixtures/adversarial/week23-cases.json",
+      "group": "incomplete",
+      "mutationPaths": [
+        "site"
+      ],
+      "ruleIdCorrect": true,
+      "severity": "BLOCKER",
+      "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+      "status": "PASS",
+      "suggestedCorrection": "Supply the site collection before running architectural validation.",
+      "suggestedCorrectionComplete": true,
+      "title": "Incomplete input has no site data"
+    }
+  ],
+  "sourceFixture": "tests/fixtures/adversarial/valid/baseline.json",
+  "status": "PASS",
+  "version": "week23.adversarial-expansion.v1"
+}

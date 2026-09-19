@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/CRAJKUMARSINGH/Advocate-Chambers/blob/main/packages/schema/week23-adversarial-case.schema.json",
+  "title": "Week 23 adversarial expansion case",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "fixtureId",
+    "title",
+    "group",
+    "category",
+    "sourceFixture",
+    "mutations",
+    "expectedFinding"
+  ],
+  "properties": {
+    "fixtureId": { "type": "string", "pattern": "^ADV-[0-9]{3}$" },
+    "title": { "type": "string", "minLength": 1 },
+    "group": { "enum": ["invalid", "incomplete"] },
+    "category": { "enum": ["geometry", "openings", "routes", "furniture", "levels", "site"] },
+    "sourceFixture": { "type": "string", "minLength": 1 },
+    "mutations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["path", "operation"],
+        "additionalProperties": false,
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "operation": { "enum": ["set", "remove", "append"] },
+          "value": {}
+        }
+      }
+    },
+    "expectedFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ruleId", "severity", "affectedObjects", "evidenceFields", "correction"],
+      "properties": {
+        "ruleId": { "type": "string", "minLength": 1 },
+        "severity": { "enum": ["BLOCKER", "ERROR", "WARNING"] },
+        "affectedObjects": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "evidenceFields": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "correction": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

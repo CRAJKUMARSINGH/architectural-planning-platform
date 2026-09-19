@@ -1,0 +1,43 @@
+{
+  "acceptance": {
+    "allCriticalDisagreementsDocumented": true,
+    "atLeastTwoIndependentReviewers": false,
+    "criticalFindingsReproducible": false,
+    "noCriticalDefectAcceptedAsUsable": false,
+    "usableAgreementTargetMet": false
+  },
+  "completedReviewers": 0,
+  "criticalDefectsAcceptedAsUsable": null,
+  "criticalFindingsReproducible": null,
+  "disagreements": [],
+  "findings": [],
+  "notes": [
+    "No professional participation is fabricated by this artifact.",
+    "Populate anonymized scorecards only after independent review is completed.",
+    "This package is not a permit, approval, or construction certification."
+  ],
+  "packSignature": "6744b958a078b9f11eb77439ab0d47237fc913dcc9dc2a17f46e341b2c1b76a1",
+  "plansInPack": 25,
+  "plansReviewed": 0,
+  "reportSignature": "906663c355904c7a95155992dbe34643ba143f2e1fecfad9e17a03dcd66d673e",
+  "requiredIndependentReviewers": 2,
+  "requiredPlanMix": {
+    "borderlineOrIncomplete": 5,
+    "defective": 10,
+    "valid": 10
+  },
+  "reviewStatus": "PENDING_EXTERNAL_REVIEW",
+  "reviewerSlots": [
+    {
+      "reviewerId": "REVIEWER-A",
+      "status": "PENDING"
+    },
+    {
+      "reviewerId": "REVIEWER-B",
+      "status": "PENDING"
+    }
+  ],
+  "status": "REVIEW_REQUIRED",
+  "usableAgreement": null,
+  "version": "week24.professional-review.v1"
+}

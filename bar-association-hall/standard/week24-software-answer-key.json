@@ -1,0 +1,370 @@
+{
+  "answerKeyNotForReviewerDistribution": true,
+  "cases": [
+    {
+      "blindedCaseId": "BLIND-001",
+      "expectedClass": "valid",
+      "findings": []
+    },
+    {
+      "blindedCaseId": "BLIND-002",
+      "expectedClass": "valid",
+      "findings": []
+    },
+    {
+      "blindedCaseId": "BLIND-003",
+      "expectedClass": "valid",
+      "findings": []
+    },
+    {
+      "blindedCaseId": "BLIND-004",
+      "expectedClass": "valid",
+      "findings": []
+    },
+    {
+      "blindedCaseId": "BLIND-005",
+      "expectedClass": "valid",
+      "findings": []
+    },
+    {
+      "blindedCaseId": "BLIND-006",
+      "expectedClass": "valid",
+      "findings": []
+    },
+    {
+      "blindedCaseId": "BLIND-007",
+      "expectedClass": "valid",
+      "findings": []
+    },
+    {
+      "blindedCaseId": "BLIND-008",
+      "expectedClass": "valid",
+      "findings": []
+    },
+    {
+      "blindedCaseId": "BLIND-009",
+      "expectedClass": "valid",
+      "findings": []
+    },
+    {
+      "blindedCaseId": "BLIND-010",
+      "expectedClass": "valid",
+      "findings": []
+    },
+    {
+      "blindedCaseId": "BLIND-011",
+      "expectedClass": "defective",
+      "findings": [
+        {
+          "affectedObjects": [
+            "FF-ROOM-01",
+            "ROUTE-FF-ROOM-01"
+          ],
+          "evidence": {
+            "connected": false,
+            "routeId": "ROUTE-FF-ROOM-01",
+            "spaceId": "FF-ROOM-01"
+          },
+          "ruleId": "ACCESS.ROUTE.CONTINUITY",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Connect the room to a valid internal route from an entry or vertical connector."
+        }
+      ],
+      "sourceFixtureId": "ADV-001"
+    },
+    {
+      "blindedCaseId": "BLIND-012",
+      "expectedClass": "defective",
+      "findings": [
+        {
+          "affectedObjects": [
+            "DOOR-FF-ROOM-01",
+            "FF-ROOM-01"
+          ],
+          "evidence": {
+            "openingId": "DOOR-FF-ROOM-01",
+            "opensInto": "wall"
+          },
+          "ruleId": "OPENING.WALL.INTERSECTION",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Move the opening to a real wall break and verify both sides of the opening."
+        }
+      ],
+      "sourceFixtureId": "ADV-002"
+    },
+    {
+      "blindedCaseId": "BLIND-013",
+      "expectedClass": "defective",
+      "findings": [
+        {
+          "affectedObjects": [
+            "DOOR-FF-ROOM-01",
+            "FF-ROOM-01"
+          ],
+          "evidence": {
+            "openingId": "DOOR-FF-ROOM-01",
+            "sideBKind": "private-room"
+          },
+          "ruleId": "OPENING.PRIVATE.ACCESS",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Connect the room to a public or circulation space, not through a private or locked room."
+        }
+      ],
+      "sourceFixtureId": "ADV-003"
+    },
+    {
+      "blindedCaseId": "BLIND-014",
+      "expectedClass": "defective",
+      "findings": [
+        {
+          "affectedObjects": [
+            "FURNITURE-01",
+            "FF-ROOM-01"
+          ],
+          "evidence": {
+            "blocksRoute": true,
+            "furnitureId": "FURNITURE-01"
+          },
+          "ruleId": "FURNITURE.ROUTE.CLEARANCE",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Relocate or resize the furniture so the required route and clearances remain open."
+        }
+      ],
+      "sourceFixtureId": "ADV-004"
+    },
+    {
+      "blindedCaseId": "BLIND-015",
+      "expectedClass": "defective",
+      "findings": [
+        {
+          "affectedObjects": [
+            "DOOR-FF-ROOM-01",
+            "FF-ROOM-01"
+          ],
+          "evidence": {
+            "openingId": "DOOR-FF-ROOM-01",
+            "swingConflict": true
+          },
+          "ruleId": "OPENING.SWING.CLEARANCE",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Reverse or relocate the door swing so the route and required clearance remain usable."
+        }
+      ],
+      "sourceFixtureId": "ADV-005"
+    },
+    {
+      "blindedCaseId": "BLIND-016",
+      "expectedClass": "defective",
+      "findings": [
+        {
+          "affectedObjects": [
+            "STAIR-01"
+          ],
+          "evidence": {
+            "landing": false,
+            "stairId": "STAIR-01"
+          },
+          "ruleId": "STAIR.LANDING.REQUIRED",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Add and dimension a valid landing at the stair approach and discharge."
+        }
+      ],
+      "sourceFixtureId": "ADV-006"
+    },
+    {
+      "blindedCaseId": "BLIND-017",
+      "expectedClass": "defective",
+      "findings": [
+        {
+          "affectedObjects": [
+            "VERTICAL-01"
+          ],
+          "evidence": {
+            "connected": false,
+            "connectorId": "VERTICAL-01",
+            "fromLevel": "GF",
+            "toLevel": "FF"
+          },
+          "ruleId": "ACCESS.VERTICAL.CONTINUITY",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Connect the vertical connector to valid routes on both levels."
+        }
+      ],
+      "sourceFixtureId": "ADV-007"
+    },
+    {
+      "blindedCaseId": "BLIND-018",
+      "expectedClass": "defective",
+      "findings": [
+        {
+          "affectedObjects": [
+            "DOOR-EXTERNAL-01",
+            "GF-ENTRY"
+          ],
+          "evidence": {
+            "external": true,
+            "landing": false,
+            "openingId": "DOOR-EXTERNAL-01"
+          },
+          "ruleId": "OPENING.EXTERNAL.LANDING",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Add an intentional porch, balcony, stair, ramp, or landing for the external door."
+        }
+      ],
+      "sourceFixtureId": "ADV-008"
+    },
+    {
+      "blindedCaseId": "BLIND-019",
+      "expectedClass": "defective",
+      "findings": [
+        {
+          "affectedObjects": [
+            "site.fireAccess"
+          ],
+          "evidence": {
+            "fireAccess": {
+              "status": "missing"
+            }
+          },
+          "ruleId": "SITE.FIRE.ACCESS",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Provide verified fire-appliance access, turning, approach, and discharge geometry."
+        }
+      ],
+      "sourceFixtureId": "ADV-009"
+    },
+    {
+      "blindedCaseId": "BLIND-020",
+      "expectedClass": "defective",
+      "findings": [
+        {
+          "affectedObjects": [
+            "site.buildingEnvelope"
+          ],
+          "evidence": {
+            "buildingEnvelope": [
+              0,
+              10,
+              90,
+              90
+            ],
+            "margins": {
+              "east": 10,
+              "north": 10,
+              "south": 10,
+              "west": 0
+            },
+            "plotBounds": [
+              0,
+              0,
+              100,
+              100
+            ],
+            "setbacks": {
+              "east": 5,
+              "north": 5,
+              "south": 5,
+              "west": 5
+            }
+          },
+          "ruleId": "SITE.SETBACKS",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Move the building envelope inside the required setbacks and confirm the rule pack."
+        }
+      ],
+      "sourceFixtureId": "ADV-010"
+    },
+    {
+      "blindedCaseId": "BLIND-021",
+      "expectedClass": "borderline_or_incomplete",
+      "findings": [
+        {
+          "affectedObjects": [
+            "routes"
+          ],
+          "evidence": {
+            "missingField": "routes"
+          },
+          "ruleId": "INPUT.MISSING.ROUTES",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Supply the routes collection before running architectural validation."
+        }
+      ],
+      "sourceFixtureId": "ADV-026"
+    },
+    {
+      "blindedCaseId": "BLIND-022",
+      "expectedClass": "borderline_or_incomplete",
+      "findings": [
+        {
+          "affectedObjects": [
+            "openings"
+          ],
+          "evidence": {
+            "missingField": "openings"
+          },
+          "ruleId": "INPUT.MISSING.OPENINGS",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Supply the openings collection before running architectural validation."
+        }
+      ],
+      "sourceFixtureId": "ADV-027"
+    },
+    {
+      "blindedCaseId": "BLIND-023",
+      "expectedClass": "borderline_or_incomplete",
+      "findings": [
+        {
+          "affectedObjects": [
+            "windows"
+          ],
+          "evidence": {
+            "missingField": "windows"
+          },
+          "ruleId": "INPUT.MISSING.WINDOWS",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Supply the windows collection before running architectural validation."
+        }
+      ],
+      "sourceFixtureId": "ADV-028"
+    },
+    {
+      "blindedCaseId": "BLIND-024",
+      "expectedClass": "borderline_or_incomplete",
+      "findings": [
+        {
+          "affectedObjects": [
+            "furniture"
+          ],
+          "evidence": {
+            "missingField": "furniture"
+          },
+          "ruleId": "INPUT.MISSING.FURNITURE",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Supply the furniture collection before running architectural validation."
+        }
+      ],
+      "sourceFixtureId": "ADV-029"
+    },
+    {
+      "blindedCaseId": "BLIND-025",
+      "expectedClass": "borderline_or_incomplete",
+      "findings": [
+        {
+          "affectedObjects": [
+            "site"
+          ],
+          "evidence": {
+            "missingField": "site"
+          },
+          "ruleId": "INPUT.MISSING.SITE",
+          "severity": "BLOCKER",
+          "suggestedCorrection": "Supply the site collection before running architectural validation."
+        }
+      ],
+      "sourceFixtureId": "ADV-030"
+    }
+  ],
+  "packSignature": "6744b958a078b9f11eb77439ab0d47237fc913dcc9dc2a17f46e341b2c1b76a1",
+  "version": "week24.software-answer-key.v1"
+}

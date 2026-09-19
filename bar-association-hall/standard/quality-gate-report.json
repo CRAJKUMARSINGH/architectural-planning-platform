@@ -10,21 +10,21 @@
   },
   "professionalReviewRequired": true,
   "releaseReady": false,
-  "reportSignature": "780ff18dc74d588f37a05aa2525c175e1728779e16a7f6b2989a31d31a966da4",
+  "reportSignature": "55afc8276723fb78b0ac60004f48e5fc1118e69356baa664c1fc4b6a64489232",
   "score": null,
   "status": "INCOMPLETE",
   "tracks": {
     "adversarial": {
       "allCriticalFindingsComplete": true,
-      "completeFindings": 15,
+      "completeFindings": 30.0,
       "criticalRecall": 1.0,
       "dangerousFalseNegatives": 0,
-      "detectedCriticalDefects": 15,
+      "detectedCriticalDefects": 30,
       "falsePositiveCount": 0,
       "missedCriticalDefects": 0,
-      "sourceReport": "bar-association-hall/standard/week22-adversarial-foundation-report.json",
+      "sourceReport": "bar-association-hall/standard/week23-adversarial-expansion-report.json",
       "status": "PASS",
-      "totalCriticalDefects": 15,
+      "totalCriticalDefects": 30,
       "zeroDangerousFalseNegatives": true
     },
     "performance": {
@@ -54,11 +54,11 @@
     "regression": {
       "command": "python3 -m unittest discover -s tests -p 'test_week*.py'",
       "failed": 0,
-      "passed": 75,
+      "passed": 84,
       "previousWeek21BaselineTests": 69,
       "status": "PASS",
       "suite": "full weekly regression",
-      "tests": 75,
+      "tests": 84,
       "verification": "Current regression suite recorded from the Week 22 run"
     }
   },

@@ -121,8 +121,9 @@ correction data for every finding. Independent professional review remains
 required; this benchmark does not grant planning or construction approval.
 
 The Week 22 adversarial track currently passes with 15 of 15 critical fixtures
-detected. The combined quality gate remains `INCOMPLETE` until the Week 24
-professional-review and Week 25 performance evidence are supplied.
+detected. The combined quality gate remains `INCOMPLETE` until independent
+Week 24 professional-review results and Week 25 performance evidence are
+supplied.
 
 Run the Week 22 fixture checks with:
 
@@ -132,6 +133,65 @@ npm run validate:week22
 npm run test:week22
 ```
 **Task completion:** Week 22 enrichment is complete and marked done in this README.
+
+## Week 23 task status — applied and marked done
+
+Week 23 expands the adversarial benchmark from the original 15 fixtures to 30
+deterministic cases and hardens the release measurements.
+
+- Retained all 15 Week 22 invalid-fixture regressions and added 10 additional
+  invalid mutation cases plus 5 incomplete-input cases.
+- Covered geometry, openings, routes, furniture, levels, and site mutations.
+- Added explicit valid, invalid, and incomplete-input group accounting.
+- Added false-positive and false-negative reports, rule-ID accuracy, affected
+  geometry accuracy, and suggested-correction completeness measurements.
+- Added the Week 23 case manifest and schema under
+  `tests/fixtures/adversarial/` and `packages/schema/`.
+- Added the deterministic report at
+  `bar-association-hall/standard/week23-adversarial-expansion-report.json`.
+- Connected the quality gate to the expanded Week 23 adversarial report.
+
+The Week 23 benchmark passes with 30 of 30 known defects detected, zero
+dangerous false negatives, zero valid-baseline false positives, and complete
+rule, evidence, geometry, and correction measurements.
+
+Run the Week 23 checks with:
+
+```bash
+npm run enrich:week23
+npm run validate:week23
+npm run test:week23
+```
+
+**Task completion:** Week 23 enrichment is complete and marked done in this README.
+
+## Week 24 task status — review package applied
+
+Week 24 adds a blinded independent professional-review package without
+fabricating professional participation.
+
+- Added a blinded pack containing 10 valid, 10 defective, and 5 borderline or
+  incomplete-input plans.
+- Added reviewer instructions covering independent scoring, reproducibility,
+  critical findings, and disagreement documentation.
+- Added the standard review form and finding/disagreement result schema.
+- Added the software answer key separately from the reviewer-facing pack.
+- Added anonymized review results with two pending reviewer slots at
+  `bar-association-hall/standard/week24-anonymized-review-results.json`.
+
+The package is structurally complete, but its status correctly remains
+`REVIEW_REQUIRED` until at least two independent professionals submit
+scorecards meeting the 90% agreement and reproducibility gates.
+
+Run the Week 24 package checks with:
+
+```bash
+npm run enrich:week24
+npm run validate:week24
+npm run test:week24
+```
+
+**Task completion:** Week 24 review infrastructure is complete; external professional review remains pending.
 
 
 ## Week 3–4 task status

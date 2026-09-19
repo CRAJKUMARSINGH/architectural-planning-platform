@@ -27,6 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TEST_ROOT = ROOT / "tests"
 REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "quality-gate-report.json"
 WEEK22_REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "week22-adversarial-foundation-report.json"
+WEEK23_REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "week23-adversarial-expansion-report.json"
 
 QUALITY_GATE_VERSION = "week21.quality-gate.v1"
 STATES = ("PASS", "REVIEW_REQUIRED", "BLOCKED", "INCOMPLETE")
@@ -291,17 +292,31 @@ def discover_test_count() -> int:
 
 def write_report() -> dict[str, Any]:
     adversarial: dict[str, Any] | None = None
-    if WEEK22_REPORT_PATH.exists():
-        week22 = json.loads(WEEK22_REPORT_PATH.read_text(encoding="utf-8"))
-        benchmark = week22.get("benchmark") or {}
+    source_report = WEEK23_REPORT_PATH if WEEK23_REPORT_PATH.exists() else WEEK22_REPORT_PATH
+    if source_report.exists():
+        adversarial_report = json.loads(source_report.read_text(encoding="utf-8"))
+        benchmark = adversarial_report.get("benchmark") or {}
+        if source_report == WEEK23_REPORT_PATH:
+            total = benchmark.get("criticalDefects", 0)
+            detected = benchmark.get("detectedDefects", 0)
+            missed = benchmark.get("missedDefects", 0)
+            false_positives = benchmark.get("falsePositives", 0)
+        else:
+            total = benchmark.get("criticalFixtures", 0)
+            detected = benchmark.get("criticalDefectsDetected", 0)
+            missed = benchmark.get("criticalDefectsMissed", 0)
+            false_positives = benchmark.get("falsePositiveCount", 0)
         adversarial = {
-            "totalCriticalDefects": benchmark.get("criticalFixtures", 0),
-            "detectedCriticalDefects": benchmark.get("criticalDefectsDetected", 0),
-            "missedCriticalDefects": benchmark.get("criticalDefectsMissed", 0),
+            "totalCriticalDefects": total,
+            "detectedCriticalDefects": detected,
+            "missedCriticalDefects": missed,
             "dangerousFalseNegatives": benchmark.get("dangerousFalseNegatives", 0),
-            "completeFindings": benchmark.get("completeFindings", 0),
-            "falsePositiveCount": benchmark.get("falsePositiveCount", 0),
-            "sourceReport": str(WEEK22_REPORT_PATH.relative_to(ROOT)),
+            "completeFindings": benchmark.get(
+                "completeFindings",
+                benchmark.get("suggestedCorrectionCompleteness", 0) * total,
+            ),
+            "falsePositiveCount": false_positives,
+            "sourceReport": str(source_report.relative_to(ROOT)),
         }
     current_test_count = discover_test_count()
     baseline = {
