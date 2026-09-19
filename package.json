@@ -71,6 +71,12 @@
     "enrich:week24": "python scripts/week24.py report",
     "validate:week24": "python scripts/week24.py validate",
     "test:week24": "python -m unittest discover -s tests -p 'test_week24*.py'",
+    "enrich:week25": "python benchmarks/run_benchmark.py report && python scripts/quality_gate.py report",
+    "validate:week25": "python benchmarks/run_benchmark.py validate && python scripts/quality_gate.py validate",
+    "test:week25": "python -m unittest discover -s tests -p 'test_week25*.py'",
+    "enrich:week26": "python scripts/week26.py report",
+    "validate:week26": "python scripts/week26.py validate",
+    "test:week26": "python -m unittest discover -s tests -p 'test_week26*.py'",
     "docs:patch-guide": "start code-junction/future-react-cad-transformation-patch-guide/deliverables/TRANSFORMATION_PATCH_GUIDE.md"
   },
   "devDependencies": {

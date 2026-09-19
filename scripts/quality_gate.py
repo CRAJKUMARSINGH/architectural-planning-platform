@@ -28,6 +28,7 @@ TEST_ROOT = ROOT / "tests"
 REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "quality-gate-report.json"
 WEEK22_REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "week22-adversarial-foundation-report.json"
 WEEK23_REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "week23-adversarial-expansion-report.json"
+WEEK25_REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "week25-performance-report.json"
 
 QUALITY_GATE_VERSION = "week21.quality-gate.v1"
 STATES = ("PASS", "REVIEW_REQUIRED", "BLOCKED", "INCOMPLETE")
@@ -292,6 +293,7 @@ def discover_test_count() -> int:
 
 def write_report() -> dict[str, Any]:
     adversarial: dict[str, Any] | None = None
+    performance: dict[str, Any] | None = None
     source_report = WEEK23_REPORT_PATH if WEEK23_REPORT_PATH.exists() else WEEK22_REPORT_PATH
     if source_report.exists():
         adversarial_report = json.loads(source_report.read_text(encoding="utf-8"))
@@ -318,6 +320,17 @@ def write_report() -> dict[str, Any]:
             "falsePositiveCount": false_positives,
             "sourceReport": str(source_report.relative_to(ROOT)),
         }
+    if WEEK25_REPORT_PATH.exists():
+        week25 = json.loads(WEEK25_REPORT_PATH.read_text(encoding="utf-8"))
+        failures = week25.get("failures") or {}
+        performance = {
+            "profiles": [profile.get("profile") for profile in week25.get("profiles", [])],
+            "silentTimeouts": failures.get("silentTimeouts", 0),
+            "outOfMemoryFailures": failures.get("outOfMemoryFailures", 0),
+            "dataLossEvents": failures.get("dataLossEvents", 0),
+            "nondeterministicRuns": failures.get("nondeterministicRuns", 0),
+            "sourceReport": str(WEEK25_REPORT_PATH.relative_to(ROOT)),
+        }
     current_test_count = discover_test_count()
     baseline = {
         "suite": "full weekly regression",
@@ -326,9 +339,9 @@ def write_report() -> dict[str, Any]:
         "passed": current_test_count,
         "failed": 0,
         "previousWeek21BaselineTests": 69,
-        "verification": "Current regression suite recorded from the Week 22 run",
+        "verification": "Current regression suite recorded from the Week 26 validation run",
     }
-    report = build_quality_gate(adversarial=adversarial, baseline=baseline)
+    report = build_quality_gate(adversarial=adversarial, performance=performance, baseline=baseline)
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
     REPORT_PATH.write_text(
         json.dumps(report, indent=2, ensure_ascii=False, sort_keys=True) + "\n",

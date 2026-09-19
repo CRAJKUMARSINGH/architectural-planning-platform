@@ -122,8 +122,7 @@ required; this benchmark does not grant planning or construction approval.
 
 The Week 22 adversarial track currently passes with 15 of 15 critical fixtures
 detected. The combined quality gate remains `INCOMPLETE` until independent
-Week 24 professional-review results and Week 25 performance evidence are
-supplied.
+Week 24 professional-review results are supplied.
 
 Run the Week 22 fixture checks with:
 
@@ -192,6 +191,67 @@ npm run test:week24
 ```
 
 **Task completion:** Week 24 review infrastructure is complete; external professional review remains pending.
+
+## Week 25 task status — applied and marked done
+
+Week 25 adds the performance benchmark harness required to establish measured
+limits for representative project sizes.
+
+- Added `benchmarks/run_benchmark.py` and `benchmarks/README.md`.
+- Added small, medium, and large deterministic workload fixtures matching the
+  validation-program profiles.
+- Recorded input, model, and validation signatures; application commit and
+  rule-pack metadata; p50/p95 operation timings; memory, CPU, failure
+  recovery, timeout, out-of-memory, data-loss, and nondeterminism counts.
+- Connected the performance report to the Week 21 quality gate.
+- Added the report at
+  `bar-association-hall/standard/week25-performance-report.json`.
+
+The initial Week 25 run passes with no silent timeouts, out-of-memory failures,
+data-loss events, operation errors, or nondeterministic repeated inputs. Export
+timings are deterministic serialization baselines, not a claim of completed
+professional PDF/DXF production exports.
+
+Run the Week 25 checks with:
+
+```bash
+npm run enrich:week25
+npm run validate:week25
+npm run test:week25
+```
+
+**Task completion:** Week 25 enrichment is complete and marked done in this README.
+
+## Week 26 task status — applied and marked done
+
+Week 26 adds reproducibility and failure-recovery evidence for a second
+workspace.
+
+- Added the reproducibility runner at `scripts/week26.py`.
+- Added an artifact package containing the input model hash, application
+  commit, rule-pack version, model signature, validation signature, and signed
+  artifact manifest.
+- Added tampered-manifest, missing-artifact, partial-export, soft
+  archive/restore, second-workspace, and revision-comparison checks.
+- Added the report at
+  `bar-association-hall/standard/week26-reproducibility-report.json`.
+- Added the explicit revision comparison report at
+  `bar-association-hall/standard/week26-revision-comparison-report.json`.
+
+The Week 26 report passes all acceptance checks: tampering is rejected, missing
+artifacts remain explicit, partial generation preserves the last valid
+revision, restore preserves revision identity, and the package verifies in a
+second workspace.
+
+Run the Week 26 checks with:
+
+```bash
+npm run enrich:week26
+npm run validate:week26
+npm run test:week26
+```
+
+**Task completion:** Week 26 enrichment is complete and marked done in this README.
 
 
 ## Week 3–4 task status

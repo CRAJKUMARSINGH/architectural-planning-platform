@@ -1,0 +1,11 @@
+{
+  "comparison": {
+    "differences": [],
+    "same": true
+  },
+  "currentRevision": "REV-001",
+  "partialCandidate": "REV-002",
+  "partialGenerationPreservedCurrent": true,
+  "restoredRevision": "REV-001",
+  "version": "week26.revision-comparison.v1"
+}

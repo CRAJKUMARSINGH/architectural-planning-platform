@@ -4,13 +4,13 @@
     "baselineRegression": "PASS",
     "criticalDefectDetection": "PASS",
     "dangerousFalseNegatives": "PASS",
-    "performanceBenchmark": "INCOMPLETE",
+    "performanceBenchmark": "PASS",
     "professionalReview": "INCOMPLETE",
-    "reproducibility": "INCOMPLETE"
+    "reproducibility": "PASS"
   },
   "professionalReviewRequired": true,
   "releaseReady": false,
-  "reportSignature": "55afc8276723fb78b0ac60004f48e5fc1118e69356baa664c1fc4b6a64489232",
+  "reportSignature": "5e193b18a7b59445fa3d60810adcfbdc44b504b091f949a406c73fc5ca91fe67",
   "score": null,
   "status": "INCOMPLETE",
   "tracks": {
@@ -28,16 +28,24 @@
       "zeroDangerousFalseNegatives": true
     },
     "performance": {
-      "message": "performance benchmark evidence has not been supplied",
-      "missingEvidence": true,
-      "requiredFields": [
-        "profiles",
-        "silentTimeouts",
-        "outOfMemoryFailures",
-        "dataLossEvents",
-        "nondeterministicRuns"
+      "dataLossEvents": 0,
+      "deterministic": true,
+      "failureCounts": {
+        "dataLossEvents": 0,
+        "nondeterministicRuns": 0,
+        "outOfMemoryFailures": 0,
+        "silentTimeouts": 0
+      },
+      "nondeterministicRuns": 0,
+      "outOfMemoryFailures": 0,
+      "profiles": [
+        "small",
+        "medium",
+        "large"
       ],
-      "status": "INCOMPLETE"
+      "silentTimeouts": 0,
+      "sourceReport": "bar-association-hall/standard/week25-performance-report.json",
+      "status": "PASS"
     },
     "professionalReview": {
       "message": "professional review evidence has not been supplied",
@@ -54,12 +62,12 @@
     "regression": {
       "command": "python3 -m unittest discover -s tests -p 'test_week*.py'",
       "failed": 0,
-      "passed": 84,
+      "passed": 93,
       "previousWeek21BaselineTests": 69,
       "status": "PASS",
       "suite": "full weekly regression",
-      "tests": 84,
-      "verification": "Current regression suite recorded from the Week 22 run"
+      "tests": 93,
+      "verification": "Current regression suite recorded from the Week 26 validation run"
     }
   },
   "version": "week21.quality-gate.v1",

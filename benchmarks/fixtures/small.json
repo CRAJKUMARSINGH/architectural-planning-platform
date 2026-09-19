@@ -1,0 +1,690 @@
+{
+  "furniture": [
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-001",
+      "spaceId": "ROOM-001"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-002",
+      "spaceId": "ROOM-002"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-003",
+      "spaceId": "ROOM-003"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-004",
+      "spaceId": "ROOM-004"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-005",
+      "spaceId": "ROOM-005"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-006",
+      "spaceId": "ROOM-006"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-007",
+      "spaceId": "ROOM-007"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-008",
+      "spaceId": "ROOM-008"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-009",
+      "spaceId": "ROOM-009"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-010",
+      "spaceId": "ROOM-010"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-011",
+      "spaceId": "ROOM-011"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-012",
+      "spaceId": "ROOM-012"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-013",
+      "spaceId": "ROOM-013"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-014",
+      "spaceId": "ROOM-014"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-015",
+      "spaceId": "ROOM-015"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-016",
+      "spaceId": "ROOM-001"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-017",
+      "spaceId": "ROOM-002"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-018",
+      "spaceId": "ROOM-003"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-019",
+      "spaceId": "ROOM-004"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-020",
+      "spaceId": "ROOM-005"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-021",
+      "spaceId": "ROOM-006"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-022",
+      "spaceId": "ROOM-007"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-023",
+      "spaceId": "ROOM-008"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-024",
+      "spaceId": "ROOM-009"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-025",
+      "spaceId": "ROOM-010"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-026",
+      "spaceId": "ROOM-011"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-027",
+      "spaceId": "ROOM-012"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-028",
+      "spaceId": "ROOM-013"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-029",
+      "spaceId": "ROOM-014"
+    },
+    {
+      "blocksRoute": false,
+      "id": "FURNITURE-030",
+      "spaceId": "ROOM-015"
+    }
+  ],
+  "levels": [
+    {
+      "id": "L-1"
+    },
+    {
+      "id": "L-2"
+    }
+  ],
+  "openings": [
+    {
+      "external": false,
+      "hostSpace": "ROOM-001",
+      "id": "DOOR-001",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-002",
+      "id": "DOOR-002",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-003",
+      "id": "DOOR-003",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-004",
+      "id": "DOOR-004",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-005",
+      "id": "DOOR-005",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-006",
+      "id": "DOOR-006",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-007",
+      "id": "DOOR-007",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-008",
+      "id": "DOOR-008",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-009",
+      "id": "DOOR-009",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-010",
+      "id": "DOOR-010",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-011",
+      "id": "DOOR-011",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-012",
+      "id": "DOOR-012",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-013",
+      "id": "DOOR-013",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-014",
+      "id": "DOOR-014",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-015",
+      "id": "DOOR-015",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-001",
+      "id": "DOOR-016",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-002",
+      "id": "DOOR-017",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-003",
+      "id": "DOOR-018",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-004",
+      "id": "DOOR-019",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-005",
+      "id": "DOOR-020",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-006",
+      "id": "DOOR-021",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-007",
+      "id": "DOOR-022",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-008",
+      "id": "DOOR-023",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-009",
+      "id": "DOOR-024",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    },
+    {
+      "external": false,
+      "hostSpace": "ROOM-010",
+      "id": "DOOR-025",
+      "landing": true,
+      "opensInto": "corridor",
+      "sideBKind": "corridor",
+      "swingConflict": false
+    }
+  ],
+  "project": {
+    "id": "week25-15",
+    "revision": 1
+  },
+  "routes": [
+    {
+      "connected": true,
+      "id": "ROUTE-001",
+      "spaceId": "ROOM-001"
+    },
+    {
+      "connected": true,
+      "id": "ROUTE-002",
+      "spaceId": "ROOM-002"
+    },
+    {
+      "connected": true,
+      "id": "ROUTE-003",
+      "spaceId": "ROOM-003"
+    },
+    {
+      "connected": true,
+      "id": "ROUTE-004",
+      "spaceId": "ROOM-004"
+    },
+    {
+      "connected": true,
+      "id": "ROUTE-005",
+      "spaceId": "ROOM-005"
+    },
+    {
+      "connected": true,
+      "id": "ROUTE-006",
+      "spaceId": "ROOM-006"
+    },
+    {
+      "connected": true,
+      "id": "ROUTE-007",
+      "spaceId": "ROOM-007"
+    },
+    {
+      "connected": true,
+      "id": "ROUTE-008",
+      "spaceId": "ROOM-008"
+    },
+    {
+      "connected": true,
+      "id": "ROUTE-009",
+      "spaceId": "ROOM-009"
+    },
+    {
+      "connected": true,
+      "id": "ROUTE-010",
+      "spaceId": "ROOM-010"
+    },
+    {
+      "connected": true,
+      "id": "ROUTE-011",
+      "spaceId": "ROOM-011"
+    },
+    {
+      "connected": true,
+      "id": "ROUTE-012",
+      "spaceId": "ROOM-012"
+    },
+    {
+      "connected": true,
+      "id": "ROUTE-013",
+      "spaceId": "ROOM-013"
+    },
+    {
+      "connected": true,
+      "id": "ROUTE-014",
+      "spaceId": "ROOM-014"
+    },
+    {
+      "connected": true,
+      "id": "ROUTE-015",
+      "spaceId": "ROOM-015"
+    }
+  ],
+  "site": {
+    "buildingEnvelope": [
+      50,
+      50,
+      950,
+      950
+    ],
+    "fireAccess": {
+      "status": "verified"
+    },
+    "plotBounds": [
+      0,
+      0,
+      1000,
+      1000
+    ],
+    "serviceAccess": {
+      "status": "verified"
+    },
+    "setbacks": {
+      "east": 25,
+      "north": 25,
+      "south": 25,
+      "west": 25
+    }
+  },
+  "spaces": [
+    {
+      "id": "ROOM-001",
+      "levelId": "L-1",
+      "requiresDoor": false
+    },
+    {
+      "id": "ROOM-002",
+      "levelId": "L-2",
+      "requiresDoor": false
+    },
+    {
+      "id": "ROOM-003",
+      "levelId": "L-1",
+      "requiresDoor": false
+    },
+    {
+      "id": "ROOM-004",
+      "levelId": "L-2",
+      "requiresDoor": false
+    },
+    {
+      "id": "ROOM-005",
+      "levelId": "L-1",
+      "requiresDoor": false
+    },
+    {
+      "id": "ROOM-006",
+      "levelId": "L-2",
+      "requiresDoor": false
+    },
+    {
+      "id": "ROOM-007",
+      "levelId": "L-1",
+      "requiresDoor": false
+    },
+    {
+      "id": "ROOM-008",
+      "levelId": "L-2",
+      "requiresDoor": false
+    },
+    {
+      "id": "ROOM-009",
+      "levelId": "L-1",
+      "requiresDoor": false
+    },
+    {
+      "id": "ROOM-010",
+      "levelId": "L-2",
+      "requiresDoor": false
+    },
+    {
+      "id": "ROOM-011",
+      "levelId": "L-1",
+      "requiresDoor": false
+    },
+    {
+      "id": "ROOM-012",
+      "levelId": "L-2",
+      "requiresDoor": false
+    },
+    {
+      "id": "ROOM-013",
+      "levelId": "L-1",
+      "requiresDoor": false
+    },
+    {
+      "id": "ROOM-014",
+      "levelId": "L-2",
+      "requiresDoor": false
+    },
+    {
+      "id": "ROOM-015",
+      "levelId": "L-1",
+      "requiresDoor": false
+    }
+  ],
+  "stairs": [
+    {
+      "id": "STAIR-01",
+      "landing": true
+    }
+  ],
+  "verticalConnectors": [
+    {
+      "connected": true,
+      "fromLevel": "L-1",
+      "id": "VERTICAL-01",
+      "toLevel": "L-2"
+    }
+  ],
+  "wetAreas": [],
+  "windows": [
+    {
+      "hostSpace": "ROOM-001",
+      "id": "WINDOW-001"
+    },
+    {
+      "hostSpace": "ROOM-002",
+      "id": "WINDOW-002"
+    },
+    {
+      "hostSpace": "ROOM-003",
+      "id": "WINDOW-003"
+    },
+    {
+      "hostSpace": "ROOM-004",
+      "id": "WINDOW-004"
+    },
+    {
+      "hostSpace": "ROOM-005",
+      "id": "WINDOW-005"
+    },
+    {
+      "hostSpace": "ROOM-006",
+      "id": "WINDOW-006"
+    },
+    {
+      "hostSpace": "ROOM-007",
+      "id": "WINDOW-007"
+    },
+    {
+      "hostSpace": "ROOM-008",
+      "id": "WINDOW-008"
+    },
+    {
+      "hostSpace": "ROOM-009",
+      "id": "WINDOW-009"
+    },
+    {
+      "hostSpace": "ROOM-010",
+      "id": "WINDOW-010"
+    },
+    {
+      "hostSpace": "ROOM-011",
+      "id": "WINDOW-011"
+    },
+    {
+      "hostSpace": "ROOM-012",
+      "id": "WINDOW-012"
+    },
+    {
+      "hostSpace": "ROOM-013",
+      "id": "WINDOW-013"
+    },
+    {
+      "hostSpace": "ROOM-014",
+      "id": "WINDOW-014"
+    },
+    {
+      "hostSpace": "ROOM-015",
+      "id": "WINDOW-015"
+    },
+    {
+      "hostSpace": "ROOM-001",
+      "id": "WINDOW-016"
+    },
+    {
+      "hostSpace": "ROOM-002",
+      "id": "WINDOW-017"
+    },
+    {
+      "hostSpace": "ROOM-003",
+      "id": "WINDOW-018"
+    },
+    {
+      "hostSpace": "ROOM-004",
+      "id": "WINDOW-019"
+    },
+    {
+      "hostSpace": "ROOM-005",
+      "id": "WINDOW-020"
+    },
+    {
+      "hostSpace": "ROOM-006",
+      "id": "WINDOW-021"
+    },
+    {
+      "hostSpace": "ROOM-007",
+      "id": "WINDOW-022"
+    },
+    {
+      "hostSpace": "ROOM-008",
+      "id": "WINDOW-023"
+    },
+    {
+      "hostSpace": "ROOM-009",
+      "id": "WINDOW-024"
+    },
+    {
+      "hostSpace": "ROOM-010",
+      "id": "WINDOW-025"
+    }
+  ]
+}

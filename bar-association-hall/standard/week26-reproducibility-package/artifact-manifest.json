@@ -1,0 +1,27 @@
+{
+  "artifacts": [
+    {
+      "bytes": 3158,
+      "kind": "input-model",
+      "path": "input-model.json",
+      "sha256": "8d3d325f4f2ab3418c4692cec8caef0c749792193fc72c6c028a908b2a14713c",
+      "status": "PRESENT"
+    },
+    {
+      "bytes": 490,
+      "kind": "revision",
+      "path": "revision.json",
+      "sha256": "c4a77391f349e7ba11306c9dae711efc3c7a380bf9af1b83b41df5f2556aeee9",
+      "status": "PRESENT"
+    },
+    {
+      "bytes": 114,
+      "kind": "validation-findings",
+      "path": "validation-findings.json",
+      "sha256": "882d1e077a22c8592f72174ec15a651dffa85866a8c200561ca8f54e5fdd3129",
+      "status": "PRESENT"
+    }
+  ],
+  "manifestSignature": "aafc16d0b7dfc5dc1bab21b2425ec93110c19773ffa094281a606b7cab8fa994",
+  "version": "week26.artifact-manifest.v1"
+}
