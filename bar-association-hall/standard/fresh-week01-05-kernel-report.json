@@ -1,0 +1,1542 @@
+{
+  "reportVersion": "fresh.week01-05.drafting-kernel.v1",
+  "status": "PASS",
+  "kernel": {
+    "authoritativeModel": "bar-association-hall/standard/model/project.json",
+    "recipeIndex": "packages/recipes/index.json",
+    "visualPatternCatalog": "packages/recipes/visual-tool-patterns.json",
+    "principle": "brief -> canonical model -> validate -> explain -> render",
+    "presentationCannotOverrideFindings": true
+  },
+  "recipe": {
+    "id": "institutional",
+    "label": "Institutional / civic",
+    "requiredFacts": [
+      "site.orientation.north",
+      "site.access.public",
+      "site.access.service",
+      "program.rooms",
+      "program.occupancy"
+    ],
+    "preferredAdjacencies": [
+      "reception-near-public-entry",
+      "assembly-near-stage",
+      "library-near-computer-support",
+      "reception-near-vertical-circulation"
+    ],
+    "forbiddenAdjacencies": [
+      "service-directly-into-assembly",
+      "upper-floor-room-without-validated-connector"
+    ],
+    "optimizationChecks": [
+      "assembly seating preserves aisles and exit routes",
+      "public, staff, service, and vertical routes are traceable",
+      "stage/dais and library support are reachable without crossing service zones",
+      "site frontage and service access remain explicit review items when unconfirmed"
+    ]
+  },
+  "visualOptimization": {
+    "catalogVersion": "advocate-chambers.visual-tool-patterns.v1",
+    "patterns": [
+      {
+        "id": "text-to-brief",
+        "references": [
+          "Maket.ai",
+          "Planner 5D",
+          "ChatGPT",
+          "Claude",
+          "Grok",
+          "Gemini"
+        ],
+        "bestFor": "Turning a detailed natural-language description into a structured brief.",
+        "safeAction": "Extract dimensions, room uses, occupancy, access intent, adjacency intent, style, and requested outputs into a reviewable brief.",
+        "mustNotDo": "Do not turn generated prose or an attractive image directly into authoritative walls, doors, routes, or stairs.",
+        "programWeeks": [
+          1,
+          6,
+          12
+        ]
+      },
+      {
+        "id": "furnished-2d-3d-exploration",
+        "references": [
+          "Planner 5D",
+          "Floorplanner",
+          "Roomstyler",
+          "Homestyler"
+        ],
+        "bestFor": "Exploring furniture arrangements and coloured 2D/3D presentation.",
+        "safeAction": "Generate presentation candidates only from validated rooms, scaled assets, route widths, door swings, and clearance envelopes.",
+        "mustNotDo": "Do not let furniture, materials, lighting, or a render hide a blocker or mutate authoritative geometry.",
+        "programWeeks": [
+          8,
+          9,
+          15,
+          16
+        ]
+      },
+      {
+        "id": "site-and-professional-modelling",
+        "references": [
+          "Archistar",
+          "Snaptrude"
+        ],
+        "bestFor": "Site context, building-scale modelling, and feasibility review.",
+        "safeAction": "Store north, frontage, setbacks, access points, levels, site assumptions, and rule-pack evidence as explicit inputs.",
+        "mustNotDo": "Do not convert a product claim or automated score into a local-code, permit, or construction approval.",
+        "programWeeks": [
+          6,
+          7,
+          14,
+          17
+        ]
+      },
+      {
+        "id": "photo-to-plan-review",
+        "references": [
+          "Magicplan",
+          "Style2AI",
+          "Massing Labs",
+          "ArkViz",
+          "Planlift"
+        ],
+        "bestFor": "Capturing an existing plan or space from photographs or images.",
+        "safeAction": "Create an assisted-recognition queue with scale evidence, confidence, source provenance, and manual confirmation before promotion.",
+        "mustNotDo": "Do not silently promote image recognition into measured, editable, or issue-ready geometry.",
+        "programWeeks": [
+          1,
+          13,
+          14
+        ]
+      },
+      {
+        "id": "architectural-model-and-sections",
+        "references": [
+          "4Lines.ai"
+        ],
+        "bestFor": "Plans, sections, elevations, and architectural model workflows.",
+        "safeAction": "Keep object IDs, levels, openings, dimensions, and validation provenance synchronized across every view and exchange.",
+        "mustNotDo": "Do not accept a section or elevation that is disconnected from the canonical model revision.",
+        "programWeeks": [
+          2,
+          8,
+          14
+        ]
+      },
+      {
+        "id": "scaled-dimension-review",
+        "references": [
+          "Archiagent"
+        ],
+        "bestFor": "Live dimensions and scaled floor-plan review.",
+        "safeAction": "Use live dimensions as an explainable review aid and rerun topology, clearance, and rule-pack checks after edits.",
+        "mustNotDo": "Do not treat a millimetre-accuracy claim as evidence of jurisdictional compliance or professional sign-off.",
+        "programWeeks": [
+          2,
+          4,
+          5,
+          8
+        ]
+      }
+    ]
+  },
+  "weeks": {
+    "01": {
+      "status": "PASS",
+      "report": "bar-association-hall/standard/week1-validation-report.json",
+      "findingCounts": {}
+    },
+    "02": {
+      "status": "PASS",
+      "schema": "advocate-chambers.project.v2",
+      "errors": []
+    },
+    "03-04": {
+      "status": "PASS",
+      "findingCounts": {},
+      "graph": {
+        "nodes": [
+          {
+            "id": "EXT-ENTRY-MAIN",
+            "kind": "exterior-zone",
+            "levelId": "GF",
+            "explicit": "explicit-entry"
+          },
+          {
+            "id": "EXT-ENTRY-VIP",
+            "kind": "exterior-zone",
+            "levelId": "GF",
+            "explicit": "explicit-entry"
+          },
+          {
+            "id": "FF-01",
+            "kind": "space",
+            "levelId": "FF",
+            "name": "Librarian / Administration",
+            "rect": [
+              6.0,
+              6.0,
+              150.0,
+              174.0
+            ]
+          },
+          {
+            "id": "FF-02",
+            "kind": "space",
+            "levelId": "FF",
+            "name": "Main Stair",
+            "rect": [
+              156.0,
+              6.0,
+              282.0,
+              174.0
+            ]
+          },
+          {
+            "id": "FF-03",
+            "kind": "space",
+            "levelId": "FF",
+            "name": "Secretary / Committee Room",
+            "rect": [
+              288.0,
+              6.0,
+              432.0,
+              174.0
+            ]
+          },
+          {
+            "id": "FF-04",
+            "kind": "space",
+            "levelId": "FF",
+            "name": "Pantry",
+            "rect": [
+              438.0,
+              6.0,
+              546.0,
+              174.0
+            ]
+          },
+          {
+            "id": "FF-05",
+            "kind": "space",
+            "levelId": "FF",
+            "name": "Toilet Block",
+            "rect": [
+              552.0,
+              6.0,
+              666.0,
+              174.0
+            ]
+          },
+          {
+            "id": "FF-06",
+            "kind": "space",
+            "levelId": "FF",
+            "name": "Library Reading Room",
+            "rect": [
+              6.0,
+              180.0,
+              666.0,
+              768.0
+            ]
+          },
+          {
+            "id": "FF-07",
+            "kind": "space",
+            "levelId": "FF",
+            "name": "Stack Area / Book Storage",
+            "rect": [
+              6.0,
+              774.0,
+              666.0,
+              990.0
+            ]
+          },
+          {
+            "id": "FF-08",
+            "kind": "space",
+            "levelId": "FF",
+            "name": "Discussion Room",
+            "rect": [
+              6.0,
+              996.0,
+              222.0,
+              1122.0
+            ]
+          },
+          {
+            "id": "FF-09",
+            "kind": "space",
+            "levelId": "FF",
+            "name": "Computer / Internet",
+            "rect": [
+              228.0,
+              996.0,
+              444.0,
+              1122.0
+            ]
+          },
+          {
+            "id": "FF-10",
+            "kind": "space",
+            "levelId": "FF",
+            "name": "Store / Electrical",
+            "rect": [
+              450.0,
+              996.0,
+              666.0,
+              1122.0
+            ]
+          },
+          {
+            "id": "GF-01",
+            "kind": "space",
+            "levelId": "GF",
+            "name": "Reception / Records",
+            "rect": [
+              6.0,
+              6.0,
+              150.0,
+              174.0
+            ]
+          },
+          {
+            "id": "GF-02",
+            "kind": "space",
+            "levelId": "GF",
+            "name": "Main Stair",
+            "rect": [
+              156.0,
+              6.0,
+              282.0,
+              174.0
+            ]
+          },
+          {
+            "id": "GF-03",
+            "kind": "space",
+            "levelId": "GF",
+            "name": "President Chamber",
+            "rect": [
+              288.0,
+              6.0,
+              432.0,
+              174.0
+            ]
+          },
+          {
+            "id": "GF-04",
+            "kind": "space",
+            "levelId": "GF",
+            "name": "Pantry",
+            "rect": [
+              438.0,
+              6.0,
+              546.0,
+              174.0
+            ]
+          },
+          {
+            "id": "GF-05",
+            "kind": "space",
+            "levelId": "GF",
+            "name": "Toilet Block",
+            "rect": [
+              552.0,
+              6.0,
+              666.0,
+              174.0
+            ]
+          },
+          {
+            "id": "GF-06",
+            "kind": "space",
+            "levelId": "GF",
+            "name": "Main Assembly Hall",
+            "rect": [
+              6.0,
+              180.0,
+              666.0,
+              900.0
+            ]
+          },
+          {
+            "id": "GF-07",
+            "kind": "space",
+            "levelId": "GF",
+            "name": "Dais / Speaker Zone",
+            "rect": [
+              6.0,
+              906.0,
+              666.0,
+              1080.0
+            ]
+          }
+        ],
+        "edges": [
+          {
+            "id": "EDGE-CONNECTOR-VC-STAIR-01",
+            "kind": "vertical-connector",
+            "from": "GF-02",
+            "to": "FF-02",
+            "connectorId": "VC-STAIR-01",
+            "levelId": "GF",
+            "toLevelId": "FF",
+            "routeClass": "vertical"
+          },
+          {
+            "id": "EDGE-OPENING-D-FF-01",
+            "kind": "opening",
+            "from": "FF-01",
+            "to": "FF-02",
+            "openingId": "D-FF-01",
+            "levelId": "FF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-FF-02",
+            "kind": "opening",
+            "from": "FF-02",
+            "to": "FF-06",
+            "openingId": "D-FF-02",
+            "levelId": "FF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-FF-03",
+            "kind": "opening",
+            "from": "FF-03",
+            "to": "FF-06",
+            "openingId": "D-FF-03",
+            "levelId": "FF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-FF-04",
+            "kind": "opening",
+            "from": "FF-04",
+            "to": "FF-06",
+            "openingId": "D-FF-04",
+            "levelId": "FF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-FF-05",
+            "kind": "opening",
+            "from": "FF-05",
+            "to": "FF-06",
+            "openingId": "D-FF-05",
+            "levelId": "FF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-FF-06",
+            "kind": "opening",
+            "from": "FF-06",
+            "to": "FF-07",
+            "openingId": "D-FF-06",
+            "levelId": "FF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-FF-07",
+            "kind": "opening",
+            "from": "FF-07",
+            "to": "FF-06",
+            "openingId": "D-FF-07",
+            "levelId": "FF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-FF-08",
+            "kind": "opening",
+            "from": "FF-08",
+            "to": "FF-07",
+            "openingId": "D-FF-08",
+            "levelId": "FF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-FF-09",
+            "kind": "opening",
+            "from": "FF-09",
+            "to": "FF-07",
+            "openingId": "D-FF-09",
+            "levelId": "FF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-FF-10",
+            "kind": "opening",
+            "from": "FF-10",
+            "to": "FF-07",
+            "openingId": "D-FF-10",
+            "levelId": "FF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-GF-01",
+            "kind": "opening",
+            "from": "GF-01",
+            "to": "GF-02",
+            "openingId": "D-GF-01",
+            "levelId": "GF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-GF-02",
+            "kind": "opening",
+            "from": "GF-02",
+            "to": "GF-06",
+            "openingId": "D-GF-02",
+            "levelId": "GF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-GF-03",
+            "kind": "opening",
+            "from": "GF-03",
+            "to": "GF-06",
+            "openingId": "D-GF-03",
+            "levelId": "GF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-GF-04",
+            "kind": "opening",
+            "from": "GF-04",
+            "to": "GF-06",
+            "openingId": "D-GF-04",
+            "levelId": "GF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-GF-05",
+            "kind": "opening",
+            "from": "GF-05",
+            "to": "GF-06",
+            "openingId": "D-GF-05",
+            "levelId": "GF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-GF-06",
+            "kind": "opening",
+            "from": "GF-06",
+            "to": "EXT-ENTRY-MAIN",
+            "openingId": "D-GF-06",
+            "levelId": "GF",
+            "routeClass": "exterior-entry"
+          },
+          {
+            "id": "EDGE-OPENING-D-GF-07",
+            "kind": "opening",
+            "from": "GF-07",
+            "to": "EXT-ENTRY-VIP",
+            "openingId": "D-GF-07",
+            "levelId": "GF",
+            "routeClass": "exterior-entry"
+          },
+          {
+            "id": "EDGE-OPENING-D-GF-08",
+            "kind": "opening",
+            "from": "GF-07",
+            "to": "GF-06",
+            "openingId": "D-GF-08",
+            "levelId": "GF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-GF-09",
+            "kind": "opening",
+            "from": "GF-01",
+            "to": "GF-06",
+            "openingId": "D-GF-09",
+            "levelId": "GF",
+            "routeClass": "internal"
+          },
+          {
+            "id": "EDGE-OPENING-D-GF-10",
+            "kind": "opening",
+            "from": "GF-03",
+            "to": "GF-02",
+            "openingId": "D-GF-10",
+            "levelId": "GF",
+            "routeClass": "internal"
+          }
+        ],
+        "entryRoots": [
+          "EXT-ENTRY-MAIN",
+          "EXT-ENTRY-VIP"
+        ],
+        "routes": [
+          {
+            "spaceId": "FF-01",
+            "levelId": "FF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-02",
+              "EDGE-CONNECTOR-VC-STAIR-01",
+              "EDGE-OPENING-D-FF-01"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "FF-02",
+            "levelId": "FF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-02",
+              "EDGE-CONNECTOR-VC-STAIR-01"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "FF-03",
+            "levelId": "FF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-02",
+              "EDGE-CONNECTOR-VC-STAIR-01",
+              "EDGE-OPENING-D-FF-02",
+              "EDGE-OPENING-D-FF-03"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "FF-04",
+            "levelId": "FF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-02",
+              "EDGE-CONNECTOR-VC-STAIR-01",
+              "EDGE-OPENING-D-FF-02",
+              "EDGE-OPENING-D-FF-04"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "FF-05",
+            "levelId": "FF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-02",
+              "EDGE-CONNECTOR-VC-STAIR-01",
+              "EDGE-OPENING-D-FF-02",
+              "EDGE-OPENING-D-FF-05"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "FF-06",
+            "levelId": "FF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-02",
+              "EDGE-CONNECTOR-VC-STAIR-01",
+              "EDGE-OPENING-D-FF-02"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "FF-07",
+            "levelId": "FF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-02",
+              "EDGE-CONNECTOR-VC-STAIR-01",
+              "EDGE-OPENING-D-FF-02",
+              "EDGE-OPENING-D-FF-06"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "FF-08",
+            "levelId": "FF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-02",
+              "EDGE-CONNECTOR-VC-STAIR-01",
+              "EDGE-OPENING-D-FF-02",
+              "EDGE-OPENING-D-FF-06",
+              "EDGE-OPENING-D-FF-08"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "FF-09",
+            "levelId": "FF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-02",
+              "EDGE-CONNECTOR-VC-STAIR-01",
+              "EDGE-OPENING-D-FF-02",
+              "EDGE-OPENING-D-FF-06",
+              "EDGE-OPENING-D-FF-09"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "FF-10",
+            "levelId": "FF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-02",
+              "EDGE-CONNECTOR-VC-STAIR-01",
+              "EDGE-OPENING-D-FF-02",
+              "EDGE-OPENING-D-FF-06",
+              "EDGE-OPENING-D-FF-10"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "GF-01",
+            "levelId": "GF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-09"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "GF-02",
+            "levelId": "GF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-02"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "GF-03",
+            "levelId": "GF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-03"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "GF-04",
+            "levelId": "GF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-04"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "GF-05",
+            "levelId": "GF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-05"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "GF-06",
+            "levelId": "GF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06"
+            ],
+            "firstBrokenEdge": null
+          },
+          {
+            "spaceId": "GF-07",
+            "levelId": "GF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-VIP"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-07"
+            ],
+            "firstBrokenEdge": null
+          }
+        ],
+        "components": [
+          [
+            "EXT-ENTRY-MAIN",
+            "EXT-ENTRY-VIP",
+            "FF-01",
+            "FF-02",
+            "FF-03",
+            "FF-04",
+            "FF-05",
+            "FF-06",
+            "FF-07",
+            "FF-08",
+            "FF-09",
+            "FF-10",
+            "GF-01",
+            "GF-02",
+            "GF-03",
+            "GF-04",
+            "GF-05",
+            "GF-06",
+            "GF-07"
+          ]
+        ]
+      },
+      "openingSchedule": [
+        {
+          "tag": "D-02",
+          "openingId": "D-GF-01",
+          "levelId": "GF",
+          "kind": "door",
+          "hostSpace": "GF-01",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "GF-01",
+            "levelId": "GF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "GF-02",
+            "levelId": "GF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "east",
+          "width": 36.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-02",
+          "openingId": "D-GF-02",
+          "levelId": "GF",
+          "kind": "door",
+          "hostSpace": "GF-02",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "GF-02",
+            "levelId": "GF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "GF-06",
+            "levelId": "GF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "south",
+          "width": 42.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-02",
+          "openingId": "D-GF-03",
+          "levelId": "GF",
+          "kind": "door",
+          "hostSpace": "GF-03",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "GF-03",
+            "levelId": "GF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "GF-06",
+            "levelId": "GF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "south",
+          "width": 42.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-03",
+          "openingId": "D-GF-04",
+          "levelId": "GF",
+          "kind": "door",
+          "hostSpace": "GF-04",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "GF-04",
+            "levelId": "GF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "GF-06",
+            "levelId": "GF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "south",
+          "width": 36.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-03",
+          "openingId": "D-GF-05",
+          "levelId": "GF",
+          "kind": "door",
+          "hostSpace": "GF-05",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "GF-05",
+            "levelId": "GF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "GF-06",
+            "levelId": "GF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "south",
+          "width": 36.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-01",
+          "openingId": "D-GF-06",
+          "levelId": "GF",
+          "kind": "door",
+          "hostSpace": "GF-06",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "GF-06",
+            "levelId": "GF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "exterior-zone",
+            "zoneId": "EXT-ENTRY-MAIN",
+            "levelId": "GF",
+            "source": "explicit-entry",
+            "isNamedZone": true
+          },
+          "connectionType": "exterior",
+          "wall": "east",
+          "width": 84.0,
+          "swing": "out",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": true,
+            "landingValid": true,
+            "zoneId": "EXT-ENTRY-MAIN"
+          },
+          "entryIds": [
+            "ENTRY-MAIN"
+          ]
+        },
+        {
+          "tag": "D-02",
+          "openingId": "D-GF-07",
+          "levelId": "GF",
+          "kind": "door",
+          "hostSpace": "GF-07",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "GF-07",
+            "levelId": "GF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "exterior-zone",
+            "zoneId": "EXT-ENTRY-VIP",
+            "levelId": "GF",
+            "source": "explicit-entry",
+            "isNamedZone": true
+          },
+          "connectionType": "exterior",
+          "wall": "east",
+          "width": 42.0,
+          "swing": "out",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": true,
+            "landingValid": true,
+            "zoneId": "EXT-ENTRY-VIP"
+          },
+          "entryIds": [
+            "ENTRY-VIP"
+          ]
+        },
+        {
+          "tag": "D-02",
+          "openingId": "D-GF-08",
+          "levelId": "GF",
+          "kind": "door",
+          "hostSpace": "GF-07",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "GF-07",
+            "levelId": "GF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "GF-06",
+            "levelId": "GF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "north",
+          "width": 42.0,
+          "swing": "out",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-02",
+          "openingId": "D-GF-09",
+          "levelId": "GF",
+          "kind": "door",
+          "hostSpace": "GF-01",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "GF-01",
+            "levelId": "GF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "GF-06",
+            "levelId": "GF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "south",
+          "width": 42.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-03",
+          "openingId": "D-GF-10",
+          "levelId": "GF",
+          "kind": "door",
+          "hostSpace": "GF-03",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "GF-03",
+            "levelId": "GF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "GF-02",
+            "levelId": "GF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "west",
+          "width": 36.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-02",
+          "openingId": "D-FF-01",
+          "levelId": "FF",
+          "kind": "door",
+          "hostSpace": "FF-01",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "FF-01",
+            "levelId": "FF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "FF-02",
+            "levelId": "FF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "east",
+          "width": 36.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-02",
+          "openingId": "D-FF-02",
+          "levelId": "FF",
+          "kind": "door",
+          "hostSpace": "FF-02",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "FF-02",
+            "levelId": "FF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "FF-06",
+            "levelId": "FF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "south",
+          "width": 42.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-02",
+          "openingId": "D-FF-03",
+          "levelId": "FF",
+          "kind": "door",
+          "hostSpace": "FF-03",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "FF-03",
+            "levelId": "FF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "FF-06",
+            "levelId": "FF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "south",
+          "width": 42.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-03",
+          "openingId": "D-FF-04",
+          "levelId": "FF",
+          "kind": "door",
+          "hostSpace": "FF-04",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "FF-04",
+            "levelId": "FF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "FF-06",
+            "levelId": "FF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "south",
+          "width": 36.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-03",
+          "openingId": "D-FF-05",
+          "levelId": "FF",
+          "kind": "door",
+          "hostSpace": "FF-05",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "FF-05",
+            "levelId": "FF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "FF-06",
+            "levelId": "FF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "south",
+          "width": 36.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-01",
+          "openingId": "D-FF-06",
+          "levelId": "FF",
+          "kind": "door",
+          "hostSpace": "FF-06",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "FF-06",
+            "levelId": "FF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "FF-07",
+            "levelId": "FF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "south",
+          "width": 48.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-01",
+          "openingId": "D-FF-07",
+          "levelId": "FF",
+          "kind": "door",
+          "hostSpace": "FF-07",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "FF-07",
+            "levelId": "FF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "FF-06",
+            "levelId": "FF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "north",
+          "width": 48.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-03",
+          "openingId": "D-FF-08",
+          "levelId": "FF",
+          "kind": "door",
+          "hostSpace": "FF-08",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "FF-08",
+            "levelId": "FF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "FF-07",
+            "levelId": "FF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "north",
+          "width": 36.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-03",
+          "openingId": "D-FF-09",
+          "levelId": "FF",
+          "kind": "door",
+          "hostSpace": "FF-09",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "FF-09",
+            "levelId": "FF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "FF-07",
+            "levelId": "FF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "north",
+          "width": 36.0,
+          "swing": "in",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        },
+        {
+          "tag": "D-03",
+          "openingId": "D-FF-10",
+          "levelId": "FF",
+          "kind": "door",
+          "hostSpace": "FF-10",
+          "sideA": {
+            "kind": "space",
+            "spaceId": "FF-10",
+            "levelId": "FF",
+            "valid": true
+          },
+          "sideB": {
+            "kind": "space",
+            "spaceId": "FF-07",
+            "levelId": "FF",
+            "source": "geometric-adjacency"
+          },
+          "connectionType": "internal",
+          "wall": "north",
+          "width": 36.0,
+          "swing": "out",
+          "wallBreak": true,
+          "approach": {
+            "requiredWidth": 36.0,
+            "requiredDepth": 42.0,
+            "landingRequired": false,
+            "landingValid": true,
+            "zoneId": null
+          },
+          "entryIds": []
+        }
+      ]
+    },
+    "05": {
+      "status": "PASS",
+      "findingCounts": {},
+      "connectors": [
+        {
+          "connectorId": "VC-STAIR-01",
+          "kind": "stair",
+          "fromLevelId": "GF",
+          "toLevelId": "FF",
+          "stairId": "STAIR-01",
+          "departureSpaceId": "GF-02",
+          "arrivalSpaceId": "FF-02",
+          "geometry": {
+            "floorToFloor": 178.0,
+            "riserCountTotal": 24.0,
+            "riser": 7.4167,
+            "tread": 9.0,
+            "width": 48.0,
+            "landingDepth": 48.0,
+            "direction": "up",
+            "flightCount": 2.0,
+            "riserCountPerFlight": 12.0
+          },
+          "route": {
+            "spaceId": "FF-02",
+            "levelId": "FF",
+            "reachable": true,
+            "entryRoots": [
+              "EXT-ENTRY-MAIN"
+            ],
+            "path": [
+              "EDGE-OPENING-D-GF-06",
+              "EDGE-OPENING-D-GF-02",
+              "EDGE-CONNECTOR-VC-STAIR-01"
+            ],
+            "firstBrokenEdge": null
+          }
+        }
+      ]
+    }
+  },
+  "findingCounts": {},
+  "findings": [],
+  "policy": {
+    "issueReadyOutputAllowed": true,
+    "professionalStatus": "PRELIMINARY / NOT FOR CONSTRUCTION"
+  }
+}
