@@ -16,6 +16,8 @@ from week1516 import (  # noqa: E402
     FLOORPLANNER_INPUT_VERSION,
     ROOMSTYLER_INPUT_VERSION,
     MAGICPLAN_INPUT_VERSION,
+    LLM_BRIEF_INPUT_VERSION,
+    FOURLINES_INPUT_VERSION,
     ai_tool_input_manifest,
     candidate_studio,
     design_package,
@@ -29,6 +31,8 @@ from week1516 import (  # noqa: E402
     validate_floorplanner_input,
     validate_roomstyler_homestyler_input,
     validate_magicplan_input,
+    validate_llm_brief_input,
+    validate_4lines_input,
     validate_placement,
 )
 
@@ -477,6 +481,128 @@ class Week1516EnrichmentTests(unittest.TestCase):
         self.assertIn("MAGICPLAN_KNOWN_SCALE_REQUIRED", rules)
         self.assertIn("MAGICPLAN_SCALE_EVIDENCE_REQUIRED", rules)
         self.assertIn("MAGICPLAN_VALIDATION_RERUN_REQUIRED", rules)
+
+    def test_w1607_llm_fixture_compiles_brief_and_accepts_typed_revision(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "llm-brief-refinement.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        model_path = ROOT / "bar-association-hall" / "standard" / "model" / "project.json"
+        model = json.loads(model_path.read_text(encoding="utf-8"))
+        before = copy.deepcopy(model)
+
+        result = validate_llm_brief_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=model["project"]["revision"],
+        )
+
+        self.assertEqual(result["version"], LLM_BRIEF_INPUT_VERSION)
+        self.assertEqual(result["status"], "pass")
+        self.assertTrue(result["candidateEligible"])
+        self.assertEqual(result["compilerShape"]["status"], "ready")
+        self.assertEqual(result["clarificationState"]["status"], "resolved")
+        self.assertEqual(result["acceptedRevision"]["afterRevision"], 2)
+        self.assertTrue(result["acceptedRevision"]["accepted"])
+        self.assertEqual(result["validationReport"]["status"], "pass")
+        self.assertEqual(result["acceptedModelRevision"], 2)
+        self.assertFalse(result["authoritativeGeometryChanged"])
+        self.assertEqual(model, before)
+
+    def test_w1607_llm_missing_upper_floor_access_blocks_before_rendering(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "llm-brief-refinement.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        payload["verticalAccess"] = []
+        payload["proposedRevisions"] = []
+        payload.pop("validationReport")
+        model = json.loads(
+            (ROOT / "bar-association-hall" / "standard" / "model" / "project.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        result = validate_llm_brief_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=model["project"]["revision"],
+        )
+
+        rules = {item["rule"] for item in result["findings"]}
+        self.assertEqual(result["status"], "blocked")
+        self.assertIn("LLM_UPPER_FLOOR_ACCESS_REQUIRED", rules)
+        self.assertEqual(result["acceptedRevision"], None)
+        self.assertEqual(result["clarificationState"]["status"], "blocked")
+
+    def test_w1607_llm_proposal_without_explicit_accept_stays_review_required(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "llm-brief-refinement.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        payload["proposedRevisions"][0]["accept"] = False
+        model = json.loads(
+            (ROOT / "bar-association-hall" / "standard" / "model" / "project.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        result = validate_llm_brief_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=model["project"]["revision"],
+        )
+
+        self.assertEqual(result["status"], "review-required")
+        self.assertIsNone(result["acceptedRevision"])
+        self.assertIn("LLM_ACCEPT_REVISION_REQUIRED", {item["rule"] for item in result["findings"]})
+
+    def test_w1608_4lines_fixture_preserves_cross_view_identity(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "4lines-plan-section-exchange.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        model = json.loads(
+            (ROOT / "bar-association-hall" / "standard" / "model" / "project.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        result = validate_4lines_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=model["project"]["revision"],
+        )
+
+        self.assertEqual(result["version"], FOURLINES_INPUT_VERSION)
+        self.assertEqual(result["status"], "pass")
+        self.assertTrue(result["candidateEligible"])
+        self.assertEqual({item["kind"] for item in result["views"]}, {"plan", "section", "elevation"})
+        self.assertEqual(result["missingObjectIds"], [])
+        self.assertFalse(result["invalidation"]["invalidated"])
+        self.assertFalse(result["authoritativeGeometryChanged"])
+
+    def test_w1608_4lines_missing_duplicate_and_disconnected_objects_are_rejected(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "4lines-plan-section-exchange.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        payload["views"][0]["objectIds"].append("GF-06")
+        payload["views"][0]["objectIds"].append("FF-06")
+        payload["views"][1]["objectIds"].remove("FF-02")
+        model = json.loads(
+            (ROOT / "bar-association-hall" / "standard" / "model" / "project.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        result = validate_4lines_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=model["project"]["revision"],
+        )
+
+        rules = {item["rule"] for item in result["findings"]}
+        self.assertEqual(result["status"], "blocked")
+        self.assertFalse(result["candidateEligible"])
+        self.assertIn("FOURLINES_DUPLICATE_OBJECT_ID", rules)
+        self.assertIn("FOURLINES_DISCONNECTED_OBJECT", rules)
+        self.assertIn("FOURLINES_OBJECT_MISSING", rules)
 
     def test_week16_exposes_tool_inputs_with_review_boundaries(self):
         manifest = ai_tool_input_manifest()

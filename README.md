@@ -571,6 +571,17 @@ The Week 15 and Week 16 enrichment is implemented in the canonical pipeline.
   scale-backed recognition with a post-promotion topology/clearance rerun is
   promoted; uncertain, rejected, and image-only results remain review
   evidence.
+- **W16-07 — ChatGPT / Claude / Grok / Gemini typed brief refinement:**
+  provider-neutral conversation input now delegates extraction and typed
+  command previews to the Week 12 compiler. Source text, assumptions,
+  clarification questions, provider/model provenance, explicit accepted
+  revisions, and validation evidence are retained. Incomplete upper-floor
+  access blocks rendering, and conversational output never becomes geometry.
+- **W16-08 — 4Lines.ai traceable plan/section exchange:** plan, section, and
+  elevation views now carry source-to-canonical object IDs, levels, openings,
+  dimensions, view references, exchange provenance, and validation signatures.
+  Missing, duplicated, unknown, disconnected, stale, or unvalidated objects
+  invalidate the presentation-only exchange.
 - Moodboards, palettes, materials, lighting presets, non-destructive design
   layers, render/panorama/presentation-sheet job manifests, and
   technical-plan-to-render revision traceability are included.
@@ -591,11 +602,15 @@ The Week 15 and Week 16 enrichment is implemented in the canonical pipeline.
   - `bar-association-hall/standard/week16-floorplanner-synchronized-view-report.json`
   - `bar-association-hall/standard/week16-roomstyler-presentation-report.json`
   - `bar-association-hall/standard/week16-magicplan-recognition-report.json`
+   - `bar-association-hall/standard/week16-llm-brief-refinement-report.json`
+   - `bar-association-hall/standard/week16-4lines-plan-section-exchange-report.json`
   - `bar-association-hall/standard/week1516-enrichment-manifest.json`
   - `bar-association-hall/standard/week1516-changelog.md`
 - Regression tests live in `tests/test_week1516_enrichment.py`, including
   Planner 5D mapping, Roomstyler clearance rejection, Magicplan promotion
-  gating, route blocking, non-mutation, and deterministic comparison coverage.
+  gating, LLM clarification and typed-revision acceptance, 4Lines cross-view
+  identity rejection, route blocking, non-mutation, and deterministic
+  comparison coverage.
 
 Commands:
 
@@ -609,6 +624,12 @@ npm run test:week1516
 **W16-05 and W16-06 task completion:** Roomstyler/Homestyler
 clearance-aware presentation and Magicplan photo-assisted recognition queue
 are implemented, covered by fixtures and regression tests, and marked done.
+
+**W16-07 and W16-08 task completion:** provider-neutral conversational brief
+refinement and 4Lines.ai traceable plan/section/elevation exchange are
+implemented, covered by fixtures and regression tests, evidence-backed, and
+marked done. Both remain review-first presentation aids and cannot override
+canonical geometry or imply professional approval.
 
 **Task completion:** Week 15–16 enrichment is complete and marked done in
 this README. Outputs remain preliminary planning/presentation aids and require

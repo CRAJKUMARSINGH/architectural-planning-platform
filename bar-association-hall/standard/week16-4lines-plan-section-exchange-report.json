@@ -1,0 +1,323 @@
+{
+  "authoritativeGeometryChanged": false,
+  "candidateEligible": true,
+  "canonicalModelRevision": 1,
+  "determinism": {
+    "algorithm": "sha256",
+    "signature": "83a3d1007b81d6b2f3eebf5b2cf6654d6e10ba6250edac218bf4cc0a960676b3"
+  },
+  "dimensions": [
+    {
+      "id": "DIM-GF-BOUNDARY",
+      "sourceObjectId": "GF-06",
+      "units": "inch",
+      "value": 666,
+      "viewIds": [
+        "4lines-plan-GF"
+      ]
+    },
+    {
+      "id": "DIM-SECTION-HEIGHT",
+      "sourceObjectId": "STAIR-01",
+      "units": "inch",
+      "value": 178,
+      "viewIds": [
+        "4lines-section-A"
+      ]
+    },
+    {
+      "id": "DIM-ELEVATION-OPENING",
+      "sourceObjectId": "D-FF-06",
+      "units": "inch",
+      "value": 42,
+      "viewIds": [
+        "4lines-elevation-east"
+      ]
+    }
+  ],
+  "exchangeReference": "4lines-export-project-revision-1",
+  "expectedObjectIds": [
+    "GF-01",
+    "GF-06",
+    "D-GF-06",
+    "STAIR-01",
+    "GF-02",
+    "FF-02",
+    "VC-STAIR-01",
+    "D-GF-02",
+    "D-FF-02",
+    "D-FF-06"
+  ],
+  "findings": [],
+  "importedModelRevision": 1,
+  "input": {
+    "authoritative": false,
+    "inputRole": "plan, section, and elevation workflow reference",
+    "modelRevision": 1,
+    "promotionGate": "accept only when every view traces to the validated canonical revision",
+    "promotionStatus": "review-required",
+    "reviewState": "pending",
+    "sourceInput": {
+      "dimensions": [
+        {
+          "id": "DIM-GF-BOUNDARY",
+          "sourceObjectId": "GF-06",
+          "units": "inch",
+          "value": 666,
+          "viewIds": [
+            "4lines-plan-GF"
+          ]
+        },
+        {
+          "id": "DIM-SECTION-HEIGHT",
+          "sourceObjectId": "STAIR-01",
+          "units": "inch",
+          "value": 178,
+          "viewIds": [
+            "4lines-section-A"
+          ]
+        },
+        {
+          "id": "DIM-ELEVATION-OPENING",
+          "sourceObjectId": "D-FF-06",
+          "units": "inch",
+          "value": 42,
+          "viewIds": [
+            "4lines-elevation-east"
+          ]
+        }
+      ],
+      "exchangeReference": "4lines-export-project-revision-1",
+      "expectedObjectIds": [
+        "GF-01",
+        "GF-06",
+        "D-GF-06",
+        "STAIR-01",
+        "GF-02",
+        "FF-02",
+        "VC-STAIR-01",
+        "D-GF-02",
+        "D-FF-02",
+        "D-FF-06"
+      ],
+      "modelRevision": 1,
+      "objectIdMap": [
+        {
+          "canonicalObjectId": "GF-01",
+          "sourceObjectId": "4l-gf-01"
+        },
+        {
+          "canonicalObjectId": "GF-06",
+          "sourceObjectId": "4l-gf-06"
+        },
+        {
+          "canonicalObjectId": "D-GF-06",
+          "sourceObjectId": "4l-d-gf-06"
+        },
+        {
+          "canonicalObjectId": "STAIR-01",
+          "sourceObjectId": "4l-stair-01"
+        },
+        {
+          "canonicalObjectId": "GF-02",
+          "sourceObjectId": "4l-gf-02"
+        },
+        {
+          "canonicalObjectId": "FF-02",
+          "sourceObjectId": "4l-ff-02"
+        },
+        {
+          "canonicalObjectId": "VC-STAIR-01",
+          "sourceObjectId": "4l-vc-stair-01"
+        },
+        {
+          "canonicalObjectId": "D-GF-02",
+          "sourceObjectId": "4l-d-gf-02"
+        },
+        {
+          "canonicalObjectId": "D-FF-02",
+          "sourceObjectId": "4l-d-ff-02"
+        },
+        {
+          "canonicalObjectId": "D-FF-06",
+          "sourceObjectId": "4l-d-ff-06"
+        }
+      ],
+      "sourceReference": "4lines-fixture-week16-08",
+      "tool": "4Lines.ai",
+      "validationProvenance": {
+        "modelRevision": 1,
+        "signature": "canonical-validation-signature-week16-08-fixture",
+        "sourceReport": "week14-synchronized-views-report.json",
+        "status": "pass"
+      },
+      "views": [
+        {
+          "dimensionRefs": [
+            "DIM-GF-BOUNDARY"
+          ],
+          "id": "4lines-plan-GF",
+          "kind": "plan",
+          "levelId": "GF",
+          "objectIds": [
+            "GF-01",
+            "GF-06"
+          ],
+          "openingIds": [
+            "D-GF-06"
+          ],
+          "referenceId": "4lines-plan-export-GF",
+          "stairIds": [
+            "STAIR-01"
+          ]
+        },
+        {
+          "dimensionRefs": [
+            "DIM-SECTION-HEIGHT"
+          ],
+          "id": "4lines-section-A",
+          "kind": "section",
+          "levelIds": [
+            "GF",
+            "FF"
+          ],
+          "objectIds": [
+            "GF-02",
+            "FF-02",
+            "STAIR-01",
+            "VC-STAIR-01"
+          ],
+          "openingIds": [
+            "D-GF-02",
+            "D-FF-02"
+          ],
+          "referenceId": "4lines-section-A-A"
+        },
+        {
+          "dimensionRefs": [
+            "DIM-ELEVATION-OPENING"
+          ],
+          "id": "4lines-elevation-east",
+          "kind": "elevation",
+          "levelIds": [
+            "GF",
+            "FF"
+          ],
+          "objectIds": [
+            "D-GF-06",
+            "D-FF-06"
+          ],
+          "referenceId": "4lines-east-elevation"
+        }
+      ]
+    },
+    "sourceReference": "4lines-fixture-week16-08",
+    "tool": "4Lines.ai",
+    "toolId": "4lines-plan-section-workflow",
+    "validationStatus": "pending"
+  },
+  "invalidation": {
+    "invalidated": false,
+    "reasons": []
+  },
+  "missingObjectIds": [],
+  "modelRevision": 1,
+  "objectIdMap": [
+    {
+      "canonicalObjectId": "GF-01",
+      "sourceObjectId": "4l-gf-01"
+    },
+    {
+      "canonicalObjectId": "GF-06",
+      "sourceObjectId": "4l-gf-06"
+    },
+    {
+      "canonicalObjectId": "D-GF-06",
+      "sourceObjectId": "4l-d-gf-06"
+    },
+    {
+      "canonicalObjectId": "STAIR-01",
+      "sourceObjectId": "4l-stair-01"
+    },
+    {
+      "canonicalObjectId": "GF-02",
+      "sourceObjectId": "4l-gf-02"
+    },
+    {
+      "canonicalObjectId": "FF-02",
+      "sourceObjectId": "4l-ff-02"
+    },
+    {
+      "canonicalObjectId": "VC-STAIR-01",
+      "sourceObjectId": "4l-vc-stair-01"
+    },
+    {
+      "canonicalObjectId": "D-GF-02",
+      "sourceObjectId": "4l-d-gf-02"
+    },
+    {
+      "canonicalObjectId": "D-FF-02",
+      "sourceObjectId": "4l-d-ff-02"
+    },
+    {
+      "canonicalObjectId": "D-FF-06",
+      "sourceObjectId": "4l-d-ff-06"
+    }
+  ],
+  "presentationOnly": true,
+  "sourceReference": "4lines-fixture-week16-08",
+  "status": "pass",
+  "tool": "4Lines.ai",
+  "validationProvenance": {
+    "modelRevision": 1,
+    "signature": "canonical-validation-signature-week16-08-fixture",
+    "sourceReport": "week14-synchronized-views-report.json",
+    "status": "pass"
+  },
+  "version": "week16-08.4lines-plan-section.v1",
+  "views": [
+    {
+      "id": "4lines-plan-GF",
+      "kind": "plan",
+      "levelIds": [
+        "GF"
+      ],
+      "objectIds": [
+        "GF-01",
+        "GF-06"
+      ],
+      "referenceId": "4lines-plan-export-GF",
+      "status": "reviewed"
+    },
+    {
+      "id": "4lines-section-A",
+      "kind": "section",
+      "levelIds": [
+        "GF",
+        "FF"
+      ],
+      "objectIds": [
+        "GF-02",
+        "FF-02",
+        "STAIR-01",
+        "VC-STAIR-01"
+      ],
+      "referenceId": "4lines-section-A-A",
+      "status": "reviewed"
+    },
+    {
+      "id": "4lines-elevation-east",
+      "kind": "elevation",
+      "levelIds": [
+        "GF",
+        "FF"
+      ],
+      "objectIds": [
+        "D-GF-06",
+        "D-FF-06"
+      ],
+      "referenceId": "4lines-east-elevation",
+      "status": "reviewed"
+    }
+  ]
+}

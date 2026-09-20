@@ -39,6 +39,10 @@ ROOMSTYLER_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "roomstyler-p
 ROOMSTYLER_REPORT_PATH = REPORT_ROOT / "week16-roomstyler-presentation-report.json"
 MAGICPLAN_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "magicplan-recognition-queue.json"
 MAGICPLAN_REPORT_PATH = REPORT_ROOT / "week16-magicplan-recognition-report.json"
+LLM_BRIEF_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "llm-brief-refinement.json"
+LLM_BRIEF_REPORT_PATH = REPORT_ROOT / "week16-llm-brief-refinement-report.json"
+FOURLINES_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "4lines-plan-section-exchange.json"
+FOURLINES_REPORT_PATH = REPORT_ROOT / "week16-4lines-plan-section-exchange-report.json"
 MANIFEST_PATH = REPORT_ROOT / "week1516-enrichment-manifest.json"
 CHANGELOG_PATH = REPORT_ROOT / "week1516-changelog.md"
 
@@ -52,6 +56,8 @@ ARCHISTAR_INPUT_VERSION = "week16-03.archistar-snaptrude.v1"
 FLOORPLANNER_INPUT_VERSION = "week16-04.floorplanner.v1"
 ROOMSTYLER_INPUT_VERSION = "week16-05.roomstyler-homestyler.v1"
 MAGICPLAN_INPUT_VERSION = "week16-06.magicplan.v1"
+LLM_BRIEF_INPUT_VERSION = "week16-07.llm-brief-refinement.v1"
+FOURLINES_INPUT_VERSION = "week16-08.4lines-plan-section.v1"
 
 
 AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
@@ -136,6 +142,8 @@ AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
         "requiredEvidence": ["source text", "extracted facts", "assumptions", "accepted revision"],
         "promotionGate": "text assistance only; never mutate geometry without typed validation",
         "programWeeks": [1, 6, 12, 16],
+        "implementationStatus": "applied",
+        "implementationFixture": "tests/fixtures/week16/llm-brief-refinement.json",
     },
     {
         "id": "4lines-plan-section-workflow",
@@ -146,6 +154,8 @@ AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
         "requiredEvidence": ["model revision", "object-ID map", "view type", "validation result"],
         "promotionGate": "accept only when every view traces to the validated canonical revision",
         "programWeeks": [2, 8, 14, 16],
+        "implementationStatus": "applied",
+        "implementationFixture": "tests/fixtures/week16/4lines-plan-section-exchange.json",
     },
     {
         "id": "archiagent-live-dimensions",
@@ -1879,6 +1889,690 @@ def validate_magicplan_input(
     }
 
 
+def _brief_revision_preview(model: dict[str, Any], command_text: str, *, timestamp: str) -> dict[str, Any]:
+    """Build a compact Week 12 typed revision preview for an LLM proposal."""
+
+    from week1112 import command_preview
+
+    preview = command_preview(
+        model,
+        command_text,
+        author="week16-llm-brief-refinement",
+        timestamp=timestamp,
+    )
+    preview["targetObjects"] = [
+        {"collection": item["collection"], "id": item["object"].get("id")}
+        for item in preview.get("targetObjects", [])
+    ]
+    return preview
+
+
+def validate_llm_brief_input(
+    model: dict[str, Any],
+    payload: dict[str, Any],
+    *,
+    source_reference: str,
+    model_revision: Any,
+) -> dict[str, Any]:
+    """Validate provider-neutral conversational brief refinement.
+
+    The LLM output is treated as text evidence and typed revision proposals.
+    Week 12 remains responsible for parsing the brief and previewing commands;
+    this adapter adds provenance, clarification state, explicit acceptance, and
+    the upper-floor access gate needed before a proposal can reach presentation.
+    """
+
+    from week1112 import accept_revision, compile_brief
+
+    normalized = ingest_ai_tool_input(
+        "llm-brief-refinement",
+        source_input=payload,
+        source_reference=source_reference,
+        model_revision=model_revision,
+    )
+    findings: list[dict[str, Any]] = []
+    brief_text = str(payload.get("briefText") or payload.get("sourceText") or "").strip()
+    if not brief_text:
+        findings.append(
+            _finding(
+                "LLM_BRIEF_TEXT_REQUIRED",
+                "Conversational refinement must retain the source brief text.",
+            )
+        )
+
+    provider = str(payload.get("provider") or "provider-neutral").strip()
+    if provider not in {"provider-neutral", "ChatGPT", "Claude", "Grok", "Gemini"}:
+        findings.append(
+            _finding(
+                "LLM_PROVIDER_UNSUPPORTED",
+                f"Provider {provider!r} is not in the provider-neutral Week 16 boundary.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    default_units = str(payload.get("defaultUnits") or "inch")
+    compiler_shape = compile_brief(brief_text, default_units=default_units)
+    compiler_shape["facts"]["constraints"] = copy.deepcopy(payload.get("constraints") or [])
+    compiler_shape["facts"]["candidateFeedback"] = copy.deepcopy(payload.get("candidateFeedback") or [])
+
+    vertical_access = payload.get("verticalAccess")
+    if not isinstance(vertical_access, list):
+        vertical_access = []
+    compiler_shape["facts"]["verticalAccess"] = copy.deepcopy(vertical_access)
+
+    brief_level_count = compiler_shape.get("facts", {}).get("levels")
+    canonical_levels = [
+        str(item.get("id"))
+        for item in model.get("levels", []) or []
+        if isinstance(item, dict) and item.get("id")
+    ]
+    required_upper_levels = set(canonical_levels[1:])
+    if isinstance(brief_level_count, (int, float)) and brief_level_count > 1 and not required_upper_levels:
+        required_upper_levels = {"upper-level"}
+    canonical_connector_ids = {
+        str(item.get("id"))
+        for collection in ("stairs", "verticalConnectors")
+        for item in model.get(collection, []) or []
+        if isinstance(item, dict) and item.get("id")
+    }
+    connected_upper_levels: set[str] = set()
+    for connection in vertical_access:
+        if not isinstance(connection, dict):
+            findings.append(
+                _finding(
+                    "LLM_VERTICAL_ACCESS_ENTRY_INVALID",
+                    "Every vertical-access proposal must be a typed object.",
+                )
+            )
+            continue
+        from_level = str(connection.get("fromLevel") or connection.get("fromLevelId") or "").strip()
+        to_level = str(connection.get("toLevel") or connection.get("toLevelId") or "").strip()
+        object_id = str(connection.get("objectId") or connection.get("connectorId") or "").strip()
+        if not from_level or not to_level or not object_id:
+            findings.append(
+                _finding(
+                    "LLM_VERTICAL_ACCESS_FIELDS_REQUIRED",
+                    "A vertical-access proposal needs fromLevel, toLevel, and objectId.",
+                    severity="BLOCKER",
+                )
+            )
+            continue
+        if object_id not in canonical_connector_ids:
+            findings.append(
+                _finding(
+                    "LLM_VERTICAL_ACCESS_CONNECTOR_UNKNOWN",
+                    f"Vertical-access proposal references unknown canonical connector {object_id}.",
+                    severity="REVIEW_REQUIRED",
+                    object_id=object_id,
+                )
+            )
+        if to_level in required_upper_levels:
+            connected_upper_levels.add(to_level)
+
+    if brief_level_count and brief_level_count > 1:
+        missing_upper_levels = sorted(required_upper_levels - connected_upper_levels)
+        if missing_upper_levels:
+            findings.append(
+                _finding(
+                    "LLM_UPPER_FLOOR_ACCESS_REQUIRED",
+                    "Upper-floor access must identify a canonical stair, lift, or ramp before rendering.",
+                    severity="BLOCKER",
+                )
+            )
+            compiler_shape["missingTopologyFacts"].append(
+                "Identify a typed stair, lift, or ramp for every upper level before rendering."
+            )
+        else:
+            compiler_shape["missingTopologyFacts"] = [
+                item
+                for item in compiler_shape.get("missingTopologyFacts", [])
+                if "which stair, lift, or ramp" not in item
+            ]
+    compiler_shape["missingTopologyFacts"] = list(dict.fromkeys(compiler_shape["missingTopologyFacts"]))
+    compiler_shape["readyForGeneration"] = not compiler_shape["missingTopologyFacts"]
+    compiler_shape["status"] = "ready" if compiler_shape["readyForGeneration"] else "needs-review"
+
+    proposals = payload.get("proposedRevisions")
+    if not isinstance(proposals, list):
+        proposals = []
+    revision_previews: list[dict[str, Any]] = []
+    accepted_revision: dict[str, Any] | None = None
+    accepted_model: dict[str, Any] | None = None
+    for proposal in proposals:
+        if isinstance(proposal, str):
+            command_text = proposal.strip()
+            accept_requested = False
+            timestamp = "2026-09-20T00:00:00+05:30"
+        elif isinstance(proposal, dict):
+            command_text = str(proposal.get("commandText") or proposal.get("text") or proposal.get("command") or "").strip()
+            accept_requested = proposal.get("accept") is True
+            timestamp = str(proposal.get("timestamp") or "2026-09-20T00:00:00+05:30")
+        else:
+            command_text = ""
+            accept_requested = False
+            timestamp = "2026-09-20T00:00:00+05:30"
+        if not command_text:
+            findings.append(
+                _finding(
+                    "LLM_REVISION_COMMAND_REQUIRED",
+                    "Each proposed revision must contain supported command text.",
+                    severity="REVIEW_REQUIRED",
+                )
+            )
+            continue
+        preview = _brief_revision_preview(model, command_text, timestamp=timestamp)
+        preview["acceptanceRequested"] = accept_requested
+        revision_previews.append(preview)
+        if accept_requested:
+            if accepted_revision is not None:
+                findings.append(
+                    _finding(
+                        "LLM_SINGLE_ACCEPT_OPERATION_REQUIRED",
+                        "Accept one typed revision at a time so each accepted revision can be validated.",
+                        severity="REVIEW_REQUIRED",
+                    )
+                )
+                continue
+            if preview.get("status") != "ready":
+                findings.append(
+                    _finding(
+                        "LLM_REVISION_REQUIRES_REVIEW",
+                        "A revision with unresolved command findings cannot be accepted for rendering.",
+                        severity="BLOCKER",
+                    )
+                )
+                continue
+            accepted = accept_revision(model, preview)
+            accepted_model = accepted["model"]
+            accepted_revision = accepted["revision"]
+
+    if revision_previews and accepted_revision is None:
+        findings.append(
+            _finding(
+                "LLM_ACCEPT_REVISION_REQUIRED",
+                "Typed model changes require an explicit accept operation before they can be applied.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    validation_report = payload.get("validationReport")
+    if not isinstance(validation_report, dict):
+        validation_report = {}
+        findings.append(
+            _finding(
+                "LLM_VALIDATION_REPORT_REQUIRED",
+                "Brief refinement must retain a validation report before presentation output.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+    validation_status = str(validation_report.get("status") or "").strip()
+    if validation_status not in {"pass", "review-required", "blocked"}:
+        findings.append(
+            _finding(
+                "LLM_VALIDATION_STATUS_REQUIRED",
+                "Validation evidence must declare pass, review-required, or blocked.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+    if not str(validation_report.get("signature") or "").strip():
+        findings.append(
+            _finding(
+                "LLM_VALIDATION_SIGNATURE_REQUIRED",
+                "Validation evidence must retain a deterministic validation signature.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+    if accepted_revision is not None:
+        accepted_revision_number = accepted_revision.get("afterRevision")
+        if validation_report.get("modelRevision") != accepted_revision_number:
+            findings.append(
+                _finding(
+                    "LLM_VALIDATION_RERUN_REQUIRED",
+                    "Accepted typed revisions require validation evidence for the resulting model revision.",
+                    severity="BLOCKER",
+                )
+            )
+        if validation_status != "pass":
+            findings.append(
+                _finding(
+                    "LLM_VALIDATION_MUST_PASS_BEFORE_RENDER",
+                    "A typed revision cannot reach presentation while its validation report is not pass.",
+                    severity="BLOCKER",
+                )
+            )
+
+    clarification_questions = list(compiler_shape.get("missingTopologyFacts") or [])
+    clarification_state = {
+        "status": "blocked" if any(item["severity"] in {"BLOCKER", "ERROR"} for item in findings) else (
+            "required" if clarification_questions else "resolved"
+        ),
+        "questions": clarification_questions,
+        "source": "week12-brief-compiler",
+    }
+    has_blocker = any(item["severity"] in {"BLOCKER", "ERROR"} for item in findings)
+    status = "blocked" if has_blocker else (
+        "review-required"
+        if findings or clarification_questions or compiler_shape.get("status") != "ready"
+        else "pass"
+    )
+    return {
+        "version": LLM_BRIEF_INPUT_VERSION,
+        "tool": "ChatGPT / Claude / Grok / Gemini",
+        "provider": provider,
+        "model": payload.get("model"),
+        "sourceReference": source_reference,
+        "modelRevision": model_revision,
+        "canonicalModelRevision": model_revision,
+        "input": normalized,
+        "sourceText": brief_text,
+        "compilerShape": compiler_shape,
+        "assumptions": list(dict.fromkeys(
+            list(compiler_shape.get("assumptions") or [])
+            + [str(item) for item in payload.get("assumptions") or []]
+        )),
+        "clarificationState": clarification_state,
+        "proposedRevisions": revision_previews,
+        "acceptedRevision": accepted_revision,
+        "acceptedModelRevision": accepted_model.get("project", {}).get("revision") if accepted_model else None,
+        "validationReport": copy.deepcopy(validation_report),
+        "findings": findings,
+        "status": status,
+        "candidateEligible": status == "pass",
+        "authoritativeGeometryChanged": False,
+        "promotionPolicy": "explicit typed revision acceptance plus validation rerun is required before presentation",
+        "determinism": {"algorithm": "sha256", "signature": _signature({
+            "sourceText": brief_text,
+            "compilerShape": compiler_shape,
+            "proposedRevisions": revision_previews,
+            "validationReport": validation_report,
+        })},
+    }
+
+
+def validate_4lines_input(
+    model: dict[str, Any],
+    payload: dict[str, Any],
+    *,
+    source_reference: str,
+    model_revision: Any,
+) -> dict[str, Any]:
+    """Validate a traceable 4Lines.ai plan/section/elevation exchange."""
+
+    normalized = ingest_ai_tool_input(
+        "4lines-plan-section-workflow",
+        source_input=payload,
+        source_reference=source_reference,
+        model_revision=model_revision,
+    )
+    findings: list[dict[str, Any]] = []
+    canonical_objects = _canonical_view_objects(model)
+    canonical_levels = {
+        str(item.get("id"))
+        for item in model.get("levels", []) or []
+        if isinstance(item, dict) and item.get("id")
+    }
+    imported_revision = payload.get("modelRevision")
+    if imported_revision != model_revision:
+        findings.append(
+            _finding(
+                "FOURLINES_MODEL_REVISION_STALE",
+                f"4Lines.ai exchange revision {imported_revision!r} does not match canonical revision {model_revision!r}.",
+                severity="BLOCKER",
+            )
+        )
+    exchange_reference = str(payload.get("exchangeReference") or payload.get("exportReference") or "").strip()
+    if not exchange_reference:
+        findings.append(
+            _finding(
+                "FOURLINES_EXCHANGE_REFERENCE_REQUIRED",
+                "The 4Lines.ai exchange must retain an import/export reference.",
+                severity="BLOCKER",
+            )
+        )
+
+    provenance = payload.get("validationProvenance")
+    if not isinstance(provenance, dict):
+        provenance = {}
+        findings.append(
+            _finding(
+                "FOURLINES_VALIDATION_PROVENANCE_REQUIRED",
+                "Every exchange must retain validation provenance from the canonical model.",
+                severity="BLOCKER",
+            )
+        )
+    if provenance.get("status") != "pass":
+        findings.append(
+            _finding(
+                "FOURLINES_VALIDATED_REVISION_REQUIRED",
+                "4Lines.ai views cannot be accepted without pass validation provenance.",
+                severity="BLOCKER",
+            )
+        )
+    if provenance.get("modelRevision") != model_revision:
+        findings.append(
+            _finding(
+                "FOURLINES_VALIDATION_REVISION_MISMATCH",
+                "Validation provenance must reference the same canonical model revision.",
+                severity="BLOCKER",
+            )
+        )
+    if not str(provenance.get("signature") or "").strip():
+        findings.append(
+            _finding(
+                "FOURLINES_VALIDATION_SIGNATURE_REQUIRED",
+                "Validation provenance must include a validation signature.",
+                severity="BLOCKER",
+            )
+        )
+
+    object_id_map = payload.get("objectIdMap")
+    if not isinstance(object_id_map, list) or not object_id_map:
+        object_id_map = []
+        findings.append(
+            _finding(
+                "FOURLINES_OBJECT_ID_MAP_REQUIRED",
+                "The exchange must provide source-to-canonical object identity mappings.",
+                severity="BLOCKER",
+            )
+        )
+    mapped_canonical_ids: list[str] = []
+    source_ids: set[str] = set()
+    for mapping in object_id_map:
+        if not isinstance(mapping, dict):
+            findings.append(
+                _finding(
+                    "FOURLINES_OBJECT_ID_MAP_INVALID",
+                    "Every 4Lines.ai object mapping must be an object.",
+                    severity="REVIEW_REQUIRED",
+                )
+            )
+            continue
+        source_id = str(mapping.get("sourceObjectId") or "").strip()
+        canonical_id = str(mapping.get("canonicalObjectId") or "").strip()
+        if not source_id or not canonical_id:
+            findings.append(
+                _finding(
+                    "FOURLINES_OBJECT_ID_FIELDS_REQUIRED",
+                    "Every object mapping needs sourceObjectId and canonicalObjectId.",
+                    severity="REVIEW_REQUIRED",
+                )
+            )
+            continue
+        if source_id in source_ids or canonical_id in mapped_canonical_ids:
+            findings.append(
+                _finding(
+                    "FOURLINES_DUPLICATE_OBJECT_MAPPING",
+                    f"Object identity mapping for {canonical_id or source_id} is duplicated.",
+                    severity="BLOCKER",
+                    object_id=canonical_id or source_id,
+                )
+            )
+        source_ids.add(source_id)
+        mapped_canonical_ids.append(canonical_id)
+        if canonical_id not in canonical_objects:
+            findings.append(
+                _finding(
+                    "FOURLINES_UNKNOWN_OBJECT_ID",
+                    f"4Lines.ai mapping references unknown canonical object {canonical_id}.",
+                    severity="BLOCKER",
+                    object_id=canonical_id,
+                )
+            )
+
+    dimensions = payload.get("dimensions")
+    if not isinstance(dimensions, list) or not dimensions:
+        dimensions = []
+        findings.append(
+            _finding(
+                "FOURLINES_DIMENSIONS_REQUIRED",
+                "The exchange must include dimension evidence tied to canonical objects.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+    dimension_ids: set[str] = set()
+    for dimension in dimensions:
+        if not isinstance(dimension, dict):
+            findings.append(_finding("FOURLINES_DIMENSION_INVALID", "Each dimension must be an object.", severity="REVIEW_REQUIRED"))
+            continue
+        dimension_id = str(dimension.get("id") or "").strip()
+        source_object_id = str(dimension.get("sourceObjectId") or dimension.get("objectId") or "").strip()
+        units = str(dimension.get("units") or dimension.get("unit") or "").strip().lower()
+        value = dimension.get("value")
+        if dimension_id in dimension_ids:
+            findings.append(_finding("FOURLINES_DUPLICATE_DIMENSION_ID", f"Dimension {dimension_id} is duplicated.", severity="BLOCKER"))
+        dimension_ids.add(dimension_id)
+        if (
+            not dimension_id
+            or not source_object_id
+            or not isinstance(value, (int, float))
+            or value <= 0
+            or units not in {"inch", "in", "foot", "ft", "mm", "cm", "m"}
+        ):
+            findings.append(
+                _finding(
+                    "FOURLINES_DIMENSION_FIELDS_REQUIRED",
+                    "Dimensions need a unique ID, positive value, supported units, and a canonical source object.",
+                    severity="REVIEW_REQUIRED",
+                )
+            )
+        elif source_object_id not in canonical_objects:
+            findings.append(
+                _finding(
+                    "FOURLINES_DIMENSION_SOURCE_UNKNOWN",
+                    f"Dimension {dimension_id} references unknown object {source_object_id}.",
+                    severity="BLOCKER",
+                    object_id=source_object_id,
+                )
+            )
+
+    views = payload.get("views")
+    if not isinstance(views, list) or not views:
+        views = []
+        findings.append(
+            _finding(
+                "FOURLINES_VIEWS_REQUIRED",
+                "The exchange must contain plan, section, or elevation views.",
+                severity="BLOCKER",
+            )
+        )
+    view_summaries: list[dict[str, Any]] = []
+    returned_ids: set[str] = set()
+    seen_view_ids: set[str] = set()
+    required_kinds = {"plan", "2d-plan", "section", "elevation"}
+    for view in views:
+        if not isinstance(view, dict):
+            findings.append(_finding("FOURLINES_VIEW_INVALID", "Every returned view must be an object.", severity="BLOCKER"))
+            continue
+        view_id = str(view.get("id") or "").strip()
+        kind = str(view.get("kind") or view.get("viewType") or "").strip().lower()
+        if not view_id or view_id in seen_view_ids:
+            findings.append(_finding("FOURLINES_DUPLICATE_VIEW_ID", f"View ID {view_id or '<missing>'} is duplicated.", severity="BLOCKER"))
+        seen_view_ids.add(view_id)
+        if kind not in required_kinds:
+            findings.append(
+                _finding(
+                    "FOURLINES_VIEW_KIND_UNSUPPORTED",
+                    f"{view_id or 'unnamed view'} must be a plan, section, or elevation.",
+                    severity="BLOCKER",
+                )
+            )
+        level_values = view.get("levelIds")
+        if not isinstance(level_values, list):
+            level_values = [view.get("levelId")] if view.get("levelId") else []
+        level_ids = [str(item).strip() for item in level_values if str(item).strip()]
+        if not level_ids and kind in {"section", "elevation"}:
+            findings.append(
+                _finding(
+                    "FOURLINES_VIEW_LEVELS_REQUIRED",
+                    f"{view_id or 'unnamed view'} must declare its referenced levels.",
+                    severity="BLOCKER",
+                )
+            )
+        for level_id in level_ids:
+            if level_id not in canonical_levels:
+                findings.append(
+                    _finding(
+                        "FOURLINES_LEVEL_UNKNOWN",
+                        f"{view_id or 'unnamed view'} references unknown level {level_id}.",
+                        severity="BLOCKER",
+                    )
+                )
+        if kind in {"section", "elevation"} and not str(view.get("referenceId") or view.get("reference") or "").strip():
+            findings.append(
+                _finding(
+                    "FOURLINES_VIEW_REFERENCE_REQUIRED",
+                    f"{view_id or 'unnamed view'} must retain a section/elevation reference.",
+                    severity="REVIEW_REQUIRED",
+                )
+            )
+        object_ids = view.get("objectIds")
+        if not isinstance(object_ids, list) or not object_ids:
+            object_ids = []
+            findings.append(
+                _finding(
+                    "FOURLINES_VIEW_OBJECTS_REQUIRED",
+                    f"{view_id or 'unnamed view'} must list its canonical object IDs.",
+                    severity="BLOCKER",
+                )
+            )
+        local_ids: set[str] = set()
+        for object_id_value in object_ids:
+            object_id = str(object_id_value)
+            if object_id in local_ids:
+                findings.append(
+                    _finding(
+                        "FOURLINES_DUPLICATE_OBJECT_ID",
+                        f"{view_id or 'unnamed view'} repeats object {object_id}.",
+                        severity="BLOCKER",
+                        object_id=object_id,
+                    )
+                )
+            local_ids.add(object_id)
+            returned_ids.add(object_id)
+            canonical = canonical_objects.get(object_id)
+            if canonical is None:
+                findings.append(
+                    _finding(
+                        "FOURLINES_UNKNOWN_OBJECT_ID",
+                        f"{view_id or 'unnamed view'} references unknown canonical object {object_id}.",
+                        severity="BLOCKER",
+                        object_id=object_id,
+                    )
+                )
+            elif level_ids and canonical.get("levelId") and canonical["levelId"] not in level_ids:
+                findings.append(
+                    _finding(
+                        "FOURLINES_DISCONNECTED_OBJECT",
+                        f"{view_id or 'unnamed view'} places {object_id} outside its declared level set.",
+                        severity="BLOCKER",
+                        object_id=object_id,
+                    )
+                )
+        for ref_key in ("openingIds", "stairIds"):
+            refs = view.get(ref_key, [])
+            if not isinstance(refs, list):
+                refs = []
+                findings.append(
+                    _finding(
+                        "FOURLINES_VIEW_REFERENCES_INVALID",
+                        f"{view_id or 'unnamed view'} {ref_key} must be a list.",
+                        severity="REVIEW_REQUIRED",
+                    )
+                )
+            for ref_id_value in refs:
+                ref_id = str(ref_id_value)
+                returned_ids.add(ref_id)
+                if ref_id not in canonical_objects:
+                    findings.append(
+                        _finding(
+                            "FOURLINES_UNKNOWN_OBJECT_ID",
+                            f"{view_id or 'unnamed view'} references unknown canonical object {ref_id}.",
+                            severity="BLOCKER",
+                            object_id=ref_id,
+                        )
+                    )
+        for dimension_ref in view.get("dimensionRefs", []) or []:
+            if str(dimension_ref) not in dimension_ids:
+                findings.append(
+                    _finding(
+                        "FOURLINES_DIMENSION_REFERENCE_UNKNOWN",
+                        f"{view_id or 'unnamed view'} references unknown dimension {dimension_ref}.",
+                        severity="REVIEW_REQUIRED",
+                    )
+                )
+        view_summaries.append(
+            {
+                "id": view_id,
+                "kind": kind,
+                "levelIds": level_ids,
+                "objectIds": [str(item) for item in object_ids],
+                "referenceId": view.get("referenceId") or view.get("reference"),
+                "status": "reviewed",
+            }
+        )
+
+    expected_ids = payload.get("expectedObjectIds")
+    if not isinstance(expected_ids, list) or not expected_ids:
+        expected_ids = list(dict.fromkeys(mapped_canonical_ids))
+    missing_ids = sorted({str(item) for item in expected_ids} - returned_ids)
+    for object_id in missing_ids:
+        findings.append(
+            _finding(
+                "FOURLINES_OBJECT_MISSING",
+                f"Expected canonical object {object_id} is absent from returned views.",
+                severity="BLOCKER",
+                object_id=object_id,
+            )
+        )
+    kinds_present = {item["kind"] for item in view_summaries}
+    for required_kind in ("plan", "section", "elevation"):
+        if required_kind not in kinds_present and not (required_kind == "plan" and "2d-plan" in kinds_present):
+            findings.append(
+                _finding(
+                    "FOURLINES_REQUIRED_VIEW_MISSING",
+                    f"The exchange must include a {required_kind} view.",
+                    severity="REVIEW_REQUIRED",
+                )
+            )
+
+    invalidation_reasons = sorted({item["rule"] for item in findings})
+    has_blocker = any(item["severity"] in {"BLOCKER", "ERROR"} for item in findings)
+    status = "blocked" if has_blocker else "review-required" if findings else "pass"
+    return {
+        "version": FOURLINES_INPUT_VERSION,
+        "tool": "4Lines.ai",
+        "sourceReference": source_reference,
+        "modelRevision": model_revision,
+        "canonicalModelRevision": model_revision,
+        "importedModelRevision": imported_revision,
+        "input": normalized,
+        "exchangeReference": exchange_reference,
+        "validationProvenance": copy.deepcopy(provenance),
+        "objectIdMap": copy.deepcopy(object_id_map),
+        "dimensions": copy.deepcopy(dimensions),
+        "views": view_summaries,
+        "expectedObjectIds": [str(item) for item in expected_ids],
+        "missingObjectIds": missing_ids,
+        "invalidation": {
+            "invalidated": bool(invalidation_reasons),
+            "reasons": invalidation_reasons,
+        },
+        "findings": findings,
+        "status": status,
+        "candidateEligible": status == "pass",
+        "presentationOnly": True,
+        "authoritativeGeometryChanged": False,
+        "determinism": {"algorithm": "sha256", "signature": _signature({
+            "sourceReference": source_reference,
+            "modelRevision": model_revision,
+            "objectIdMap": object_id_map,
+            "dimensions": dimensions,
+            "views": views,
+            "validationProvenance": provenance,
+        })},
+    }
+
+
 def _rect(value: Any) -> list[float] | None:
     if isinstance(value, dict):
         value = value.get("rect")
@@ -2301,6 +2995,24 @@ def enrichment_report(model: dict[str, Any]) -> dict[str, Any]:
             source_reference=str(magicplan_payload.get("sourceReference", "magicplan-fixture")),
             model_revision=model.get("project", {}).get("revision"),
         )
+    llm_brief = None
+    if LLM_BRIEF_FIXTURE_PATH.is_file():
+        llm_brief_payload = json.loads(LLM_BRIEF_FIXTURE_PATH.read_text(encoding="utf-8"))
+        llm_brief = validate_llm_brief_input(
+            model,
+            llm_brief_payload,
+            source_reference=str(llm_brief_payload.get("sourceReference", "llm-brief-fixture")),
+            model_revision=model.get("project", {}).get("revision"),
+        )
+    fourlines = None
+    if FOURLINES_FIXTURE_PATH.is_file():
+        fourlines_payload = json.loads(FOURLINES_FIXTURE_PATH.read_text(encoding="utf-8"))
+        fourlines = validate_4lines_input(
+            model,
+            fourlines_payload,
+            source_reference=str(fourlines_payload.get("sourceReference", "4lines-fixture")),
+            model_revision=model.get("project", {}).get("revision"),
+        )
     return {
         "status": "blocked"
         if furnishings["status"] == "blocked"
@@ -2309,6 +3021,8 @@ def enrichment_report(model: dict[str, Any]) -> dict[str, Any]:
         or (floorplanner and floorplanner["status"] == "blocked")
         or (roomstyler and roomstyler["status"] == "blocked")
         or (magicplan and magicplan["status"] == "blocked")
+        or (llm_brief and llm_brief["status"] == "blocked")
+        or (fourlines and fourlines["status"] == "blocked")
         else "pass",
         "aiToolInputs": ai_tool_input_manifest(),
         "week15": furnishings,
@@ -2318,6 +3032,8 @@ def enrichment_report(model: dict[str, Any]) -> dict[str, Any]:
         "floorplanner": floorplanner,
         "roomstyler": roomstyler,
         "magicplan": magicplan,
+        "llmBrief": llm_brief,
+        "fourlines": fourlines,
         "designPackage": package,
     }
 
@@ -2352,6 +3068,8 @@ def write_reports() -> dict[str, Any]:
     model["floorplannerSynchronizedView"] = {"version": FLOORPLANNER_INPUT_VERSION, "report": str(FLOORPLANNER_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["floorplanner"]["candidateEligible"], "status": report["floorplanner"]["status"], "synchronizationStatus": report["floorplanner"]["synchronizationStatus"]}
     model["roomstylerPresentation"] = {"version": ROOMSTYLER_INPUT_VERSION, "report": str(ROOMSTYLER_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["roomstyler"]["candidateEligible"], "status": report["roomstyler"]["status"]}
     model["magicplanRecognitionQueue"] = {"version": MAGICPLAN_INPUT_VERSION, "report": str(MAGICPLAN_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["magicplan"]["candidateEligible"], "status": report["magicplan"]["status"], "promotedObjectCount": len(report["magicplan"]["promotedObjects"])}
+    model["llmBriefRefinement"] = {"version": LLM_BRIEF_INPUT_VERSION, "report": str(LLM_BRIEF_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["llmBrief"]["candidateEligible"], "status": report["llmBrief"]["status"], "acceptedRevisionId": (report["llmBrief"].get("acceptedRevision") or {}).get("id")}
+    model["fourlinesPlanSectionExchange"] = {"version": FOURLINES_INPUT_VERSION, "report": str(FOURLINES_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["fourlines"]["candidateEligible"], "status": report["fourlines"]["status"], "invalidation": report["fourlines"]["invalidation"]}
     model["designPresentation"] = report["designPackage"]
     ASSET_REPORT_PATH.write_text(json.dumps(report["week15"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     AI_INPUT_REPORT_PATH.write_text(json.dumps(report["aiToolInputs"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -2361,7 +3079,9 @@ def write_reports() -> dict[str, Any]:
     FLOORPLANNER_REPORT_PATH.write_text(json.dumps(report["floorplanner"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     ROOMSTYLER_REPORT_PATH.write_text(json.dumps(report["roomstyler"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     MAGICPLAN_REPORT_PATH.write_text(json.dumps(report["magicplan"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    MANIFEST_PATH.write_text(json.dumps({"manifestVersion": "week1516.enrichment-manifest.v1", "status": report["status"], "reports": {"week15": str(ASSET_REPORT_PATH.relative_to(ROOT)), "week16": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "planner5d": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "archistarSnaptrude": str(ARCHISTAR_REPORT_PATH.relative_to(ROOT)), "floorplanner": str(FLOORPLANNER_REPORT_PATH.relative_to(ROOT)), "roomstyler": str(ROOMSTYLER_REPORT_PATH.relative_to(ROOT)), "magicplan": str(MAGICPLAN_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT))}, "changelog": str(CHANGELOG_PATH.relative_to(ROOT)), "catalogVersion": WEEK15_VERSION, "candidateVersion": WEEK16_VERSION, "planner5dVersion": PLANNER5D_INPUT_VERSION, "archistarSnaptrudeVersion": ARCHISTAR_INPUT_VERSION, "floorplannerVersion": FLOORPLANNER_INPUT_VERSION, "roomstylerVersion": ROOMSTYLER_INPUT_VERSION, "magicplanVersion": MAGICPLAN_INPUT_VERSION, "aiToolInputCatalogVersion": AI_INPUT_VERSION, "bestCandidateId": report["week16"]["bestCandidateId"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    LLM_BRIEF_REPORT_PATH.write_text(json.dumps(report["llmBrief"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    FOURLINES_REPORT_PATH.write_text(json.dumps(report["fourlines"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    MANIFEST_PATH.write_text(json.dumps({"manifestVersion": "week1516.enrichment-manifest.v1", "status": report["status"], "reports": {"week15": str(ASSET_REPORT_PATH.relative_to(ROOT)), "week16": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "planner5d": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "archistarSnaptrude": str(ARCHISTAR_REPORT_PATH.relative_to(ROOT)), "floorplanner": str(FLOORPLANNER_REPORT_PATH.relative_to(ROOT)), "roomstyler": str(ROOMSTYLER_REPORT_PATH.relative_to(ROOT)), "magicplan": str(MAGICPLAN_REPORT_PATH.relative_to(ROOT)), "llmBrief": str(LLM_BRIEF_REPORT_PATH.relative_to(ROOT)), "fourlines": str(FOURLINES_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT))}, "changelog": str(CHANGELOG_PATH.relative_to(ROOT)), "catalogVersion": WEEK15_VERSION, "candidateVersion": WEEK16_VERSION, "planner5dVersion": PLANNER5D_INPUT_VERSION, "archistarSnaptrudeVersion": ARCHISTAR_INPUT_VERSION, "floorplannerVersion": FLOORPLANNER_INPUT_VERSION, "roomstylerVersion": ROOMSTYLER_INPUT_VERSION, "magicplanVersion": MAGICPLAN_INPUT_VERSION, "llmBriefVersion": LLM_BRIEF_INPUT_VERSION, "fourlinesVersion": FOURLINES_INPUT_VERSION, "aiToolInputCatalogVersion": AI_INPUT_VERSION, "bestCandidateId": report["week16"]["bestCandidateId"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     CHANGELOG_PATH.write_text(
         """# Week 15–16 enrichment changelog
 
@@ -2436,6 +3156,29 @@ def write_reports() -> dict[str, Any]:
   and missing validation signatures from silent acceptance.
 - Accepted view edits require a post-edit model revision and validation rerun
   signature; view data remains presentation-only and cannot mutate geometry.
+
+### W16-07 implementation status — ChatGPT / Claude / Grok / Gemini
+
+- Added a provider-neutral conversation fixture containing a natural-language
+  brief, constraints, candidate feedback, typed vertical access, and a
+  validation report.
+- Added `validate_llm_brief_input`, which delegates extraction and command
+  previews to the Week 12 compiler, preserves assumptions and clarification
+  questions, and records provider/model metadata only as provenance.
+- Typed revisions require an explicit `accept` operation and a validation rerun
+  for the resulting revision; incomplete upper-floor access is a blocker before
+  rendering, and the canonical input model remains unchanged.
+
+### W16-08 implementation status — 4Lines.ai
+
+- Added a plan/section/elevation exchange fixture with source-to-canonical
+  object IDs, levels, openings, dimensions, section references, and validation
+  provenance.
+- Added `validate_4lines_input`, which detects stale revisions, missing or
+  duplicated object identity, unknown/disconnected objects, missing dimensions,
+  and absent view references.
+- Returned views are invalidated unless they trace to the validated canonical
+  model revision; the exchange remains presentation-only.
 """,
         encoding="utf-8",
     )

@@ -145,6 +145,14 @@ uncertain and rejected recognition remains in the review queue.
 
 **Evidence and gate:** source text, extracted facts, assumptions, clarification state, accepted revision, and validation report. Missing facts must produce a clarification or blocker before rendering.
 
+**Implementation status:** Applied in `scripts/week1516.py` through
+`validate_llm_brief_input`, with the provider-neutral fixture at
+`tests/fixtures/week16/llm-brief-refinement.json`, generated evidence at
+`bar-association-hall/standard/week16-llm-brief-refinement-report.json`, and
+regression coverage in `tests/test_week1516_enrichment.py`. Typed revisions
+require explicit acceptance and a validation rerun; incomplete upper-floor
+access remains blocked.
+
 ## W16-08 — 4Lines.ai: traceable plan/section exchange
 
 **Potential study:** assess architectural plan, section, elevation, and model-exchange workflows where semantic IDs and levels must remain synchronized.
@@ -157,6 +165,13 @@ uncertain and rejected recognition remains in the review queue.
 **Implementation:** add a plan-section exchange fixture and cross-view identity test to the synchronized-view contract. Record import/export signatures and invalidation reasons.
 
 **Evidence and gate:** model revision, object-ID map, view type, exchange reference, validation signature, and invalidation state. A disconnected section or elevation remains rejected even if visually complete.
+
+**Implementation status:** Applied in `scripts/week1516.py` through
+`validate_4lines_input`, with the exchange fixture at
+`tests/fixtures/week16/4lines-plan-section-exchange.json`, generated evidence at
+`bar-association-hall/standard/week16-4lines-plan-section-exchange-report.json`,
+and cross-view identity regression coverage in
+`tests/test_week1516_enrichment.py`.
 
 ## W16-09 — Archiagent: live-dimension review
 

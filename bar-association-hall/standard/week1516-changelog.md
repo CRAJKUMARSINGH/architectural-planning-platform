@@ -72,26 +72,25 @@
 - Accepted view edits require a post-edit model revision and validation rerun
   signature; view data remains presentation-only and cannot mutate geometry.
 
-### W16-05 implementation status — Roomstyler / Homestyler
+### W16-07 implementation status — ChatGPT / Claude / Grok / Gemini
 
-- Added a typed presentation-options fixture with canonical asset mappings,
-  furniture scale, occupancy intent, finish options, render provenance, and a
-  technical-plan side-by-side trace.
-- Added `validate_roomstyler_homestyler_input`, which reuses the Week 15
-  clearance validator for room fit, routes, service zones, door approaches, and
-  overlapping furniture envelopes.
-- A styled option containing a clearance blocker remains rejected and
-  candidate-ineligible; the blocker is retained in the evidence and cannot be
-  hidden by the accepted visual option. Presentation furniture and finishes
-  remain non-authoritative.
+- Added a provider-neutral conversation fixture containing a natural-language
+  brief, constraints, candidate feedback, typed vertical access, and a
+  validation report.
+- Added `validate_llm_brief_input`, which delegates extraction and command
+  previews to the Week 12 compiler, preserves assumptions and clarification
+  questions, and records provider/model metadata only as provenance.
+- Typed revisions require an explicit `accept` operation and a validation rerun
+  for the resulting revision; incomplete upper-floor access is a blocker before
+  rendering, and the canonical input model remains unchanged.
 
-### W16-06 implementation status — Magicplan
+### W16-08 implementation status — 4Lines.ai
 
-- Added a photo-assisted recognition fixture with source image metadata, known
-  dimensions, scale evidence, confidence, and accepted, uncertain, and rejected
-  recognition states.
-- Added `validate_magicplan_input`, which keeps recognition in a review queue
-  and only marks a manually confirmed, scale-backed object with a
-  topology/clearance validation rerun as promoted.
-- Image-only recognition cannot be promoted; uncertain and rejected objects
-  retain provenance and remain outside editable authoritative geometry.
+- Added a plan/section/elevation exchange fixture with source-to-canonical
+  object IDs, levels, openings, dimensions, section references, and validation
+  provenance.
+- Added `validate_4lines_input`, which detects stale revisions, missing or
+  duplicated object identity, unknown/disconnected objects, missing dimensions,
+  and absent view references.
+- Returned views are invalidated unless they trace to the validated canonical
+  model revision; the exchange remains presentation-only.

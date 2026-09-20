@@ -1,0 +1,88 @@
+{
+  "tool": "4Lines.ai",
+  "sourceReference": "4lines-fixture-week16-08",
+  "exchangeReference": "4lines-export-project-revision-1",
+  "modelRevision": 1,
+  "validationProvenance": {
+    "status": "pass",
+    "modelRevision": 1,
+    "signature": "canonical-validation-signature-week16-08-fixture",
+    "sourceReport": "week14-synchronized-views-report.json"
+  },
+  "objectIdMap": [
+    {"sourceObjectId": "4l-gf-01", "canonicalObjectId": "GF-01"},
+    {"sourceObjectId": "4l-gf-06", "canonicalObjectId": "GF-06"},
+    {"sourceObjectId": "4l-d-gf-06", "canonicalObjectId": "D-GF-06"},
+    {"sourceObjectId": "4l-stair-01", "canonicalObjectId": "STAIR-01"},
+    {"sourceObjectId": "4l-gf-02", "canonicalObjectId": "GF-02"},
+    {"sourceObjectId": "4l-ff-02", "canonicalObjectId": "FF-02"},
+    {"sourceObjectId": "4l-vc-stair-01", "canonicalObjectId": "VC-STAIR-01"},
+    {"sourceObjectId": "4l-d-gf-02", "canonicalObjectId": "D-GF-02"},
+    {"sourceObjectId": "4l-d-ff-02", "canonicalObjectId": "D-FF-02"},
+    {"sourceObjectId": "4l-d-ff-06", "canonicalObjectId": "D-FF-06"}
+  ],
+  "expectedObjectIds": [
+    "GF-01",
+    "GF-06",
+    "D-GF-06",
+    "STAIR-01",
+    "GF-02",
+    "FF-02",
+    "VC-STAIR-01",
+    "D-GF-02",
+    "D-FF-02",
+    "D-FF-06"
+  ],
+  "dimensions": [
+    {
+      "id": "DIM-GF-BOUNDARY",
+      "value": 666,
+      "units": "inch",
+      "sourceObjectId": "GF-06",
+      "viewIds": ["4lines-plan-GF"]
+    },
+    {
+      "id": "DIM-SECTION-HEIGHT",
+      "value": 178,
+      "units": "inch",
+      "sourceObjectId": "STAIR-01",
+      "viewIds": ["4lines-section-A"]
+    },
+    {
+      "id": "DIM-ELEVATION-OPENING",
+      "value": 42,
+      "units": "inch",
+      "sourceObjectId": "D-FF-06",
+      "viewIds": ["4lines-elevation-east"]
+    }
+  ],
+  "views": [
+    {
+      "id": "4lines-plan-GF",
+      "kind": "plan",
+      "levelId": "GF",
+      "objectIds": ["GF-01", "GF-06"],
+      "openingIds": ["D-GF-06"],
+      "stairIds": ["STAIR-01"],
+      "dimensionRefs": ["DIM-GF-BOUNDARY"],
+      "referenceId": "4lines-plan-export-GF"
+    },
+    {
+      "id": "4lines-section-A",
+      "kind": "section",
+      "levelIds": ["GF", "FF"],
+      "objectIds": ["GF-02", "FF-02", "STAIR-01", "VC-STAIR-01"],
+      "openingIds": ["D-GF-02", "D-FF-02"],
+      "dimensionRefs": ["DIM-SECTION-HEIGHT"],
+      "referenceId": "4lines-section-A-A"
+    },
+    {
+      "id": "4lines-elevation-east",
+      "kind": "elevation",
+      "levelIds": ["GF", "FF"],
+      "objectIds": ["D-GF-06", "D-FF-06"],
+      "dimensionRefs": ["DIM-ELEVATION-OPENING"],
+      "referenceId": "4lines-east-elevation"
+    }
+  ]
+}

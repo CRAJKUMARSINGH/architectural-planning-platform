@@ -1,0 +1,40 @@
+{
+  "tool": "ChatGPT / Claude / Grok / Gemini",
+  "provider": "provider-neutral",
+  "model": "fixture-conversation-model",
+  "sourceReference": "llm-brief-fixture-week16-07",
+  "defaultUnits": "inch",
+  "briefText": "Design a 2 level advocate chambers on a site 60m x 30m. North is north and frontage is east. Floor-to-floor is 3.6m. Include 1 reception, 2 offices, a library area target of 60m2, and an assembly hall for 120 people. Use public access, library near lobby, style contemporary, outputs PDF and DXF.",
+  "constraints": [
+    "Keep the canonical stair and route evidence authoritative.",
+    "Do not infer walls or openings from conversational suggestions."
+  ],
+  "candidateFeedback": [
+    {
+      "candidateId": "C-16-07-01",
+      "feedback": "Keep the public assembly route visible in the technical plan."
+    }
+  ],
+  "verticalAccess": [
+    {
+      "objectId": "VC-STAIR-01",
+      "kind": "stair",
+      "fromLevel": "GF",
+      "toLevel": "FF",
+      "intent": "public vertical access"
+    }
+  ],
+  "proposedRevisions": [
+    {
+      "commandText": "Give the main assembly hall a public access.",
+      "accept": true,
+      "timestamp": "2026-09-20T00:00:00+05:30"
+    }
+  ],
+  "validationReport": {
+    "status": "pass",
+    "modelRevision": 2,
+    "signature": "canonical-validation-signature-week16-07-fixture",
+    "sourceReport": "week12-brief-compiler-report.json"
+  }
+}

@@ -193,6 +193,8 @@
           "candidate feedback"
         ],
         "id": "llm-brief-refinement",
+        "implementationFixture": "tests/fixtures/week16/llm-brief-refinement.json",
+        "implementationStatus": "applied",
         "inputRole": "brief refinement and explanation",
         "programWeeks": [
           1,
@@ -219,6 +221,8 @@
           "validation provenance"
         ],
         "id": "4lines-plan-section-workflow",
+        "implementationFixture": "tests/fixtures/week16/4lines-plan-section-exchange.json",
+        "implementationStatus": "applied",
         "inputRole": "plan, section, and elevation workflow reference",
         "programWeeks": [
           2,

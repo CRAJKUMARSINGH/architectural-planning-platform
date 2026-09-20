@@ -1,0 +1,294 @@
+{
+  "acceptedModelRevision": 2,
+  "acceptedRevision": {
+    "accepted": true,
+    "afterRevision": 2,
+    "author": "week16-llm-brief-refinement",
+    "beforeRevision": 1,
+    "changedObjectIds": [
+      "GF-06"
+    ],
+    "command": {
+      "accessIntent": "public",
+      "sourceText": "Give the main assembly hall a public access.",
+      "targetLabel": "main assembly hall",
+      "type": "set_access_intent"
+    },
+    "id": "rev-db3295eeeaf1",
+    "timestamp": "2026-09-20T00:00:00+05:30",
+    "validationDelta": {
+      "findings": [],
+      "status": "ready"
+    }
+  },
+  "assumptions": [
+    "Dimensions without units use the requested default unit: inch."
+  ],
+  "authoritativeGeometryChanged": false,
+  "candidateEligible": true,
+  "canonicalModelRevision": 1,
+  "clarificationState": {
+    "questions": [],
+    "source": "week12-brief-compiler",
+    "status": "resolved"
+  },
+  "compilerShape": {
+    "ambiguities": [],
+    "assumptions": [
+      "Dimensions without units use the requested default unit: inch."
+    ],
+    "compilerVersion": "week12.brief-compiler.v1",
+    "facts": {
+      "accessIntent": {
+        "source": "brief",
+        "value": "public"
+      },
+      "adjacencies": [
+        {
+          "left": "library",
+          "relationship": "near",
+          "right": "lobby"
+        }
+      ],
+      "areaTargets": [],
+      "candidateFeedback": [
+        {
+          "candidateId": "C-16-07-01",
+          "feedback": "Keep the public assembly route visible in the technical plan."
+        }
+      ],
+      "constraints": [
+        "Keep the canonical stair and route evidence authoritative.",
+        "Do not infer walls or openings from conversational suggestions."
+      ],
+      "floorToFloor": {
+        "display": "3.6",
+        "sourceUnit": "m",
+        "unit": "inch",
+        "value": 141.732283
+      },
+      "levels": 2,
+      "north": {
+        "direction": "north",
+        "source": "brief"
+      },
+      "occupancy": {
+        "people": 120
+      },
+      "requiredOutputs": [
+        "dxf",
+        "pdf"
+      ],
+      "roadFrontage": {
+        "side": "east",
+        "source": "brief"
+      },
+      "roomSchedule": [
+        {
+          "count": 1,
+          "label": "assembly hall",
+          "roomUse": "assembly"
+        },
+        {
+          "areaTarget": {
+            "display": "area target of 60m2",
+            "sourceUnit": "m2",
+            "unit": "sqft",
+            "value": 645.8346
+          },
+          "count": 1,
+          "label": "reception",
+          "roomUse": "reception"
+        },
+        {
+          "areaTarget": {
+            "display": "area target of 60m2",
+            "sourceUnit": "m2",
+            "unit": "sqft",
+            "value": 645.8346
+          },
+          "count": 2,
+          "label": "offices",
+          "roomUse": "office"
+        },
+        {
+          "areaTarget": {
+            "display": "area target of 60m2",
+            "sourceUnit": "m2",
+            "unit": "sqft",
+            "value": 645.8346
+          },
+          "count": 1,
+          "label": "library",
+          "roomUse": "library"
+        },
+        {
+          "count": 1,
+          "label": "library",
+          "roomUse": "library"
+        },
+        {
+          "count": 1,
+          "label": "lobby",
+          "roomUse": "lobby"
+        },
+        {
+          "count": 1,
+          "label": "hall",
+          "roomUse": "assembly"
+        }
+      ],
+      "site": {
+        "depth": {
+          "display": "30",
+          "sourceUnit": "m",
+          "unit": "inch",
+          "value": 1181.102362
+        },
+        "width": {
+          "display": "60",
+          "sourceUnit": "m",
+          "unit": "inch",
+          "value": 2362.204724
+        }
+      },
+      "style": "contemporary",
+      "units": {
+        "canonical": "inch",
+        "default": "inch",
+        "detected": "unspecified"
+      },
+      "verticalAccess": [
+        {
+          "fromLevel": "GF",
+          "intent": "public vertical access",
+          "kind": "stair",
+          "objectId": "VC-STAIR-01",
+          "toLevel": "FF"
+        }
+      ]
+    },
+    "input": "Design a 2 level advocate chambers on a site 60m x 30m. North is north and frontage is east. Floor-to-floor is 3.6m. Include 1 reception, 2 offices, a library area target of 60m2, and an assembly hall for 120 people. Use public access, library near lobby, style contemporary, outputs PDF and DXF.",
+    "missingTopologyFacts": [],
+    "performance": {
+      "compileDurationMs": 5.312,
+      "telemetry": "local-only"
+    },
+    "readyForGeneration": true,
+    "status": "ready"
+  },
+  "determinism": {
+    "algorithm": "sha256",
+    "signature": "d45be9383d50469d9818599e66c8a3f3514ff5d6ba8794e5a6192cd1b989bd6c"
+  },
+  "findings": [],
+  "input": {
+    "authoritative": false,
+    "inputRole": "brief refinement and explanation",
+    "modelRevision": 1,
+    "promotionGate": "text assistance only; never mutate geometry without typed validation",
+    "promotionStatus": "review-required",
+    "reviewState": "pending",
+    "sourceInput": {
+      "briefText": "Design a 2 level advocate chambers on a site 60m x 30m. North is north and frontage is east. Floor-to-floor is 3.6m. Include 1 reception, 2 offices, a library area target of 60m2, and an assembly hall for 120 people. Use public access, library near lobby, style contemporary, outputs PDF and DXF.",
+      "candidateFeedback": [
+        {
+          "candidateId": "C-16-07-01",
+          "feedback": "Keep the public assembly route visible in the technical plan."
+        }
+      ],
+      "constraints": [
+        "Keep the canonical stair and route evidence authoritative.",
+        "Do not infer walls or openings from conversational suggestions."
+      ],
+      "defaultUnits": "inch",
+      "model": "fixture-conversation-model",
+      "proposedRevisions": [
+        {
+          "accept": true,
+          "commandText": "Give the main assembly hall a public access.",
+          "timestamp": "2026-09-20T00:00:00+05:30"
+        }
+      ],
+      "provider": "provider-neutral",
+      "sourceReference": "llm-brief-fixture-week16-07",
+      "tool": "ChatGPT / Claude / Grok / Gemini",
+      "validationReport": {
+        "modelRevision": 2,
+        "signature": "canonical-validation-signature-week16-07-fixture",
+        "sourceReport": "week12-brief-compiler-report.json",
+        "status": "pass"
+      },
+      "verticalAccess": [
+        {
+          "fromLevel": "GF",
+          "intent": "public vertical access",
+          "kind": "stair",
+          "objectId": "VC-STAIR-01",
+          "toLevel": "FF"
+        }
+      ]
+    },
+    "sourceReference": "llm-brief-fixture-week16-07",
+    "tool": "ChatGPT / Claude / Grok / Gemini",
+    "toolId": "llm-brief-refinement",
+    "validationStatus": "pending"
+  },
+  "model": "fixture-conversation-model",
+  "modelRevision": 1,
+  "promotionPolicy": "explicit typed revision acceptance plus validation rerun is required before presentation",
+  "proposedRevisions": [
+    {
+      "acceptanceRequested": true,
+      "canonicalModelUnchanged": true,
+      "command": {
+        "accessIntent": "public",
+        "sourceText": "Give the main assembly hall a public access.",
+        "targetLabel": "main assembly hall",
+        "type": "set_access_intent"
+      },
+      "compilerVersion": "week12.brief-compiler.v1",
+      "findings": [],
+      "revision": {
+        "accepted": false,
+        "afterRevision": 2,
+        "author": "week16-llm-brief-refinement",
+        "beforeRevision": 1,
+        "changedObjectIds": [
+          "GF-06"
+        ],
+        "command": {
+          "accessIntent": "public",
+          "sourceText": "Give the main assembly hall a public access.",
+          "targetLabel": "main assembly hall",
+          "type": "set_access_intent"
+        },
+        "id": "rev-db3295eeeaf1",
+        "timestamp": "2026-09-20T00:00:00+05:30",
+        "validationDelta": {
+          "findings": [],
+          "status": "ready"
+        }
+      },
+      "status": "ready",
+      "targetObjects": [
+        {
+          "collection": "spaces",
+          "id": "GF-06"
+        }
+      ]
+    }
+  ],
+  "provider": "provider-neutral",
+  "sourceReference": "llm-brief-fixture-week16-07",
+  "sourceText": "Design a 2 level advocate chambers on a site 60m x 30m. North is north and frontage is east. Floor-to-floor is 3.6m. Include 1 reception, 2 offices, a library area target of 60m2, and an assembly hall for 120 people. Use public access, library near lobby, style contemporary, outputs PDF and DXF.",
+  "status": "pass",
+  "tool": "ChatGPT / Claude / Grok / Gemini",
+  "validationReport": {
+    "modelRevision": 2,
+    "signature": "canonical-validation-signature-week16-07-fixture",
+    "sourceReport": "week12-brief-compiler-report.json",
+    "status": "pass"
+  },
+  "version": "week16-07.llm-brief-refinement.v1"
+}

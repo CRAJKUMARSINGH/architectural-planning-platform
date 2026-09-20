@@ -6604,5 +6604,22 @@
     "candidateEligible": false,
     "status": "review-required",
     "promotedObjectCount": 1
+  },
+  "llmBriefRefinement": {
+    "version": "week16-07.llm-brief-refinement.v1",
+    "report": "bar-association-hall/standard/week16-llm-brief-refinement-report.json",
+    "candidateEligible": true,
+    "status": "pass",
+    "acceptedRevisionId": "rev-db3295eeeaf1"
+  },
+  "fourlinesPlanSectionExchange": {
+    "version": "week16-08.4lines-plan-section.v1",
+    "report": "bar-association-hall/standard/week16-4lines-plan-section-exchange-report.json",
+    "candidateEligible": true,
+    "status": "pass",
+    "invalidation": {
+      "invalidated": false,
+      "reasons": []
+    }
   }
 }
