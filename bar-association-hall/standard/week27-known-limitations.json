@@ -1,0 +1,57 @@
+{
+  "limitations": [
+    {
+      "category": "independent-professional-review",
+      "evidence": {
+        "qualityGateStatus": "REVIEW_REQUIRED",
+        "sourceReport": "bar-association-hall/standard/week24-anonymized-review-results.json"
+      },
+      "exitCriteria": [
+        "Two independent reviewers submit signed scorecards.",
+        "Usable/not-usable agreement is at least 90%.",
+        "No critical defect is accepted as usable by both reviewers.",
+        "Critical software findings are reproducible from model and rule evidence."
+      ],
+      "id": "LIM-027-001",
+      "severity": "REVIEW_REQUIRED",
+      "statement": "Two independent professional reviews, usable/not-usable agreement, and finding reproducibility are still pending.",
+      "status": "OPEN"
+    },
+    {
+      "category": "statutory-and-site-verification",
+      "evidence": {
+        "automaticApproval": false,
+        "source": "Validation program scope and project review notes"
+      },
+      "exitCriteria": [
+        "Appointed professionals verify the current site and governing requirements.",
+        "Authority-specific corrections are recorded against a project revision.",
+        "A signed issue decision is stored with the delivered package."
+      ],
+      "id": "LIM-027-002",
+      "severity": "REVIEW_REQUIRED",
+      "statement": "Survey, jurisdictional code, fire/life-safety, accessibility, structural, MEP, and authority sign-off remain outside automated release evidence.",
+      "status": "OPEN"
+    },
+    {
+      "category": "drawing-status",
+      "evidence": {
+        "automaticIssuance": false,
+        "releaseClassification": "REVIEW_REQUIRED"
+      },
+      "exitCriteria": [
+        "Professional review is complete.",
+        "Site and authority evidence is complete.",
+        "A separately approved issue package is generated and archived."
+      ],
+      "id": "LIM-027-003",
+      "severity": "REVIEW_REQUIRED",
+      "statement": "Repository drawing packages remain preliminary planning and coordination aids, not construction or permit drawings.",
+      "status": "OPEN"
+    }
+  ],
+  "releaseClassification": "REVIEW_REQUIRED",
+  "reportSignature": "233850917aadffbe7bdc5155d95a61165f8b28cccef57e90a3361f72596447f8",
+  "sourceReport": "bar-association-hall/standard/week27-integrated-release-report.json",
+  "version": "week27.known-limitations.v1"
+}

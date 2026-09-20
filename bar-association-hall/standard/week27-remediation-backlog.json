@@ -1,0 +1,47 @@
+{
+  "items": [
+    {
+      "acceptance": [
+        "Two independent reviewers submit signed scorecards.",
+        "Usable/not-usable agreement is at least 90%.",
+        "No critical defect is accepted as usable by both reviewers.",
+        "Critical software findings are reproducible from model and rule evidence."
+      ],
+      "action": "Complete the Week 24 blinded professional review package.",
+      "id": "REM-027-001",
+      "linkedLimitation": "LIM-027-001",
+      "owner": "appointed independent reviewers",
+      "priority": "HIGH",
+      "status": "OPEN"
+    },
+    {
+      "acceptance": [
+        "Appointed professionals verify the current site and governing requirements.",
+        "Authority-specific corrections are recorded against a project revision.",
+        "A signed issue decision is stored with the delivered package."
+      ],
+      "action": "Verify site, statutory, fire, accessibility, structural, and MEP assumptions.",
+      "id": "REM-027-002",
+      "linkedLimitation": "LIM-027-002",
+      "owner": "appointed architect, engineers, surveyor, and authority",
+      "priority": "HIGH",
+      "status": "OPEN"
+    },
+    {
+      "acceptance": [
+        "Every tracked project artifact has a project, role, source path, and review state.",
+        "Legacy paths remain unchanged until a separately approved migration.",
+        "Each delivered revision has a manifest and validation status."
+      ],
+      "action": "Keep the multi-project inventory and proposed canonical paths updated for every future delivery.",
+      "id": "REM-027-003",
+      "linkedLimitation": "W28-DATA-001",
+      "owner": "repository maintainer",
+      "priority": "MEDIUM",
+      "status": "IN_PROGRESS"
+    }
+  ],
+  "reportSignature": "233850917aadffbe7bdc5155d95a61165f8b28cccef57e90a3361f72596447f8",
+  "sourceReport": "bar-association-hall/standard/week27-integrated-release-report.json",
+  "version": "week27.remediation-backlog.v1"
+}

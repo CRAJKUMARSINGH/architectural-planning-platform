@@ -1,0 +1,40 @@
+{
+  "acceptance": {
+    "ambiguousFilesRemainVisible": true,
+    "everyTrackedPathInventoried": true,
+    "legacyPathsRemainUnchanged": true,
+    "proposedDestinationForEveryPath": true,
+    "threeDeliveredProjectsRegistered": true
+  },
+  "entryCount": 324,
+  "generatedFromCommit": "92b800d80ec9c22535203acb866f56fa8209af29",
+  "legacyPathsPreserved": true,
+  "migrationMode": "index-first",
+  "projectCount": 3,
+  "projectCounts": {
+    "advocate-chambers": 71,
+    "bar-association-hall": 132,
+    "jamuniya-shaktawat": 15,
+    "shared-repository": 106
+  },
+  "registeredProjects": [
+    "bar-association-hall",
+    "jamuniya-shaktawat",
+    "advocate-chambers"
+  ],
+  "reviewRequiredCount": 5,
+  "roleCounts": {
+    "cad-output": 43,
+    "documentation": 7,
+    "input-reference": 9,
+    "pdf-output": 56,
+    "render-reference": 7,
+    "shared-engineering": 57,
+    "source-or-project-document": 43,
+    "validation": 42,
+    "validation-metadata": 60
+  },
+  "sourceInventory": "projects/project-inventory.json",
+  "sourceRegistry": "projects/project-registry.json",
+  "version": "week28.project-organization.v1"
+}

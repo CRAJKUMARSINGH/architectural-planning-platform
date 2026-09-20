@@ -1,0 +1,81 @@
+{
+  "generatedFromCommit": "92b800d80ec9c22535203acb866f56fa8209af29",
+  "migrationPolicy": {
+    "deletionAllowed": false,
+    "duplicateCleanupRequiresReview": true,
+    "legacyPathsPreserved": true,
+    "mode": "index-first",
+    "sourceOfTruthMustBeDeclared": true
+  },
+  "projects": [
+    {
+      "canonicalLayout": [
+        "01-inputs",
+        "02-source",
+        "03-outputs",
+        "04-validation",
+        "05-documentation",
+        "06-archive"
+      ],
+      "confidence": "explicit",
+      "description": "Banswara G+1 planning and coordinated drawing package.",
+      "name": "Bar Association Hall",
+      "projectId": "bar-association-hall",
+      "roots": [
+        "bar-association-hall",
+        "code-junction/Bar-Association-Standard-Drawing-Package"
+      ],
+      "sourceOfTruth": "bar-association-hall/standard/source",
+      "status": "DELIVERED_ARCHIVE"
+    },
+    {
+      "canonicalLayout": [
+        "01-inputs",
+        "02-source",
+        "03-outputs",
+        "04-validation",
+        "05-documentation",
+        "06-archive"
+      ],
+      "confidence": "explicit",
+      "description": "Jamuniya revised floor-plan and reference-image package.",
+      "name": "Jamuniya-Shaktawat",
+      "projectId": "jamuniya-shaktawat",
+      "roots": [
+        "Jamuniya-Shaktawat"
+      ],
+      "sourceOfTruth": "Jamuniya-Shaktawat/CAD",
+      "status": "DELIVERED_ARCHIVE"
+    },
+    {
+      "canonicalLayout": [
+        "01-inputs",
+        "02-source",
+        "03-outputs",
+        "04-validation",
+        "05-documentation",
+        "06-archive"
+      ],
+      "confidence": "inferred-from-drawing-set-name",
+      "description": "Advocate Chambers 16-drawing CAD/PDF delivery archive.",
+      "name": "Advocate Chambers",
+      "projectId": "advocate-chambers",
+      "roots": [
+        "CAD-Drawings"
+      ],
+      "sourceOfTruth": "CAD-Drawings",
+      "status": "DELIVERED_ARCHIVE"
+    }
+  ],
+  "reviewScope": {
+    "canonicalPath": "projects/_review/",
+    "description": "Root or legacy material not safely attributable without human confirmation.",
+    "projectId": "unassigned"
+  },
+  "sharedScope": {
+    "canonicalPath": "shared/",
+    "description": "Application, validation, schemas, and repository documentation shared by all projects.",
+    "projectId": "shared-repository"
+  },
+  "version": "week28.project-registry.v1"
+}

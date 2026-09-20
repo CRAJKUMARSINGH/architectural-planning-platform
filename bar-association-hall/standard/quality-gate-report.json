@@ -10,7 +10,7 @@
   },
   "professionalReviewRequired": true,
   "releaseReady": false,
-  "reportSignature": "365da0385bd7eb7982a4a98e36ebac74b5cb5d0c1f3636fa3f44267632ef73bd",
+  "reportSignature": "9bd1688eafed5a50461fa26ad1be650e1a04ece462c82afec5a91ad720b20bed",
   "score": null,
   "status": "REVIEW_REQUIRED",
   "tracks": {
@@ -62,11 +62,11 @@
     "regression": {
       "command": "python3 -m unittest discover -s tests -p 'test_week*.py'",
       "failed": 0,
-      "passed": 93,
+      "passed": 101,
       "previousWeek21BaselineTests": 69,
       "status": "PASS",
       "suite": "full weekly regression",
-      "tests": 93,
+      "tests": 101,
       "verification": "Current regression suite recorded from the Week 26 validation run"
     },
     "reproducibility": {

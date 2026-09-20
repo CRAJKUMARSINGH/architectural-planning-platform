@@ -6,22 +6,31 @@ This document records the storage policy for completed planning projects in Advo
 
 | Project family | Current source locations | Archive slug | Migration status |
 |---|---|---|---|
-| Advocate-Chambers / Bar Association | bar-association-hall, CAD-Drawings, code-junction/Bar-Association-Standard-Drawing-Package | advocate-chambers | Inventory required; legacy paths retained |
-| Jamuniya-Shaktawat | Jamuniya-Shaktawat/CAD, Jamuniya-Shaktawat/PDF, reference images | jamuniya-shaktawat | Inventory required; legacy paths retained |
+| Bar Association Hall | bar-association-hall, code-junction/Bar-Association-Standard-Drawing-Package | bar-association-hall | Week 28 inventory applied; legacy paths retained |
+| Jamuniya-Shaktawat | Jamuniya-Shaktawat/CAD, Jamuniya-Shaktawat/PDF, reference images | jamuniya-shaktawat | Week 28 inventory applied; legacy paths retained |
+| Advocate Chambers | CAD-Drawings and explicitly named root-level legacy assets | advocate-chambers | Week 28 inventory applied; five ambiguous root assets remain for review |
+
+The complete machine-readable registry is
+`projects/project-registry.json`; the path-level inventory is
+`projects/project-inventory.json`. Shared application, validation, schema, and
+documentation files remain under the `shared-repository` scope rather than
+being copied into every project.
 
 ## Canonical destination
 
 ~~~text
 projects/YYYY/project-slug/
   project.json
-  source/
-  revisions/rNNN/
-    model/
-    inputs/
+  01-inputs/
+  02-source/
+  03-outputs/
     cad/
     pdf/
     renders/
-    validation/
+  04-validation/
+  05-documentation/
+  06-archive/
+  revisions/rNNN/
     manifest.json
   current.json
 ~~~

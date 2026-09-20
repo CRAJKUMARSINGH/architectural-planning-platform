@@ -286,6 +286,28 @@ unresolved issue into a tracked engineering or professional-review item.
 - Archive and revision verification pass.
 - The README uses the correct release classification.
 
+### Week 28 — Multi-project data organization and delivery archive
+
+**Objective:** Organize the delivered Bar Association Hall, Jamuniya-Shaktawat,
+and Advocate Chambers packages without destroying legacy provenance or
+silently mixing project inputs and outputs.
+
+**Deliverables:**
+
+- Stable three-project registry
+- Inventory of every tracked path with project scope and operational role
+- Proposed canonical input/source/output/validation/archive destinations
+- Explicit shared-repository and ambiguous-legacy scopes
+- Organization report and repeatable validation tests
+
+**Acceptance gate:**
+
+- All three delivered projects are registered.
+- Every tracked path appears exactly once in the inventory.
+- Every entry has a proposed destination and storage hint.
+- Existing legacy paths remain unchanged.
+- Ambiguous root assets are visible for human classification.
+
 ## Proposed repository layout
 
 ```text

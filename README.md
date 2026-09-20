@@ -259,6 +259,37 @@ and validated on `main`. The combined quality gate remains
 `REVIEW_REQUIRED` only until two independent professionals complete the Week
 24 review; no professional approval or permit decision is implied.
 
+## Week 27–28 task status — release decision and project organization applied
+
+Week 27 combines the validation evidence into one conservative release
+classification, known-limitations register, and remediation backlog. Week 28
+adds an index-first inventory for the three delivered project packages:
+**Bar Association Hall**, **Jamuniya-Shaktawat**, and **Advocate Chambers**.
+
+- Existing drawing and input paths are preserved; no destructive binary move or
+  history rewrite is performed.
+- Every tracked path receives a project scope, role, storage hint, Git identity,
+  and proposed canonical destination.
+- Ambiguous legacy root assets remain visible with `reviewRequired: true`.
+- The current release classification remains `REVIEW_REQUIRED`; automated
+  evidence is coordinated, but professional, site, statutory, and authority
+  review are not fabricated.
+
+Run the organization and release checks with:
+
+```bash
+npm run enrich:week27
+npm run validate:week27
+npm run test:week27
+npm run enrich:week28
+npm run validate:week28
+npm run test:week28
+```
+
+**Task completion:** Week 27–28 enrichment is applied. The repository now has
+a repeatable release/remediation record and a reversible project-data index;
+physical migration remains a separate reviewed operation.
+
 
 ## Week 3–4 task status
 
