@@ -16,10 +16,13 @@
         "sha256": "82e0c426527f4b39f80c1032129d056d6fede0fd18d7dc1788ffaeb4e8d6c84c"
       }
     ],
-    "expectedValidationStatus": "fail",
-    "requiredBaselineRule": "ROOM_HAS_UNJUSTIFIED_EXTERNAL_DOOR"
+    "expectedValidationStatus": "pass"
   },
   "validationReport": "bar-association-hall/standard/week1-validation-report.json",
+  "regressionFixtures": [
+    "tests/fixtures/week1/known-upper-floor-exterior-door.json",
+    "tests/fixtures/week1/valid-connected-model.json"
+  ],
   "artifactRoots": [
     "bar-association-hall/PDF",
     "bar-association-hall/CAD"

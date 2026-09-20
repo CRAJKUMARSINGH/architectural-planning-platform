@@ -1,0 +1,103 @@
+{
+  "fixtureVersion": "week1.regression-fixture.v1",
+  "id": "valid-connected-model",
+  "description": "A small connected plan must remain free of blocking findings.",
+  "model": {
+    "site": {
+      "project": {
+        "name": "Week 1 valid fixture"
+      },
+      "levels": [
+        {
+          "id": "GF",
+          "name": "Ground Floor"
+        }
+      ],
+      "site": {
+        "plot": [
+          [
+            0,
+            0
+          ],
+          [
+            240,
+            0
+          ],
+          [
+            240,
+            240
+          ]
+        ]
+      }
+    },
+    "plans": {
+      "projectId": "week1-valid-fixture",
+      "units": "inch",
+      "wallThickness": 6,
+      "spaces": [
+        {
+          "id": "GF-ENTRY",
+          "level": "GF",
+          "name": "Entry",
+          "rect": [
+            0,
+            0,
+            120,
+            120
+          ],
+          "finish": "circulation"
+        },
+        {
+          "id": "GF-ROOM",
+          "level": "GF",
+          "name": "Review Room",
+          "rect": [
+            126,
+            0,
+            246,
+            120
+          ],
+          "finish": "public"
+        }
+      ],
+      "openings": [
+        {
+          "id": "D-MAIN",
+          "level": "GF",
+          "type": "door",
+          "tag": "D-01",
+          "hostSpace": "GF-ROOM",
+          "wall": "east",
+          "offset": 42,
+          "width": 36,
+          "swing": "out"
+        }
+      ],
+      "windows": [],
+      "entries": [
+        {
+          "id": "ENTRY-MAIN",
+          "level": "GF",
+          "kind": "main",
+          "label": "Main entry",
+          "openingId": "D-MAIN",
+          "hostSpace": "GF-ROOM",
+          "wall": "east",
+          "status": "confirmed",
+          "porch": {
+            "width": 48,
+            "depth": 48
+          }
+        }
+      ],
+      "stairs": [],
+      "notes": [
+        "Door symbols show a wall break."
+      ]
+    }
+  },
+  "expected": {
+    "status": "pass",
+    "findings": []
+  }
+}

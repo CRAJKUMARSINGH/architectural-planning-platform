@@ -10,6 +10,7 @@ MODEL_ROOT = ROOT / "bar-association-hall"
 sys.path.insert(0, str(MODEL_ROOT))
 
 from drawing_model import load_model, validate_model_findings  # noqa: E402
+from week1 import run_regression_fixtures  # noqa: E402
 
 
 class Week1ValidationTests(unittest.TestCase):
@@ -177,6 +178,14 @@ class Week1ValidationTests(unittest.TestCase):
         for name in ("site_plan.json", "preliminary_plans.json"):
             with (source / name).open(encoding="utf-8") as handle:
                 self.assertIsInstance(json.load(handle), dict)
+
+    def test_checked_in_regression_fixtures_match_their_contracts(self):
+        result = run_regression_fixtures()
+        self.assertEqual(result["status"], "pass", result)
+        self.assertEqual(
+            {fixture["id"] for fixture in result["fixtures"]},
+            {"known-upper-floor-exterior-door", "valid-connected-model"},
+        )
 
 
 if __name__ == "__main__":

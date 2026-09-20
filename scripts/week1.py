@@ -8,6 +8,7 @@ a clean checkout before CAD/PDF rendering dependencies are installed.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import sys
@@ -20,6 +21,7 @@ MODEL_ROOT = ROOT / "bar-association-hall"
 SOURCE_ROOT = MODEL_ROOT / "standard" / "source"
 REPORT_PATH = MODEL_ROOT / "standard" / "week1-validation-report.json"
 MANIFEST_PATH = MODEL_ROOT / "standard" / "regression_manifest.json"
+FIXTURE_ROOT = ROOT / "tests" / "fixtures" / "week1"
 
 sys.path.insert(0, str(MODEL_ROOT))
 from drawing_model import load_model, validate_model_findings  # noqa: E402
@@ -77,6 +79,85 @@ def run_validate(write_report: bool) -> int:
     return 0 if report["status"] == "pass" else 1
 
 
+def _apply_fixture_mutations(plans: dict[str, Any], mutations: list[dict[str, Any]]) -> None:
+    """Apply declarative test mutations without changing the source fixture."""
+
+    for mutation in mutations:
+        collection = mutation["collection"]
+        action = mutation["action"]
+        if action == "append":
+            plans.setdefault(collection, []).append(copy.deepcopy(mutation["value"]))
+            continue
+        if action == "update":
+            object_id = mutation["id"]
+            target = next(item for item in plans[collection] if item.get("id") == object_id)
+            target.update(copy.deepcopy(mutation["value"]))
+            continue
+        raise ValueError(f"Unsupported Week 1 fixture mutation: {action}")
+
+
+def _fixture_model(fixture: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
+    if fixture.get("baseModel") == "canonical":
+        site, plans = load_model()
+        _apply_fixture_mutations(plans, fixture.get("mutations", []))
+        return site, plans
+    model = fixture["model"]
+    return copy.deepcopy(model["site"]), copy.deepcopy(model["plans"])
+
+
+def regression_fixtures() -> list[dict[str, Any]]:
+    """Load the checked-in Week 1 fixture definitions in stable order."""
+
+    return [
+        json.loads(path.read_text(encoding="utf-8"))
+        for path in sorted(FIXTURE_ROOT.glob("*.json"))
+    ]
+
+
+def run_regression_fixtures() -> dict[str, Any]:
+    """Run valid and invalid fixtures and verify their expected findings."""
+
+    results: list[dict[str, Any]] = []
+    for fixture in regression_fixtures():
+        site, plans = _fixture_model(fixture)
+        findings = validate_model_findings(site, plans)
+        blocking = [finding for finding in findings if finding["severity"] in {"BLOCKER", "ERROR"}]
+        actual_status = "fail" if blocking else "pass"
+        mismatches: list[str] = []
+        expected = fixture["expected"]
+        if actual_status != expected["status"]:
+            mismatches.append(f"expected status {expected['status']}, got {actual_status}")
+        for required in expected.get("findings", []):
+            matches = [
+                finding
+                for finding in findings
+                if all(finding.get(key) == value for key, value in required.items())
+            ]
+            if not matches:
+                mismatches.append(f"missing expected finding: {required}")
+        results.append(
+            {
+                "id": fixture["id"],
+                "status": "pass" if not mismatches else "fail",
+                "actualValidationStatus": actual_status,
+                "findingCount": len(findings),
+                "blockingCount": len(blocking),
+                "mismatches": mismatches,
+            }
+        )
+    return {
+        "reportVersion": "week1.regression-fixtures.v1",
+        "status": "pass" if all(item["status"] == "pass" for item in results) else "fail",
+        "fixtures": results,
+    }
+
+
+def run_fixtures() -> int:
+    result = run_regression_fixtures()
+    print(json.dumps(result, indent=2))
+    return 0 if result["status"] == "pass" else 1
+
+
 def artifact_files() -> list[Path]:
     files: list[Path] = []
     for directory in (MODEL_ROOT / "PDF", MODEL_ROOT / "CAD"):
@@ -114,10 +195,13 @@ def build_manifest() -> dict[str, Any]:
                 }
                 for path in source_files
             ],
-            "expectedValidationStatus": "fail",
-            "requiredBaselineRule": "ROOM_HAS_UNJUSTIFIED_EXTERNAL_DOOR",
+            "expectedValidationStatus": "pass",
         },
         "validationReport": str(REPORT_PATH.relative_to(ROOT)),
+        "regressionFixtures": [
+            "tests/fixtures/week1/known-upper-floor-exterior-door.json",
+            "tests/fixtures/week1/valid-connected-model.json",
+        ],
         "artifactRoots": ["bar-association-hall/PDF", "bar-association-hall/CAD"],
         "artifacts": artifacts,
         "notes": [
@@ -142,6 +226,24 @@ def run_verify_manifest() -> int:
         return 1
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
     mismatches: list[dict[str, Any]] = []
+    report_path = ROOT / manifest.get("validationReport", "")
+    if not report_path.exists():
+        mismatches.append({"path": manifest.get("validationReport"), "reason": "missing"})
+    else:
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        expected_status = manifest.get("fixture", {}).get("expectedValidationStatus")
+        if expected_status and report.get("status") != expected_status:
+            mismatches.append(
+                {
+                    "path": manifest.get("validationReport"),
+                    "reason": "validation status drift",
+                    "expected": expected_status,
+                    "actual": report.get("status"),
+                }
+            )
+    for fixture_path in manifest.get("regressionFixtures", []):
+        if not (ROOT / fixture_path).exists():
+            mismatches.append({"path": fixture_path, "reason": "missing regression fixture"})
     for record in manifest.get("fixture", {}).get("source", []):
         path = ROOT / record["path"]
         if not path.exists():
@@ -182,12 +284,15 @@ def main() -> int:
     manifest_parser.add_argument("--write", action="store_true", help=f"write {MANIFEST_PATH.relative_to(ROOT)}")
 
     subparsers.add_parser("verify-manifest", help="verify all recorded source and artifact hashes")
+    subparsers.add_parser("fixtures", help="run the checked-in valid and invalid Week 1 fixtures")
     args = parser.parse_args()
 
     if args.command == "validate":
         return run_validate(args.write_report)
     if args.command == "manifest":
         return run_manifest(args.write)
+    if args.command == "fixtures":
+        return run_fixtures()
     return run_verify_manifest()
 
 
