@@ -5,8 +5,10 @@
   "catalogVersion": "week15.parametric-assets.v1",
   "changelog": "bar-association-hall/standard/week1516-changelog.md",
   "manifestVersion": "week1516.enrichment-manifest.v1",
+  "planner5dVersion": "week16-02.planner5d.v1",
   "reports": {
     "aiToolInputs": "bar-association-hall/standard/week16-ai-tool-inputs.json",
+    "planner5d": "bar-association-hall/standard/week16-planner5d-exchange-report.json",
     "week15": "bar-association-hall/standard/week15-parametric-assets-report.json",
     "week16": "bar-association-hall/standard/week16-candidate-studio-report.json"
   },

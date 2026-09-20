@@ -11,6 +11,7 @@ from week1516 import (  # noqa: E402
     ASSET_CATALOG,
     ROOM_TEMPLATES,
     AI_INPUT_VERSION,
+    PLANNER5D_INPUT_VERSION,
     ai_tool_input_manifest,
     candidate_studio,
     design_package,
@@ -19,6 +20,7 @@ from week1516 import (  # noqa: E402
     furnish_model,
     ingest_ai_tool_input,
     validate_maket_input,
+    validate_planner5d_input,
     validate_placement,
 )
 
@@ -35,6 +37,22 @@ def model_fixture():
         "adjacencies": [{"satisfied": True}],
         "program": {"spaceChecks": [{"status": "pass"}]},
     }
+
+
+def planner_model_fixture():
+    model = model_fixture()
+    model["project"]["revision"] = 1
+    model["spaces"] = [
+        {
+            "id": "GF-03",
+            "name": "President Chamber",
+            "roomUse": "office",
+            "geometry": {"rect": [288, 6, 432, 174]},
+        }
+    ]
+    model["routes"] = []
+    model["openings"] = []
+    return model
 
 
 class Week1516EnrichmentTests(unittest.TestCase):
@@ -78,6 +96,89 @@ class Week1516EnrichmentTests(unittest.TestCase):
         self.assertEqual(result["status"], "blocked")
         self.assertIn("MAKET_UNITS_REQUIRED", rules)
         self.assertIn("MAKET_ROOM_DIMENSIONS_REQUIRED", rules)
+
+    def test_w1602_planner5d_fixture_maps_assets_and_rejects_clearance_conflict(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "planner5d-furnished-layout.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        model = planner_model_fixture()
+        before = copy.deepcopy(model)
+
+        result = validate_planner5d_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=1,
+        )
+
+        self.assertEqual(result["version"], PLANNER5D_INPUT_VERSION)
+        self.assertEqual(result["status"], "review-required")
+        self.assertEqual(result["clearanceResult"], {"checked": 2, "accepted": 1, "rejected": 1})
+        self.assertEqual(result["acceptedPlacements"][0]["assetId"], "work-desk")
+        self.assertTrue(result["acceptedPlacements"][0]["presentationOnly"])
+        self.assertEqual(result["rejectedPlacements"][0]["id"], "planner-chair-01")
+        self.assertTrue(
+            any(
+                finding["rule"] == "ASSET_CLEARANCES_MUST_NOT_OVERLAP"
+                for finding in result["rejectedPlacements"][0]["findings"]
+            )
+        )
+        self.assertEqual(
+            {item["status"] for item in result["assetMappingReport"]},
+            {"mapped"},
+        )
+        self.assertFalse(result["candidateEligible"])
+        self.assertEqual(model, before)
+
+    def test_w1602_planner5d_route_conflict_cannot_be_candidate(self):
+        payload = {
+            "modelRevision": 8,
+            "units": "inch",
+            "assetMappings": [{"sourceAssetId": "desk", "assetId": "work-desk"}],
+            "placements": [
+                {
+                    "id": "desk",
+                    "sourceAssetId": "desk",
+                    "hostSpaceId": "GF-OFFICE",
+                    "position": {"x": 0, "y": 0},
+                    "rotation": 0,
+                    "dimensions": {"width": 60, "depth": 30},
+                }
+            ],
+        }
+        result = validate_planner5d_input(
+            model_fixture(),
+            payload,
+            source_reference="planner5d-route-conflict",
+            model_revision=8,
+        )
+
+        self.assertFalse(result["candidateEligible"])
+        self.assertTrue(
+            any(
+                finding["rule"] == "ASSET_MUST_NOT_BLOCK_ZONE"
+                for finding in result["rejectedPlacements"][0]["findings"]
+            )
+        )
+
+    def test_w1602_planner5d_comparison_is_deterministic(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "planner5d-furnished-layout.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        first = validate_planner5d_input(
+            planner_model_fixture(),
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=1,
+        )
+        second = validate_planner5d_input(
+            planner_model_fixture(),
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=1,
+        )
+
+        self.assertEqual(first["baselineComparison"], second["baselineComparison"])
+        self.assertEqual(first["determinism"], second["determinism"])
+        self.assertTrue(first["baselineComparison"]["deterministic"])
 
     def test_week16_exposes_tool_inputs_with_review_boundaries(self):
         manifest = ai_tool_input_manifest()

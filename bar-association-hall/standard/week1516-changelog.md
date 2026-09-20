@@ -37,3 +37,14 @@
   `validate_maket_input`.
 - Conflicting dimensions become `review-required`; missing units or dimensions
   become blockers; the canonical model is never mutated.
+
+### W16-02 implementation status — Planner 5D
+
+- Added a furnishing exchange fixture with explicit model revision, units,
+  source asset mappings, scaled dimensions, occupancy intent, and placements.
+- Added canonical asset mapping and clearance validation through
+  `validate_planner5d_input`; route, door-swing, room-fit, and overlapping
+  clearance conflicts are retained as rejected-placement findings.
+- Added a deterministic comparison with the Week 15 furnishing baseline.
+  Imported items remain presentation-only and a rejected item cannot make the
+  Planner 5D candidate eligible.

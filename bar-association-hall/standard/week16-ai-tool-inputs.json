@@ -59,6 +59,8 @@
         "occupancy intent"
       ],
       "id": "planner5d-furnished-layout",
+      "implementationFixture": "tests/fixtures/week16/planner5d-furnished-layout.json",
+      "implementationStatus": "applied",
       "inputRole": "furnished 2D/3D exploration",
       "programWeeks": [
         8,

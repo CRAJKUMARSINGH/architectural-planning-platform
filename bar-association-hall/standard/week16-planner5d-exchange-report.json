@@ -1,0 +1,177 @@
+{
+  "acceptedPlacements": [
+    {
+      "assetId": "work-desk",
+      "authoritative": false,
+      "clearanceEnvelope": [
+        324.0,
+        42.0,
+        396.0,
+        114.0
+      ],
+      "geometry": {
+        "rect": [
+          330.0,
+          48.0,
+          390.0,
+          78.0
+        ]
+      },
+      "hostSpaceId": "GF-03",
+      "id": "planner-desk-01",
+      "modelRevision": 1,
+      "occupancyIntent": 1,
+      "presentationOnly": true,
+      "rotation": 0,
+      "serviceSideIntent": null,
+      "sourceAssetId": "planner-desk-01",
+      "sourceReference": "planner5d-fixture-week16-02",
+      "sourceTool": "Planner 5D"
+    }
+  ],
+  "assetMappingReport": [
+    {
+      "assetId": "work-desk",
+      "canonicalDimensions": {
+        "depth": 30,
+        "height": 30,
+        "unit": "inch",
+        "width": 60
+      },
+      "canonicalLabel": "Work desk",
+      "sourceAssetId": "planner-desk-01",
+      "sourceLabel": "Planner 5D Work Desk",
+      "status": "mapped"
+    },
+    {
+      "assetId": "visitor-chair",
+      "canonicalDimensions": {
+        "depth": 20,
+        "height": 32,
+        "unit": "inch",
+        "width": 20
+      },
+      "canonicalLabel": "Visitor chair",
+      "sourceAssetId": "planner-chair-01",
+      "sourceLabel": "Planner 5D Visitor Chair",
+      "status": "mapped"
+    }
+  ],
+  "assetScaleToCanonicalInches": 1.0,
+  "authoritativeGeometryChanged": false,
+  "baselineComparison": {
+    "acceptedPlacementCount": 1,
+    "baselinePlacementCount": 17,
+    "baselineSeed": 1516,
+    "baselineStatus": "pass",
+    "deterministic": true,
+    "importedPlacementCount": 2,
+    "plannerCandidateEligible": false,
+    "rejectedPlacementCount": 1
+  },
+  "candidateEligible": false,
+  "canonicalModelRevision": 1,
+  "clearanceResult": {
+    "accepted": 1,
+    "checked": 2,
+    "rejected": 1
+  },
+  "determinism": {
+    "algorithm": "sha256",
+    "signature": "f2e70e71f0154ad8e33f2e5b5e551a3e7c7b839f2bc80c826feeed9043a8c4ac"
+  },
+  "findings": [
+    {
+      "message": "planner-chair-01 overlaps the clearance envelope of planner-desk-01.",
+      "objectId": "planner-chair-01",
+      "rule": "ASSET_CLEARANCES_MUST_NOT_OVERLAP",
+      "severity": "BLOCKER"
+    }
+  ],
+  "input": {
+    "authoritative": false,
+    "inputRole": "furnished 2D/3D exploration",
+    "modelRevision": 1,
+    "promotionGate": "presentation layer only; never authoritative geometry",
+    "promotionStatus": "review-required",
+    "reviewState": "pending",
+    "sourceInput": {
+      "assetMappings": [
+        {
+          "assetId": "work-desk",
+          "sourceAssetId": "planner-desk-01",
+          "sourceLabel": "Planner 5D Work Desk"
+        },
+        {
+          "assetId": "visitor-chair",
+          "sourceAssetId": "planner-chair-01",
+          "sourceLabel": "Planner 5D Visitor Chair"
+        }
+      ],
+      "modelRevision": 1,
+      "placements": [
+        {
+          "dimensions": {
+            "depth": 30,
+            "width": 60
+          },
+          "hostSpaceId": "GF-03",
+          "id": "planner-desk-01",
+          "occupancy": 1,
+          "position": {
+            "x": 330,
+            "y": 48
+          },
+          "rotation": 0,
+          "sourceAssetId": "planner-desk-01"
+        },
+        {
+          "dimensions": {
+            "depth": 20,
+            "width": 20
+          },
+          "hostSpaceId": "GF-03",
+          "id": "planner-chair-01",
+          "occupancy": 1,
+          "position": {
+            "x": 360,
+            "y": 72
+          },
+          "rotation": 0,
+          "sourceAssetId": "planner-chair-01"
+        }
+      ],
+      "sourceReference": "planner5d-fixture-week16-02",
+      "tool": "Planner 5D",
+      "units": "inch"
+    },
+    "sourceReference": "planner5d-fixture-week16-02",
+    "tool": "Planner 5D",
+    "toolId": "planner5d-furnished-layout",
+    "validationStatus": "pending"
+  },
+  "modelRevision": 1,
+  "presentationOnly": true,
+  "rejectedPlacements": [
+    {
+      "assetId": "visitor-chair",
+      "findings": [
+        {
+          "message": "planner-chair-01 overlaps the clearance envelope of planner-desk-01.",
+          "objectId": "planner-chair-01",
+          "rule": "ASSET_CLEARANCES_MUST_NOT_OVERLAP",
+          "severity": "BLOCKER"
+        }
+      ],
+      "id": "planner-chair-01",
+      "presentationOnly": true,
+      "sourceAssetId": "planner-chair-01",
+      "status": "rejected"
+    }
+  ],
+  "sourceReference": "planner5d-fixture-week16-02",
+  "status": "review-required",
+  "tool": "Planner 5D",
+  "units": "inch",
+  "version": "week16-02.planner5d.v1"
+}

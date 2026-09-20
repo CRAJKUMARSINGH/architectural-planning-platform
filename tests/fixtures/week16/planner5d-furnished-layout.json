@@ -1,0 +1,50 @@
+{
+  "tool": "Planner 5D",
+  "sourceReference": "planner5d-fixture-week16-02",
+  "modelRevision": 1,
+  "units": "inch",
+  "assetMappings": [
+    {
+      "sourceAssetId": "planner-desk-01",
+      "sourceLabel": "Planner 5D Work Desk",
+      "assetId": "work-desk"
+    },
+    {
+      "sourceAssetId": "planner-chair-01",
+      "sourceLabel": "Planner 5D Visitor Chair",
+      "assetId": "visitor-chair"
+    }
+  ],
+  "placements": [
+    {
+      "id": "planner-desk-01",
+      "sourceAssetId": "planner-desk-01",
+      "hostSpaceId": "GF-03",
+      "position": {
+        "x": 330,
+        "y": 48
+      },
+      "rotation": 0,
+      "dimensions": {
+        "width": 60,
+        "depth": 30
+      },
+      "occupancy": 1
+    },
+    {
+      "id": "planner-chair-01",
+      "sourceAssetId": "planner-chair-01",
+      "hostSpaceId": "GF-03",
+      "position": {
+        "x": 360,
+        "y": 72
+      },
+      "rotation": 0,
+      "dimensions": {
+        "width": 20,
+        "depth": 20
+      },
+      "occupancy": 1
+    }
+  ]
+}

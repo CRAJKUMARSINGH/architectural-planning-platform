@@ -29,6 +29,8 @@ CANONICAL_PATH = REPORT_ROOT / "model" / "project.json"
 ASSET_REPORT_PATH = REPORT_ROOT / "week15-parametric-assets-report.json"
 CANDIDATE_REPORT_PATH = REPORT_ROOT / "week16-candidate-studio-report.json"
 AI_INPUT_REPORT_PATH = REPORT_ROOT / "week16-ai-tool-inputs.json"
+PLANNER5D_REPORT_PATH = REPORT_ROOT / "week16-planner5d-exchange-report.json"
+PLANNER5D_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "planner5d-furnished-layout.json"
 MANIFEST_PATH = REPORT_ROOT / "week1516-enrichment-manifest.json"
 CHANGELOG_PATH = REPORT_ROOT / "week1516-changelog.md"
 
@@ -37,6 +39,7 @@ WEEK16_VERSION = "week16.candidate-studio.v1"
 RENDER_VERSION = "week16.render-pipeline.v1"
 AI_INPUT_VERSION = "week16.ai-tool-inputs.v1"
 MAKET_INPUT_VERSION = "week16-01.maket-ai.v1"
+PLANNER5D_INPUT_VERSION = "week16-02.planner5d.v1"
 
 
 AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
@@ -61,6 +64,8 @@ AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
         "requiredEvidence": ["model revision", "asset scale", "clearance result", "tool/export reference"],
         "promotionGate": "presentation layer only; never authoritative geometry",
         "programWeeks": [8, 9, 15, 16],
+        "implementationStatus": "applied",
+        "implementationFixture": "tests/fixtures/week16/planner5d-furnished-layout.json",
     },
     {
         "id": "archistar-snaptrude-site-model",
@@ -337,6 +342,276 @@ def validate_maket_input(
         "authoritativeGeometryChanged": False,
         "canonicalModelRevision": model_revision,
     }
+
+
+def _planner5d_unit_scale(units: str) -> float | None:
+    return {
+        "inch": 1.0,
+        "in": 1.0,
+        "foot": 12.0,
+        "ft": 12.0,
+        "mm": 1 / 25.4,
+        "m": 39.3700787402,
+    }.get(str(units).strip().lower())
+
+
+def _planner5d_position(item: dict[str, Any]) -> tuple[float, float] | None:
+    position = item.get("position")
+    if isinstance(position, dict) and all(key in position for key in ("x", "y")):
+        if isinstance(position["x"], (int, float)) and isinstance(position["y"], (int, float)):
+            return float(position["x"]), float(position["y"])
+    rect = _rect(item.get("geometry")) or _rect(item.get("rect"))
+    if rect is not None:
+        return rect[0], rect[1]
+    return None
+
+
+def validate_planner5d_input(
+    model: dict[str, Any],
+    payload: dict[str, Any],
+    *,
+    source_reference: str,
+    model_revision: Any,
+) -> dict[str, Any]:
+    """Exchange a Planner 5D furnishing candidate through the Week 15 validator.
+
+    Planner 5D dimensions and coordinates are treated as an imported proposal.
+    Each item is remapped to a canonical asset, rebuilt from the canonical
+    dimensions, and then checked without changing ``model``.  A rejected item
+    remains useful evidence, but it cannot be promoted to the presentation
+    candidate.
+    """
+
+    normalized = ingest_ai_tool_input(
+        "planner5d-furnished-layout",
+        source_input=payload,
+        source_reference=source_reference,
+        model_revision=model_revision,
+    )
+    findings: list[dict[str, Any]] = []
+    units = str(payload.get("units", "")).strip().lower()
+    unit_scale = _planner5d_unit_scale(units)
+    if unit_scale is None:
+        findings.append(_finding("PLANNER5D_UNITS_REQUIRED", "Planner 5D input must declare supported units."))
+    imported_revision = payload.get("modelRevision", model_revision)
+    if imported_revision != model_revision:
+        findings.append(
+            _finding(
+                "PLANNER5D_MODEL_REVISION_MISMATCH",
+                f"Planner 5D revision {imported_revision!r} does not match canonical revision {model_revision!r}.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    mappings = payload.get("assetMappings")
+    mapping_by_source: dict[str, dict[str, Any]] = {}
+    mapping_report: list[dict[str, Any]] = []
+    if not isinstance(mappings, list) or not mappings:
+        findings.append(_finding("PLANNER5D_ASSET_MAPPING_REQUIRED", "Planner 5D input must provide typed asset mappings."))
+        mappings = []
+    for mapping in mappings:
+        if not isinstance(mapping, dict):
+            findings.append(_finding("PLANNER5D_ASSET_MAPPING_INVALID", "Each Planner 5D asset mapping must be an object."))
+            continue
+        source_asset_id = str(mapping.get("sourceAssetId", "")).strip()
+        asset_id = str(mapping.get("assetId", "")).strip()
+        spec = ASSET_CATALOG.get(asset_id)
+        if not source_asset_id or not asset_id or spec is None:
+            findings.append(
+                _finding(
+                    "PLANNER5D_ASSET_MAPPING_UNKNOWN",
+                    f"Planner 5D mapping {source_asset_id or asset_id or 'unnamed'} does not resolve to a canonical asset.",
+                )
+            )
+            mapping_report.append(
+                {
+                    "sourceAssetId": source_asset_id or None,
+                    "assetId": asset_id or None,
+                    "status": "rejected",
+                }
+            )
+            continue
+        if source_asset_id in mapping_by_source:
+            findings.append(
+                _finding(
+                    "PLANNER5D_ASSET_MAPPING_DUPLICATE",
+                    f"Planner 5D source asset {source_asset_id!r} has more than one canonical mapping.",
+                )
+            )
+            continue
+        mapping_by_source[source_asset_id] = mapping
+        mapping_report.append(
+            {
+                "sourceAssetId": source_asset_id,
+                "sourceLabel": mapping.get("sourceLabel"),
+                "assetId": asset_id,
+                "canonicalLabel": spec["label"],
+                "canonicalDimensions": copy.deepcopy(spec["dimensions"]),
+                "status": "mapped",
+            }
+        )
+
+    imported_items = payload.get("placements")
+    if not isinstance(imported_items, list) or not imported_items:
+        findings.append(_finding("PLANNER5D_PLACEMENTS_REQUIRED", "Planner 5D input must contain at least one furniture placement."))
+        imported_items = []
+
+    accepted: list[dict[str, Any]] = []
+    rejected: list[dict[str, Any]] = []
+    normalized_placements: list[dict[str, Any]] = []
+    for item in imported_items:
+        if not isinstance(item, dict):
+            findings.append(_finding("PLANNER5D_PLACEMENT_INVALID", "Each Planner 5D placement must be an object."))
+            continue
+        object_id = str(item.get("id", "")).strip() or "planner5d-placement"
+        source_asset_id = str(item.get("sourceAssetId", "")).strip()
+        mapping = mapping_by_source.get(source_asset_id)
+        if mapping is None:
+            rejected.append(
+                {
+                    "id": object_id,
+                    "sourceAssetId": source_asset_id or None,
+                    "status": "rejected",
+                    "findings": [
+                        _finding(
+                            "PLANNER5D_ASSET_MAPPING_REQUIRED",
+                            f"{object_id} has no canonical asset mapping.",
+                            object_id=object_id,
+                        )
+                    ],
+                }
+            )
+            continue
+        asset_id = str(mapping["assetId"])
+        spec = ASSET_CATALOG[asset_id]
+        item_findings: list[dict[str, Any]] = []
+        position = _planner5d_position(item)
+        if unit_scale is None or position is None:
+            item_findings.append(
+                _finding(
+                    "PLANNER5D_POSITION_REQUIRED",
+                    f"{object_id} needs a position with numeric x/y coordinates.",
+                    object_id=object_id,
+                )
+            )
+            rejected.append({"id": object_id, "sourceAssetId": source_asset_id, "status": "rejected", "findings": item_findings})
+            continue
+
+        try:
+            rotation = int(item.get("rotation", 0)) % 360
+        except (TypeError, ValueError):
+            rotation = -1
+        if rotation not in spec["rotationRules"]["allowedDegrees"]:
+            item_findings.append(
+                _finding(
+                    "PLANNER5D_ROTATION_NOT_ALLOWED",
+                    f"{object_id} uses rotation {rotation}; {asset_id} allows {spec['rotationRules']['allowedDegrees']}.",
+                    object_id=object_id,
+                )
+            )
+
+        imported_dimensions = item.get("dimensions")
+        if isinstance(imported_dimensions, dict) and unit_scale is not None:
+            for dimension in ("width", "depth"):
+                value = imported_dimensions.get(dimension)
+                expected = float(spec[dimension]) / unit_scale
+                if not isinstance(value, (int, float)) or abs(float(value) - expected) > 0.01:
+                    item_findings.append(
+                        _finding(
+                            "PLANNER5D_ASSET_SCALE_CONFLICT",
+                            f"{object_id} {dimension} does not match the canonical {asset_id} scale.",
+                            severity="REVIEW_REQUIRED",
+                            object_id=object_id,
+                        )
+                    )
+
+        host_space_id = str(item.get("hostSpaceId") or item.get("spaceId") or "")
+        space = next((space for space in model.get("spaces", []) if space.get("id") == host_space_id), None)
+        if space is not None and _room_use(space) not in set(spec["roomUses"]):
+            item_findings.append(
+                _finding(
+                    "PLANNER5D_ASSET_ROOM_USE_REVIEW",
+                    f"{object_id} maps {asset_id} into {_room_use(space)!r}, outside its catalog room uses.",
+                    severity="REVIEW_REQUIRED",
+                    object_id=object_id,
+                )
+            )
+
+        placement = _new_placement(
+            asset_id,
+            host_space_id,
+            position[0] * unit_scale,
+            position[1] * unit_scale,
+            rotation if rotation >= 0 else 0,
+            object_id=object_id,
+        )
+        placement.update(
+            {
+                "sourceTool": "Planner 5D",
+                "sourceAssetId": source_asset_id,
+                "sourceReference": source_reference,
+                "modelRevision": model_revision,
+                "occupancyIntent": item.get("occupancy"),
+                "serviceSideIntent": item.get("serviceSide"),
+                "presentationOnly": True,
+                "authoritative": False,
+            }
+        )
+        item_findings.extend(validate_placement(model, placement, existing=normalized_placements))
+        if item_findings:
+            rejected.append(
+                {
+                    "id": object_id,
+                    "sourceAssetId": source_asset_id,
+                    "assetId": asset_id,
+                    "status": "rejected",
+                    "presentationOnly": True,
+                    "findings": item_findings,
+                }
+            )
+        else:
+            accepted.append(copy.deepcopy(placement))
+        normalized_placements.append(placement)
+
+    baseline = furnish_model(model, seed=1516)
+    placement_findings = [finding for item in rejected for finding in item.get("findings", [])]
+    all_findings = findings + placement_findings
+    comparison = {
+        "baselineSeed": baseline["seed"],
+        "baselineStatus": baseline["status"],
+        "baselinePlacementCount": len(baseline["placements"]),
+        "importedPlacementCount": len(imported_items),
+        "acceptedPlacementCount": len(accepted),
+        "rejectedPlacementCount": len(rejected),
+        "plannerCandidateEligible": not findings and not rejected,
+        "deterministic": True,
+    }
+    result = {
+        "version": PLANNER5D_INPUT_VERSION,
+        "tool": "Planner 5D",
+        "sourceReference": source_reference,
+        "modelRevision": model_revision,
+        "canonicalModelRevision": model_revision,
+        "units": units,
+        "assetScaleToCanonicalInches": unit_scale,
+        "input": normalized,
+        "assetMappingReport": mapping_report,
+        "acceptedPlacements": accepted,
+        "rejectedPlacements": rejected,
+        "clearanceResult": {
+            "checked": len(normalized_placements),
+            "accepted": len(accepted),
+            "rejected": len(rejected),
+        },
+        "baselineComparison": comparison,
+        "findings": all_findings,
+        "authoritativeGeometryChanged": False,
+        "presentationOnly": True,
+        "candidateEligible": comparison["plannerCandidateEligible"],
+    }
+    result["determinism"] = {"algorithm": "sha256", "signature": _signature(result)}
+    result["status"] = "blocked" if any(item["severity"] == "BLOCKER" for item in findings) else ("review-required" if all_findings else "pass")
+    return result
 
 
 def _rect(value: Any) -> list[float] | None:
@@ -716,11 +991,21 @@ def enrichment_report(model: dict[str, Any]) -> dict[str, Any]:
     furnishings = furnish_model(model)
     candidates = candidate_studio(model, inherited_findings=model.get("findings", []) or [])
     package = design_package(model, candidates["bestCandidateId"])
+    planner5d = None
+    if PLANNER5D_FIXTURE_PATH.is_file():
+        planner_payload = json.loads(PLANNER5D_FIXTURE_PATH.read_text(encoding="utf-8"))
+        planner5d = validate_planner5d_input(
+            model,
+            planner_payload,
+            source_reference=str(planner_payload.get("sourceReference", "planner5d-fixture")),
+            model_revision=model.get("project", {}).get("revision"),
+        )
     return {
         "status": "blocked" if furnishings["status"] == "blocked" or candidates["status"] == "blocked" else "pass",
         "aiToolInputs": ai_tool_input_manifest(),
         "week15": furnishings,
         "week16": candidates,
+        "planner5d": planner5d,
         "designPackage": package,
     }
 
@@ -750,11 +1035,13 @@ def write_reports() -> dict[str, Any]:
     )
     model["parametricAssets"] = {"version": WEEK15_VERSION, "report": str(ASSET_REPORT_PATH.relative_to(ROOT)), "catalog": catalog, "presentation": report["week15"]}
     model["candidateStudio"] = {"version": WEEK16_VERSION, "report": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT)), "bestCandidateId": report["week16"]["bestCandidateId"], "status": report["week16"]["status"], "seeds": report["week16"]["seeds"]}
+    model["planner5dExchange"] = {"version": PLANNER5D_INPUT_VERSION, "report": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["planner5d"]["candidateEligible"], "status": report["planner5d"]["status"]}
     model["designPresentation"] = report["designPackage"]
     ASSET_REPORT_PATH.write_text(json.dumps(report["week15"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     AI_INPUT_REPORT_PATH.write_text(json.dumps(report["aiToolInputs"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     CANDIDATE_REPORT_PATH.write_text(json.dumps({"aiToolInputs": report["aiToolInputs"], "candidateStudio": report["week16"], "designPackage": report["designPackage"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    MANIFEST_PATH.write_text(json.dumps({"manifestVersion": "week1516.enrichment-manifest.v1", "status": report["status"], "reports": {"week15": str(ASSET_REPORT_PATH.relative_to(ROOT)), "week16": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT))}, "changelog": str(CHANGELOG_PATH.relative_to(ROOT)), "catalogVersion": WEEK15_VERSION, "candidateVersion": WEEK16_VERSION, "aiToolInputCatalogVersion": AI_INPUT_VERSION, "bestCandidateId": report["week16"]["bestCandidateId"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    PLANNER5D_REPORT_PATH.write_text(json.dumps(report["planner5d"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    MANIFEST_PATH.write_text(json.dumps({"manifestVersion": "week1516.enrichment-manifest.v1", "status": report["status"], "reports": {"week15": str(ASSET_REPORT_PATH.relative_to(ROOT)), "week16": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "planner5d": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT))}, "changelog": str(CHANGELOG_PATH.relative_to(ROOT)), "catalogVersion": WEEK15_VERSION, "candidateVersion": WEEK16_VERSION, "planner5dVersion": PLANNER5D_INPUT_VERSION, "aiToolInputCatalogVersion": AI_INPUT_VERSION, "bestCandidateId": report["week16"]["bestCandidateId"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     CHANGELOG_PATH.write_text(
         """# Week 15–16 enrichment changelog
 
@@ -795,6 +1082,17 @@ def write_reports() -> dict[str, Any]:
   `validate_maket_input`.
 - Conflicting dimensions become `review-required`; missing units or dimensions
   become blockers; the canonical model is never mutated.
+
+### W16-02 implementation status — Planner 5D
+
+- Added a furnishing exchange fixture with explicit model revision, units,
+  source asset mappings, scaled dimensions, occupancy intent, and placements.
+- Added canonical asset mapping and clearance validation through
+  `validate_planner5d_input`; route, door-swing, room-fit, and overlapping
+  clearance conflicts are retained as rejected-placement findings.
+- Added a deterministic comparison with the Week 15 furnishing baseline.
+  Imported items remain presentation-only and a rejected item cannot make the
+  Planner 5D candidate eligible.
 """,
         encoding="utf-8",
     )

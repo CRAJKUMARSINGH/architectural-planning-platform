@@ -6572,5 +6572,11 @@
       "tag": "W-02",
       "wall": "north"
     }
-  ]
+  ],
+  "planner5dExchange": {
+    "version": "week16-02.planner5d.v1",
+    "report": "bar-association-hall/standard/week16-planner5d-exchange-report.json",
+    "candidateEligible": false,
+    "status": "review-required"
+  }
 }

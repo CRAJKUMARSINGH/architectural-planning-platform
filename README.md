@@ -540,6 +540,12 @@ The Week 15 and Week 16 enrichment is implemented in the canonical pipeline.
   deterministic seeds and transparent area, adjacency, route,
   daylight/ventilation, vertical-coordination, furniture-fit, and visual
   metrics. A candidate with a `BLOCKER` or `ERROR` cannot win.
+- **W16-02 — Planner 5D furnishing candidate exchange:** imported furniture
+  now passes through typed canonical asset mappings, model-revision and scale
+  checks, and the Week 15 clearance validator. Route, door-swing, room-fit,
+  stair/service-zone, and overlapping-clearance conflicts are reported as
+  rejected placements; imported items remain presentation-only, and a
+  rejected item makes the Planner 5D candidate ineligible.
 - Moodboards, palettes, materials, lighting presets, non-destructive design
   layers, render/panorama/presentation-sheet job manifests, and
   technical-plan-to-render revision traceability are included.
@@ -555,9 +561,12 @@ The Week 15 and Week 16 enrichment is implemented in the canonical pipeline.
 - Deterministic artifacts:
   - `bar-association-hall/standard/week15-parametric-assets-report.json`
   - `bar-association-hall/standard/week16-candidate-studio-report.json`
+  - `bar-association-hall/standard/week16-planner5d-exchange-report.json`
   - `bar-association-hall/standard/week1516-enrichment-manifest.json`
   - `bar-association-hall/standard/week1516-changelog.md`
-- Regression tests live in `tests/test_week1516_enrichment.py`.
+- Regression tests live in `tests/test_week1516_enrichment.py`, including
+  Planner 5D mapping, clearance rejection, route blocking, non-mutation, and
+  deterministic comparison coverage.
 
 Commands:
 
@@ -571,6 +580,11 @@ npm run test:week1516
 **Task completion:** Week 15–16 enrichment is complete and marked done in
 this README. Outputs remain preliminary planning/presentation aids and require
 appointed architect, engineers, surveyor, and local-authority review.
+
+**W16-02 completion:** Planner 5D furnishing candidate exchange is implemented,
+tested, evidence-backed, and marked done. The fixture intentionally retains one
+clearance-conflicting placement as rejected review evidence; it is not promoted
+to the presentation candidate.
 
 ## Week 17–18 task status — applied and marked done
 

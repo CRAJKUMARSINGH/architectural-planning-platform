@@ -52,6 +52,8 @@ The implementation surface is the Week 16 contract in scripts/week1516.py, the m
 
 **Evidence and gate:** model revision, asset scale, clearance result, source reference, and rejected conflicts. No candidate may win if the imported furniture blocks a route, stair, service zone, or door swing.
 
+**Implementation status:** Applied in `scripts/week1516.py` through `validate_planner5d_input`, with the exchange fixture at `tests/fixtures/week16/planner5d-furnished-layout.json`, generated evidence at `bar-association-hall/standard/week16-planner5d-exchange-report.json`, and regression coverage in `tests/test_week1516_enrichment.py`.
+
 ## W16-03 — Archistar / Snaptrude: site-feasibility evidence
 
 **Potential study:** use site and building-scale modelling patterns for north, frontage, setbacks, levels, public access, staff access, service access, and massing assumptions.
