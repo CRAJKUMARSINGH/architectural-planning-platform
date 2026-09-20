@@ -4,6 +4,38 @@ The Week 9 and Week 10 enrichment from
 [`docs/ARCHITECTURAL_INTELLIGENCE_ROADMAP.md`](docs/ARCHITECTURAL_INTELLIGENCE_ROADMAP.md)
 has been implemented and merged into the canonical planning pipeline.
 
+## Fresh Week 01–16 program — Weeks 01–05 applied
+
+The fresh execution program now uses a common root drafting kernel plus small
+building-type recipes instead of duplicating planning logic in one weekly file.
+The program includes safe optimization guidance derived from the requested
+Maket.ai, Planner 5D, Archistar/Snaptrude, Floorplanner, Roomstyler/Homestyler,
+Magicplan, LLM, 4Lines.ai, and Archiagent patterns. Those tools are visual and
+workflow references only; they do not replace canonical geometry validation or
+professional review.
+
+- Program: [`docs/FRESH_WEEKLY_PROGRAM_01_16.md`](docs/FRESH_WEEKLY_PROGRAM_01_16.md)
+- Common kernel: [`scripts/drafting_kernel.py`](scripts/drafting_kernel.py)
+- Small project recipes: [`packages/recipes/index.json`](packages/recipes/index.json)
+- Safe visual-tool patterns:
+  [`packages/recipes/visual-tool-patterns.json`](packages/recipes/visual-tool-patterns.json)
+- Fresh Week 01–05 report:
+  `bar-association-hall/standard/fresh-week01-05-kernel-report.json`
+
+Run the fresh Week 01–05 contract with:
+
+```bash
+npm run enrich:fresh-week01-05
+npm run validate:fresh-week01-05
+npm run test:fresh-week01-05
+```
+
+**Task completion:** the fresh Week 01–05 kernel/recipe enrichment and the
+fresh Week 01–16 program are applied in this branch and marked complete here.
+Outputs remain preliminary planning aids and are not construction, permit, code,
+accessibility, fire/life-safety, structural, MEP, survey, or authority
+certification.
+
 ## Delivered
 
 - **Week 9 — furniture and presentation:** a versioned furniture/equipment library
