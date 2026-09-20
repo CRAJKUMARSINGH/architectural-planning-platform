@@ -665,6 +665,10 @@ workspace into the main web stream:
 - The default React route is now a responsive Advocate Chambers landing page
   with a canonical-plan preview, model-truth/visual-clarity/delivery-confidence
   sections, the review-first workflow, and validation evidence signals.
+- The landing page now opens a project-intake screen that lets a user choose
+  **New project** or **Continue existing**, enter a project name, narrate
+  instructions, and attach multiple PDF, DOC/DOCX, TXT/MD, Excel/CSV, or image
+  references before entering the workspace.
 - **Open workspace** enters the existing live 2D drawing editor, including
   product modes, level selection, validation, artifacts, and property
   inspection. The landing page and editor are one application, not separate

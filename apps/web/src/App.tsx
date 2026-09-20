@@ -9,6 +9,16 @@ import './App.css';
 
 type LevelId = 'GF' | 'FF';
 
+type ProjectMode = 'new' | 'existing';
+
+type ProjectDraft = {
+  mode: ProjectMode;
+  projectId: string;
+  name: string;
+  narration: string;
+  files: Array<{ name: string; size: number; type: string }>;
+};
+
 function BrandMark(): React.JSX.Element {
   return (
     <span className="brand-mark" aria-hidden="true">
@@ -94,6 +104,166 @@ function PlanPreview(): React.JSX.Element {
         <span><i className="status-dot" /> Canonical model · Revision 1</span>
         <span>Units: inches</span>
       </div>
+    </div>
+  );
+}
+
+function ProjectSetup({ onStart }: { onStart: (draft: ProjectDraft) => void }): React.JSX.Element {
+  const [mode, setMode] = useState<ProjectMode>('new');
+  const [name, setName] = useState('');
+  const [selectedProject, setSelectedProject] = useState('proj-banswara-bar-association');
+  const [narration, setNarration] = useState('');
+  const [files, setFiles] = useState<Array<{ name: string; size: number; type: string }>>([]);
+
+  const existingProjects = [
+    {
+      id: 'proj-banswara-bar-association',
+      name: 'Bar Association Hall',
+      meta: 'Banswara · Revision 1 · 17 spaces',
+      tone: 'blue',
+    },
+    {
+      id: 'proj-jamuniya-shaktawat',
+      name: 'Jamuniya Shaktawat',
+      meta: 'Planning archive · CAD and PDF sources',
+      tone: 'cream',
+    },
+  ];
+
+  const handleFiles = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const incoming = Array.from(event.target.files ?? []);
+    setFiles((current) => [
+      ...current,
+      ...incoming.map((file) => ({ name: file.name, size: file.size, type: file.type })),
+    ]);
+    event.target.value = '';
+  };
+
+  const removeFile = (nameToRemove: string) => {
+    setFiles((current) => current.filter((file) => file.name !== nameToRemove));
+  };
+
+  const projectName = mode === 'new'
+    ? name.trim()
+    : existingProjects.find((project) => project.id === selectedProject)?.name ?? 'Project';
+  const canStart = Boolean(projectName);
+
+  return (
+    <div className="setup-page">
+      <header className="setup-header">
+        <a className="brand" href="#" aria-label="Advocate Chambers home">
+          <BrandMark />
+          <span className="brand-copy"><strong>Advocate</strong><span>Chambers</span></span>
+        </a>
+        <span className="setup-header__step">PROJECT INTAKE <b>01 / 01</b></span>
+      </header>
+      <main className="setup-main">
+        <div className="setup-intro">
+          <div className="eyebrow"><span className="eyebrow-line" /> Start with the work, not the paperwork</div>
+          <h1>Give the project<br /><em>a clear beginning.</em></h1>
+          <p>Choose a project to continue, or start a new one with the instruction and source files that matter.</p>
+        </div>
+        <section className="setup-card">
+          <div className="setup-card__tabs" role="tablist" aria-label="Project mode">
+            <button className={mode === 'new' ? 'setup-tab setup-tab--active' : 'setup-tab'} type="button" onClick={() => setMode('new')} role="tab" aria-selected={mode === 'new'}>
+              <span className="setup-tab__number">01</span>
+              <span><strong>New project</strong><small>Begin with a fresh brief</small></span>
+            </button>
+            <button className={mode === 'existing' ? 'setup-tab setup-tab--active' : 'setup-tab'} type="button" onClick={() => setMode('existing')} role="tab" aria-selected={mode === 'existing'}>
+              <span className="setup-tab__number">02</span>
+              <span><strong>Continue existing</strong><small>Pick up where you left off</small></span>
+            </button>
+          </div>
+
+          <div className="setup-card__body">
+            {mode === 'new' ? (
+              <label className="field-label">
+                Project name
+                <input
+                  className="setup-input"
+                  type="text"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  placeholder="e.g. Mahi Colony Court Campus"
+                  autoFocus
+                />
+              </label>
+            ) : (
+              <div className="existing-projects">
+                <span className="field-label">Your projects</span>
+                {existingProjects.map((project) => (
+                  <button
+                    className={`existing-project ${selectedProject === project.id ? 'existing-project--selected' : ''}`}
+                    type="button"
+                    key={project.id}
+                    onClick={() => setSelectedProject(project.id)}
+                  >
+                    <span className={`existing-project__mark existing-project__mark--${project.tone}`}>{project.name.slice(0, 2).toUpperCase()}</span>
+                    <span><strong>{project.name}</strong><small>{project.meta}</small></span>
+                    <span className="existing-project__check">{selectedProject === project.id ? '✓' : ''}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <label className="field-label">
+              Narration / instructions
+              <span className="field-hint">Describe the project in your own words. Include the decisions, constraints, or output you need first.</span>
+              <textarea
+                className="setup-input setup-input--textarea"
+                value={narration}
+                onChange={(event) => setNarration(event.target.value)}
+                placeholder="I need a coordinated preliminary plan for..."
+                rows={5}
+              />
+            </label>
+
+            <div className="field-label">
+              Source files <span className="field-optional">optional</span>
+              <label className="file-drop">
+                <input
+                  type="file"
+                  multiple
+                  accept=".pdf,.doc,.docx,.txt,.md,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.webp,.svg,image/*"
+                  onChange={handleFiles}
+                />
+                <span className="file-drop__icon">↑</span>
+                <span><strong>Drop files here or browse</strong><small>PDF, DOC, TXT, Excel, CSV, or image files</small></span>
+              </label>
+              {files.length > 0 && (
+                <div className="file-list" aria-label="Selected source files">
+                  {files.map((file) => (
+                    <div className="file-item" key={`${file.name}-${file.size}`}>
+                      <span className="file-item__type">{file.name.split('.').pop()?.toUpperCase() ?? 'FILE'}</span>
+                      <span>{file.name}<small>{Math.max(1, Math.round(file.size / 1024))} KB</small></span>
+                      <button type="button" onClick={() => removeFile(file.name)} aria-label={`Remove ${file.name}`}>×</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="setup-card__footer">
+              <span><i className="status-dot" /> Files are attached to this intake session</span>
+              <button
+                className="button button--primary"
+                type="button"
+                disabled={!canStart}
+                onClick={() => onStart({
+                  mode,
+                  projectId: mode === 'new' ? `project-${projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}` : selectedProject,
+                  name: projectName,
+                  narration: narration.trim(),
+                  files,
+                })}
+              >
+                Start working <ArrowIcon />
+              </button>
+            </div>
+          </div>
+        </section>
+        <p className="setup-note">You can add more context, drawings, and references from inside the workspace at any time.</p>
+      </main>
     </div>
   );
 }
@@ -238,18 +408,25 @@ function LandingPage({ onOpenStudio }: { onOpenStudio: () => void }): React.JSX.
   );
 }
 
-function StudioView({ onBack }: { onBack: () => void }): React.JSX.Element {
+function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft }): React.JSX.Element {
   const [level, setLevel] = useState<LevelId>('GF');
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const projectId = 'proj-banswara-bar-association';
+  const projectId = draft.projectId;
 
   return (
     <div className="studio-shell">
       <header className="studio-header">
         <button className="studio-back" type="button" onClick={onBack}>← Back to overview</button>
-        <div className="studio-title"><BrandMark /><strong>Advocate Chambers</strong><span>Workspace</span></div>
+        <div className="studio-title"><BrandMark /><strong>{draft.name}</strong><span>Workspace</span></div>
         <div className="studio-revision"><span className="status-dot" /> Revision 1 · Preliminary review</div>
       </header>
+      {(draft.narration || draft.files.length > 0) && (
+        <div className="studio-intake-strip">
+          <span className="studio-intake-strip__label">INTAKE</span>
+          {draft.narration && <span className="studio-intake-strip__narration">{draft.narration}</span>}
+          {draft.files.length > 0 && <span className="studio-intake-strip__files">{draft.files.length} source file{draft.files.length === 1 ? '' : 's'} attached</span>}
+        </div>
+      )}
       <div className="studio-body">
         <aside className="studio-sidebar">
           <ProductModePanel />
@@ -269,8 +446,18 @@ function StudioView({ onBack }: { onBack: () => void }): React.JSX.Element {
 }
 
 export function App(): React.JSX.Element {
-  const [view, setView] = useState<'landing' | 'studio'>('landing');
+  const [view, setView] = useState<'landing' | 'setup' | 'studio'>('landing');
+  const [draft, setDraft] = useState<ProjectDraft>({
+    mode: 'existing',
+    projectId: 'proj-banswara-bar-association',
+    name: 'Bar Association Hall',
+    narration: '',
+    files: [],
+  });
+  if (view === 'setup') {
+    return <ProjectSetup onStart={(nextDraft) => { setDraft(nextDraft); setView('studio'); }} />;
+  }
   return view === 'studio'
-    ? <StudioView onBack={() => setView('landing')} />
-    : <LandingPage onOpenStudio={() => setView('studio')} />;
+    ? <StudioView draft={draft} onBack={() => setView('landing')} />
+    : <LandingPage onOpenStudio={() => setView('setup')} />;
 }
