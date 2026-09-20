@@ -1,0 +1,96 @@
+{
+  "errors": [],
+  "hardGates": {
+    "baselineRegression": "PASS",
+    "criticalDefectDetection": "PASS",
+    "dangerousFalseNegatives": "PASS",
+    "performanceBenchmark": "PASS",
+    "professionalReview": "REVIEW_REQUIRED",
+    "reproducibility": "PASS"
+  },
+  "professionalReviewRequired": true,
+  "releaseReady": false,
+  "reportSignature": "9bd1688eafed5a50461fa26ad1be650e1a04ece462c82afec5a91ad720b20bed",
+  "score": null,
+  "status": "REVIEW_REQUIRED",
+  "tracks": {
+    "adversarial": {
+      "allCriticalFindingsComplete": true,
+      "completeFindings": 30.0,
+      "criticalRecall": 1.0,
+      "dangerousFalseNegatives": 0,
+      "detectedCriticalDefects": 30,
+      "falsePositiveCount": 0,
+      "missedCriticalDefects": 0,
+      "sourceReport": "bar-association-hall/standard/week23-adversarial-expansion-report.json",
+      "status": "PASS",
+      "totalCriticalDefects": 30,
+      "zeroDangerousFalseNegatives": true
+    },
+    "performance": {
+      "dataLossEvents": 0,
+      "deterministic": true,
+      "failureCounts": {
+        "dataLossEvents": 0,
+        "nondeterministicRuns": 0,
+        "outOfMemoryFailures": 0,
+        "silentTimeouts": 0
+      },
+      "nondeterministicRuns": 0,
+      "outOfMemoryFailures": 0,
+      "profiles": [
+        "small",
+        "medium",
+        "large"
+      ],
+      "silentTimeouts": 0,
+      "sourceReport": "bar-association-hall/standard/week25-performance-report.json",
+      "status": "PASS"
+    },
+    "professionalReview": {
+      "agreementTargetMet": false,
+      "criticalDefectsAcceptedAsUsable": null,
+      "criticalDefectsRejectedAsUsable": false,
+      "criticalFindingsReproducible": null,
+      "plansReviewed": 0,
+      "reviewStatus": "PENDING_EXTERNAL_REVIEW",
+      "reviewers": 0,
+      "sourceReport": "bar-association-hall/standard/week24-anonymized-review-results.json",
+      "status": "REVIEW_REQUIRED",
+      "usableAgreement": null
+    },
+    "regression": {
+      "command": "python3 -m unittest discover -s tests -p 'test_week*.py'",
+      "failed": 0,
+      "passed": 101,
+      "previousWeek21BaselineTests": 69,
+      "status": "PASS",
+      "suite": "full weekly regression",
+      "tests": 101,
+      "verification": "Current regression suite recorded from the Week 26 validation run"
+    },
+    "reproducibility": {
+      "acceptance": {
+        "missingArtifactsExplicit": true,
+        "partialGenerationCannotReplaceValidRevision": true,
+        "rerunMatchesOriginal": true,
+        "secondWorkspaceCanVerify": true,
+        "softArchiveRestorePreservesRevision": true,
+        "tamperedManifestRejected": true
+      },
+      "missingArtifactsExplicit": true,
+      "partialGenerationCannotReplaceValidRevision": true,
+      "rerunMatchesOriginal": true,
+      "secondWorkspaceCanVerify": true,
+      "softArchiveRestorePreservesRevision": true,
+      "sourceReport": "bar-association-hall/standard/week26-reproducibility-report.json",
+      "status": "PASS",
+      "tamperedManifestRejected": true
+    }
+  },
+  "version": "week21.quality-gate.v1",
+  "warnings": [
+    "Missing benchmark evidence is reported as INCOMPLETE, never as pass.",
+    "This quality gate does not grant planning, permit, code, or construction approval."
+  ]
+}

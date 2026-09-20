@@ -1,5 +1,20 @@
 # Week 9–10 architectural enrichment — applied
 
+## Enterprise Enrichment E01 — foundation slice started
+
+The attached enterprise plan is preserved under
+[`code-junction/Advocate-Chambers-Enterprise-Enrichment/`](code-junction/Advocate-Chambers-Enterprise-Enrichment/).
+The first E01 slice adds repository hygiene and a frozen verification baseline
+without changing geometry or runtime behavior:
+
+- pinned Node/Python versions and shared Python tooling configuration;
+- `CONTRIBUTING.md`, `SECURITY.md`, `CODEOWNERS`, and `CHANGELOG.md`;
+- baseline reports under `baselines/2026-09-20/`;
+- one-command verification with `npm run verify:baseline`.
+
+E01 remains in progress; persistence, identity, queues, CI enforcement, and
+deployment are intentionally deferred to their ordered enterprise weeks.
+
 ## W1-E-10 — Week 1 regression contract: DONE
 
 The Week 1 baseline contract is now synchronized with the current canonical
