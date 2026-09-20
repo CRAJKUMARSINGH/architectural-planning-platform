@@ -1,8 +1,7 @@
 # Week 9–10 architectural enrichment — applied
 
-The Week 9 and Week 10 enrichment from
-[`docs/ARCHITECTURAL_INTELLIGENCE_ROADMAP.md`](docs/ARCHITECTURAL_INTELLIGENCE_ROADMAP.md)
-has been implemented and merged into the canonical planning pipeline.
+The Week 9 and Week 10 enrichment has been implemented and merged into the
+canonical planning pipeline.
 
 ## Fresh Week 01–16 program — Weeks 01–05 applied
 
@@ -14,7 +13,6 @@ Magicplan, LLM, 4Lines.ai, and Archiagent patterns. Those tools are visual and
 workflow references only; they do not replace canonical geometry validation or
 professional review.
 
-- Program: [`docs/FRESH_WEEKLY_PROGRAM_01_16.md`](docs/FRESH_WEEKLY_PROGRAM_01_16.md)
 - Common kernel: [`scripts/drafting_kernel.py`](scripts/drafting_kernel.py)
 - Small project recipes: [`packages/recipes/index.json`](packages/recipes/index.json)
 - Safe visual-tool patterns:
@@ -90,11 +88,9 @@ another feature-only phase. It adds a weekly plan for adversarial architectural
 fixtures, independent professional review, performance benchmarks, and
 reproducibility gates.
 
-See
-[`docs/VALIDATION_AND_BENCHMARK_WEEKLY_PROGRAM.md`](docs/VALIDATION_AND_BENCHMARK_WEEKLY_PROGRAM.md)
-for the Week 21–27 execution plan, acceptance thresholds, benchmark workload
-profiles, reviewer scorecard, release classifications, and proposed evidence
-layout.
+The Week 21–27 validation track records acceptance thresholds, benchmark
+workload profiles, reviewer scorecards, release classifications, and proposed
+evidence layout.
 
 The target release statement is: **100% detection of known critical defects,
 zero dangerous false negatives, reproducible professional findings, measured
@@ -470,9 +466,7 @@ MEP, or construction certification.
 
 ## Week 13–14 task status — applied and marked done
 
-The Week 13 and Week 14 enrichment from
-[`docs/ARCHITECTURAL_INTELLIGENCE_ROADMAP.md`](docs/ARCHITECTURAL_INTELLIGENCE_ROADMAP.md)
-is implemented in the canonical pipeline.
+The Week 13 and Week 14 enrichment is implemented in the canonical pipeline.
 
 - **Week 13 — import, recognition and editable digital twin:** DXF source
   inspection preserves source hash, entity/layer counts and geometry-preserved
@@ -521,9 +515,7 @@ engineers, surveyor and local authority review.
 
 ## Week 15–16 task status — applied and marked done
 
-The Week 15 and Week 16 enrichment from
-[`docs/ARCHITECTURAL_INTELLIGENCE_ROADMAP.md`](docs/ARCHITECTURAL_INTELLIGENCE_ROADMAP.md)
-is implemented in the canonical pipeline.
+The Week 15 and Week 16 enrichment is implemented in the canonical pipeline.
 
 - **Week 15 — parametric assets and clearance-aware furnishing:** the typed
   catalog covers furniture, fixtures, appliances, sanitaryware, seating rows,
@@ -574,9 +566,8 @@ appointed architect, engineers, surveyor, and local-authority review.
 
 ## Week 17–18 task status — applied and marked done
 
-The Week 17 and Week 18 enrichment from
-[`docs/ARCHITECTURAL_INTELLIGENCE_ROADMAP.md`](docs/ARCHITECTURAL_INTELLIGENCE_ROADMAP.md)
-is implemented in the canonical pipeline and marked complete here.
+The Week 17 and Week 18 enrichment is implemented in the canonical pipeline and
+marked complete here.
 
 - **Week 17 — site feasibility and transparent plan review:** the site
   workspace exposes plot bounds, north, setbacks, access points, level and
