@@ -1,0 +1,229 @@
+{
+  "acceptedObjects": [
+    {
+      "authoritative": false,
+      "confidence": 0.96,
+      "editableGeometry": true,
+      "findings": [],
+      "id": "recognized-room-office",
+      "kind": "room",
+      "manualConfirmation": true,
+      "promotion": {
+        "postPromotionModelRevision": 2,
+        "validationRerunSignature": "topology-clearance-rerun-week16-06-accepted-room"
+      },
+      "proposedObjectId": "GF-03",
+      "queueStatus": "accepted",
+      "sourceImageId": "photo-office-capture-01"
+    }
+  ],
+  "authoritativeGeometryChanged": false,
+  "candidateEligible": false,
+  "canonicalModelRevision": 1,
+  "captureMetadata": {
+    "device": "phone-camera",
+    "method": "photo-assisted-room-capture",
+    "operatorReviewState": "pending"
+  },
+  "determinism": {
+    "algorithm": "sha256",
+    "signature": "853d84d7317f15958ef6a98b3760cb5162ab4d68ac245aae24b31f7b67206e00"
+  },
+  "findings": [],
+  "input": {
+    "authoritative": false,
+    "inputRole": "photo-assisted existing-plan capture",
+    "modelRevision": 1,
+    "promotionGate": "review queue only; do not silently promote recognition to editable geometry",
+    "promotionStatus": "review-required",
+    "reviewState": "pending",
+    "sourceInput": {
+      "captureMetadata": {
+        "device": "phone-camera",
+        "method": "photo-assisted-room-capture",
+        "operatorReviewState": "pending"
+      },
+      "knownDimensions": [
+        {
+          "id": "known-wall-span-01",
+          "source": "laser-measured-wall-span",
+          "units": "inch",
+          "value": 120
+        }
+      ],
+      "modelRevision": 1,
+      "photos": [
+        {
+          "captureMetadata": {
+            "device": "phone-camera",
+            "locationNote": "President Chamber",
+            "orientation": "landscape"
+          },
+          "capturedAt": "2026-09-01T10:30:00+05:30",
+          "id": "photo-office-capture-01",
+          "sourceImage": "survey-review-package/magicplan/office-capture-01.jpg"
+        }
+      ],
+      "recognizedObjects": [
+        {
+          "confidence": 0.96,
+          "id": "recognized-room-office",
+          "kind": "room",
+          "manualConfirmation": true,
+          "promotion": {
+            "postPromotionModelRevision": 2,
+            "validationRerunSignature": "topology-clearance-rerun-week16-06-accepted-room"
+          },
+          "proposedObjectId": "GF-03",
+          "queueStatus": "accepted",
+          "sourceImageId": "photo-office-capture-01"
+        },
+        {
+          "confidence": 0.62,
+          "id": "recognized-opening-uncertain",
+          "kind": "opening",
+          "manualConfirmation": false,
+          "proposedObjectId": "D-GF-03",
+          "queueStatus": "uncertain",
+          "sourceImageId": "photo-office-capture-01"
+        },
+        {
+          "confidence": 0.21,
+          "id": "recognized-wall-rejected",
+          "kind": "wall",
+          "manualConfirmation": false,
+          "queueStatus": "rejected",
+          "sourceImageId": "photo-office-capture-01"
+        }
+      ],
+      "scaleEvidence": [
+        {
+          "confidence": 0.94,
+          "dimensionId": "known-wall-span-01",
+          "method": "visible-measured-span",
+          "photoId": "photo-office-capture-01"
+        }
+      ],
+      "sourceReference": "magicplan-fixture-week16-06",
+      "tool": "Magicplan"
+    },
+    "sourceReference": "magicplan-fixture-week16-06",
+    "tool": "Magicplan",
+    "toolId": "magicplan-photo-capture",
+    "validationStatus": "pending"
+  },
+  "knownDimensions": [
+    {
+      "id": "known-wall-span-01",
+      "source": "laser-measured-wall-span",
+      "units": "inch",
+      "value": 120
+    }
+  ],
+  "modelRevision": 1,
+  "photos": [
+    {
+      "captureMetadata": {
+        "device": "phone-camera",
+        "locationNote": "President Chamber",
+        "orientation": "landscape"
+      },
+      "capturedAt": "2026-09-01T10:30:00+05:30",
+      "id": "photo-office-capture-01",
+      "sourceImage": "survey-review-package/magicplan/office-capture-01.jpg"
+    }
+  ],
+  "promotedObjects": [
+    {
+      "authoritative": false,
+      "confidence": 0.96,
+      "editableGeometry": true,
+      "findings": [],
+      "id": "recognized-room-office",
+      "kind": "room",
+      "manualConfirmation": true,
+      "promotion": {
+        "postPromotionModelRevision": 2,
+        "validationRerunSignature": "topology-clearance-rerun-week16-06-accepted-room"
+      },
+      "proposedObjectId": "GF-03",
+      "queueStatus": "accepted",
+      "sourceImageId": "photo-office-capture-01"
+    }
+  ],
+  "promotionPolicy": "only manually confirmed, scale-backed objects with a validation rerun may become editable in a later revision",
+  "recognitionSummary": {
+    "accepted": 1,
+    "imageOnlyPromotionBlocked": false,
+    "promoted": 1,
+    "recognized": 3,
+    "rejected": 1,
+    "uncertain": 1
+  },
+  "rejectedObjects": [
+    {
+      "authoritative": false,
+      "confidence": 0.21,
+      "editableGeometry": false,
+      "findings": [],
+      "id": "recognized-wall-rejected",
+      "kind": "wall",
+      "manualConfirmation": false,
+      "proposedObjectId": null,
+      "queueStatus": "rejected",
+      "sourceImageId": "photo-office-capture-01"
+    }
+  ],
+  "reviewQueue": [
+    {
+      "authoritative": false,
+      "confidence": 0.62,
+      "editableGeometry": false,
+      "findings": [],
+      "id": "recognized-opening-uncertain",
+      "kind": "opening",
+      "manualConfirmation": false,
+      "proposedObjectId": "D-GF-03",
+      "queueStatus": "uncertain",
+      "sourceImageId": "photo-office-capture-01"
+    },
+    {
+      "authoritative": false,
+      "confidence": 0.21,
+      "editableGeometry": false,
+      "findings": [],
+      "id": "recognized-wall-rejected",
+      "kind": "wall",
+      "manualConfirmation": false,
+      "proposedObjectId": null,
+      "queueStatus": "rejected",
+      "sourceImageId": "photo-office-capture-01"
+    }
+  ],
+  "scaleEvidence": [
+    {
+      "confidence": 0.94,
+      "dimensionId": "known-wall-span-01",
+      "method": "visible-measured-span",
+      "photoId": "photo-office-capture-01"
+    }
+  ],
+  "sourceReference": "magicplan-fixture-week16-06",
+  "status": "review-required",
+  "tool": "Magicplan",
+  "uncertainObjects": [
+    {
+      "authoritative": false,
+      "confidence": 0.62,
+      "editableGeometry": false,
+      "findings": [],
+      "id": "recognized-opening-uncertain",
+      "kind": "opening",
+      "manualConfirmation": false,
+      "proposedObjectId": "D-GF-03",
+      "queueStatus": "uncertain",
+      "sourceImageId": "photo-office-capture-01"
+    }
+  ],
+  "version": "week16-06.magicplan.v1"
+}

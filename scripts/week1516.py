@@ -35,6 +35,10 @@ ARCHISTAR_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "archistar-sna
 ARCHISTAR_REPORT_PATH = REPORT_ROOT / "week16-archistar-snaptrude-site-report.json"
 FLOORPLANNER_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "floorplanner-synchronized-view.json"
 FLOORPLANNER_REPORT_PATH = REPORT_ROOT / "week16-floorplanner-synchronized-view-report.json"
+ROOMSTYLER_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "roomstyler-presentation-options.json"
+ROOMSTYLER_REPORT_PATH = REPORT_ROOT / "week16-roomstyler-presentation-report.json"
+MAGICPLAN_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "magicplan-recognition-queue.json"
+MAGICPLAN_REPORT_PATH = REPORT_ROOT / "week16-magicplan-recognition-report.json"
 MANIFEST_PATH = REPORT_ROOT / "week1516-enrichment-manifest.json"
 CHANGELOG_PATH = REPORT_ROOT / "week1516-changelog.md"
 
@@ -46,6 +50,8 @@ MAKET_INPUT_VERSION = "week16-01.maket-ai.v1"
 PLANNER5D_INPUT_VERSION = "week16-02.planner5d.v1"
 ARCHISTAR_INPUT_VERSION = "week16-03.archistar-snaptrude.v1"
 FLOORPLANNER_INPUT_VERSION = "week16-04.floorplanner.v1"
+ROOMSTYLER_INPUT_VERSION = "week16-05.roomstyler-homestyler.v1"
+MAGICPLAN_INPUT_VERSION = "week16-06.magicplan.v1"
 
 
 AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
@@ -106,6 +112,8 @@ AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
         "requiredEvidence": ["asset dimensions", "clearance result", "model revision", "source reference"],
         "promotionGate": "non-authoritative presentation option; recheck routes and door swings",
         "programWeeks": [9, 15, 16],
+        "implementationStatus": "applied",
+        "implementationFixture": "tests/fixtures/week16/roomstyler-presentation-options.json",
     },
     {
         "id": "magicplan-photo-capture",
@@ -116,6 +124,8 @@ AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
         "requiredEvidence": ["source image", "scale evidence", "confidence", "manual confirmation"],
         "promotionGate": "review queue only; do not silently promote recognition to editable geometry",
         "programWeeks": [1, 13, 14, 16],
+        "implementationStatus": "applied",
+        "implementationFixture": "tests/fixtures/week16/magicplan-recognition-queue.json",
     },
     {
         "id": "llm-brief-refinement",
@@ -1307,6 +1317,568 @@ def validate_floorplanner_input(
 validate_floorplanner_view_input = validate_floorplanner_input
 
 
+def _canonical_object_ids(model: dict[str, Any]) -> set[str]:
+    """Return IDs that a photo-recognition result may propose linking to."""
+
+    object_ids: set[str] = set()
+    for collection in ("spaces", "openings", "walls", "stairs", "routes", "serviceZones"):
+        for item in model.get(collection, []) or []:
+            if isinstance(item, dict) and str(item.get("id", "")).strip():
+                object_ids.add(str(item["id"]))
+    return object_ids
+
+
+def validate_roomstyler_homestyler_input(
+    model: dict[str, Any],
+    payload: dict[str, Any],
+    *,
+    source_reference: str,
+    model_revision: Any,
+) -> dict[str, Any]:
+    """Validate a Roomstyler/Homestyler presentation option.
+
+    Imported furniture and finishes are rebuilt as typed presentation objects
+    from the canonical asset catalog.  The technical plan remains a separate
+    traceable surface; styling can expose a blocker but cannot hide or edit it.
+    """
+
+    normalized = ingest_ai_tool_input(
+        "roomstyler-homestyler-furnishing",
+        source_input=payload,
+        source_reference=source_reference,
+        model_revision=model_revision,
+    )
+    findings: list[dict[str, Any]] = []
+    units = str(payload.get("units", "")).strip().lower()
+    unit_scale = _planner5d_unit_scale(units)
+    if unit_scale is None:
+        findings.append(_finding("ROOMSTYLER_UNITS_REQUIRED", "Roomstyler/Homestyler input must declare supported units."))
+
+    imported_revision = payload.get("modelRevision", model_revision)
+    if imported_revision != model_revision:
+        findings.append(
+            _finding(
+                "ROOMSTYLER_MODEL_REVISION_MISMATCH",
+                f"Styled option revision {imported_revision!r} does not match canonical revision {model_revision!r}.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    candidate_id = str(payload.get("candidateId", "")).strip()
+    if not candidate_id:
+        findings.append(_finding("ROOMSTYLER_CANDIDATE_ID_REQUIRED", "A styled presentation option must identify its candidate."))
+
+    technical_plan = payload.get("technicalPlan")
+    if not isinstance(technical_plan, dict):
+        findings.append(
+            _finding(
+                "ROOMSTYLER_TECHNICAL_PLAN_REQUIRED",
+                "The styled option must carry a technical-plan trace for side-by-side review.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+        technical_plan = {}
+    if technical_plan.get("modelRevision") != model_revision:
+        findings.append(
+            _finding(
+                "ROOMSTYLER_TECHNICAL_PLAN_REVISION_MISMATCH",
+                "The technical plan and styled presentation must use the same canonical model revision.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+    if candidate_id and technical_plan.get("candidateId") != candidate_id:
+        findings.append(
+            _finding(
+                "ROOMSTYLER_TECHNICAL_PLAN_CANDIDATE_MISMATCH",
+                "The technical plan and styled presentation must use the same candidate ID.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+    if not str(technical_plan.get("validationSignature", "")).strip():
+        findings.append(
+            _finding(
+                "ROOMSTYLER_TECHNICAL_VALIDATION_REQUIRED",
+                "Side-by-side presentation requires the technical plan validation signature.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+    render_reference = str(payload.get("renderReference", "")).strip()
+    if not render_reference:
+        findings.append(
+            _finding(
+                "ROOMSTYLER_RENDER_REFERENCE_REQUIRED",
+                "A styled presentation must retain its source render/export reference.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    mappings = payload.get("assetMappings")
+    mapping_by_source: dict[str, str] = {}
+    mapping_report: list[dict[str, Any]] = []
+    if not isinstance(mappings, list) or not mappings:
+        findings.append(_finding("ROOMSTYLER_ASSET_MAPPING_REQUIRED", "Styled furniture must use typed canonical asset mappings."))
+        mappings = []
+    for mapping in mappings:
+        if not isinstance(mapping, dict):
+            findings.append(_finding("ROOMSTYLER_ASSET_MAPPING_INVALID", "Each styled asset mapping must be an object."))
+            continue
+        source_asset_id = str(mapping.get("sourceAssetId", "")).strip()
+        asset_id = str(mapping.get("assetId", "")).strip()
+        if not source_asset_id or asset_id not in ASSET_CATALOG:
+            findings.append(
+                _finding(
+                    "ROOMSTYLER_ASSET_MAPPING_UNKNOWN",
+                    f"Styled asset mapping {source_asset_id or asset_id or 'unnamed'} does not resolve to a canonical asset.",
+                )
+            )
+            mapping_report.append({"sourceAssetId": source_asset_id or None, "assetId": asset_id or None, "status": "rejected"})
+            continue
+        mapping_by_source[source_asset_id] = asset_id
+        mapping_report.append({"sourceAssetId": source_asset_id, "assetId": asset_id, "status": "mapped"})
+
+    options = payload.get("options")
+    if not isinstance(options, list) or not options:
+        findings.append(_finding("ROOMSTYLER_OPTIONS_REQUIRED", "At least one typed presentation option is required."))
+        options = []
+
+    accepted_options: list[dict[str, Any]] = []
+    rejected_options: list[dict[str, Any]] = []
+    option_summaries: list[dict[str, Any]] = []
+    for option in options:
+        if not isinstance(option, dict):
+            findings.append(_finding("ROOMSTYLER_OPTION_INVALID", "Each presentation option must be an object."))
+            continue
+        option_id = str(option.get("id", "")).strip()
+        option_findings: list[dict[str, Any]] = []
+        if not option_id:
+            option_findings.append(_finding("ROOMSTYLER_OPTION_ID_REQUIRED", "Each presentation option must have an ID."))
+        placements: list[dict[str, Any]] = []
+        furniture = option.get("furniture")
+        if not isinstance(furniture, list):
+            option_findings.append(_finding("ROOMSTYLER_FURNITURE_REQUIRED", f"{option_id or 'option'} must contain a furniture list."))
+            furniture = []
+
+        for item in furniture:
+            if not isinstance(item, dict):
+                option_findings.append(_finding("ROOMSTYLER_FURNITURE_INVALID", f"{option_id or 'option'} contains a non-object furniture item."))
+                continue
+            object_id = str(item.get("id", "")).strip()
+            source_asset_id = str(item.get("sourceAssetId", "")).strip()
+            asset_id = str(item.get("assetId") or mapping_by_source.get(source_asset_id, "")).strip()
+            spec = ASSET_CATALOG.get(asset_id)
+            item_findings: list[dict[str, Any]] = []
+            if not object_id:
+                item_findings.append(_finding("ROOMSTYLER_FURNITURE_ID_REQUIRED", "Every styled furniture item must have an ID."))
+            if spec is None:
+                item_findings.append(_finding("ROOMSTYLER_ASSET_UNKNOWN", f"{object_id or 'furniture'} does not resolve to a canonical asset.", object_id=object_id))
+                option_findings.extend(item_findings)
+                continue
+            position = _planner5d_position(item)
+            if position is None or unit_scale is None:
+                item_findings.append(
+                    _finding(
+                        "ROOMSTYLER_FURNITURE_POSITION_REQUIRED",
+                        f"{object_id or asset_id} needs a numeric position in supported units.",
+                        object_id=object_id,
+                    )
+                )
+                option_findings.extend(item_findings)
+                continue
+            rotation = int(item.get("rotation", 0) or 0)
+            placement = _new_placement(
+                asset_id,
+                str(item.get("hostSpaceId") or item.get("spaceId") or ""),
+                position[0] * unit_scale,
+                position[1] * unit_scale,
+                rotation,
+                object_id=object_id or None,
+            )
+            dimensions = item.get("dimensions")
+            if isinstance(dimensions, dict):
+                expected_width = spec["depth"] if rotation % 180 == 90 else spec["width"]
+                expected_depth = spec["width"] if rotation % 180 == 90 else spec["depth"]
+                for dimension, expected in (("width", expected_width), ("depth", expected_depth)):
+                    value = dimensions.get(dimension)
+                    if not isinstance(value, (int, float)) or abs(float(value) * unit_scale - expected) > 0.01:
+                        item_findings.append(
+                            _finding(
+                                "ROOMSTYLER_ASSET_SCALE_CONFLICT",
+                                f"{object_id or asset_id} {dimension} does not match the canonical {asset_id} scale.",
+                                severity="REVIEW_REQUIRED",
+                                object_id=object_id,
+                            )
+                        )
+            host_space = next(
+                (space for space in model.get("spaces", []) if space.get("id") == placement["hostSpaceId"]),
+                None,
+            )
+            if host_space is not None and _room_use(host_space) not in set(spec["roomUses"]):
+                item_findings.append(
+                    _finding(
+                        "ROOMSTYLER_ASSET_ROOM_USE_REVIEW",
+                        f"{object_id or asset_id} maps {asset_id} into {_room_use(host_space)!r}, outside its catalog room uses.",
+                        severity="REVIEW_REQUIRED",
+                        object_id=object_id,
+                    )
+                )
+            item_findings.extend(validate_placement(model, placement, existing=placements))
+            placement.update(
+                {
+                    "sourceTool": "Roomstyler / Homestyler",
+                    "sourceAssetId": source_asset_id or None,
+                    "sourceReference": source_reference,
+                    "candidateId": candidate_id or None,
+                    "modelRevision": model_revision,
+                    "occupancyIntent": item.get("occupancy"),
+                    "serviceSideIntent": item.get("serviceSide"),
+                    "presentationOnly": True,
+                    "authoritative": False,
+                }
+            )
+            placements.append(placement)
+            option_findings.extend(item_findings)
+
+        finish_options = option.get("finishes")
+        normalized_finishes: list[dict[str, Any]] = []
+        if not isinstance(finish_options, list):
+            option_findings.append(_finding("ROOMSTYLER_FINISHES_REQUIRED", f"{option_id or 'option'} must contain typed finish options."))
+            finish_options = []
+        for finish in finish_options:
+            if not isinstance(finish, dict):
+                option_findings.append(_finding("ROOMSTYLER_FINISH_INVALID", f"{option_id or 'option'} contains a non-object finish."))
+                continue
+            finish_id = str(finish.get("id", "")).strip()
+            host_space_id = str(finish.get("hostSpaceId", "")).strip()
+            if not finish_id or not host_space_id or not str(finish.get("material", "")).strip():
+                option_findings.append(
+                    _finding(
+                        "ROOMSTYLER_FINISH_TYPED_FIELDS_REQUIRED",
+                        f"{finish_id or 'finish'} requires an ID, host space, and material.",
+                        severity="REVIEW_REQUIRED",
+                    )
+                )
+                continue
+            if not any(space.get("id") == host_space_id for space in model.get("spaces", [])):
+                option_findings.append(
+                    _finding(
+                        "ROOMSTYLER_FINISH_HOST_SPACE_UNKNOWN",
+                        f"{finish_id} references an unknown canonical host space.",
+                        severity="REVIEW_REQUIRED",
+                    )
+                )
+            normalized_finishes.append(
+                {
+                    "id": finish_id,
+                    "hostSpaceId": host_space_id,
+                    "material": str(finish["material"]),
+                    "finish": str(finish.get("finish", "")),
+                    "sourceReference": source_reference,
+                    "candidateId": candidate_id or None,
+                    "modelRevision": model_revision,
+                    "presentationOnly": True,
+                    "authoritative": False,
+                }
+            )
+
+        option_result = {
+            "id": option_id or None,
+            "label": str(option.get("label", "")),
+            "furniture": placements,
+            "finishes": normalized_finishes,
+            "findings": option_findings,
+            "status": "review-required" if option_findings else "pass",
+            "presentationOnly": True,
+            "authoritativeGeometryChanged": False,
+        }
+        option_summaries.append(
+            {
+                "id": option_result["id"],
+                "label": option_result["label"],
+                "furnitureCount": len(placements),
+                "finishCount": len(normalized_finishes),
+                "status": option_result["status"],
+            }
+        )
+        if option_findings:
+            rejected_options.append(option_result)
+        else:
+            accepted_options.append(option_result)
+
+    all_findings = findings + [finding for option in rejected_options for finding in option["findings"]]
+    # A rejected styled option may contain a technical BLOCKER, but it is
+    # isolated from the accepted presentation options.  Preserve that finding
+    # and make the candidate ineligible without blocking the report itself.
+    has_blocker = any(item["severity"] in {"BLOCKER", "ERROR"} for item in findings)
+    status = "blocked" if has_blocker else "review-required" if all_findings else "pass"
+    result = {
+        "version": ROOMSTYLER_INPUT_VERSION,
+        "tool": "Roomstyler / Homestyler",
+        "sourceReference": source_reference,
+        "renderReference": render_reference or None,
+        "candidateId": candidate_id or None,
+        "modelRevision": model_revision,
+        "canonicalModelRevision": model_revision,
+        "importedModelRevision": imported_revision,
+        "units": units,
+        "assetScaleToCanonicalInches": unit_scale,
+        "input": normalized,
+        "assetMappingReport": mapping_report,
+        "options": option_summaries,
+        "acceptedOptions": accepted_options,
+        "rejectedOptions": rejected_options,
+        "technicalPlanSideBySide": {
+            "reference": technical_plan.get("reference"),
+            "candidateId": technical_plan.get("candidateId"),
+            "modelRevision": technical_plan.get("modelRevision"),
+            "validationSignature": technical_plan.get("validationSignature"),
+            "validationMarkersRetained": True,
+        },
+        "findings": all_findings,
+        "status": status,
+        "candidateEligible": status == "pass" and not rejected_options,
+        "presentationOnly": True,
+        "authoritativeGeometryChanged": False,
+    }
+    result["determinism"] = {"algorithm": "sha256", "signature": _signature(result)}
+    return result
+
+
+def validate_magicplan_input(
+    model: dict[str, Any],
+    payload: dict[str, Any],
+    *,
+    source_reference: str,
+    model_revision: Any,
+) -> dict[str, Any]:
+    """Validate Magicplan photo recognition as a confidence-based queue."""
+
+    normalized = ingest_ai_tool_input(
+        "magicplan-photo-capture",
+        source_input=payload,
+        source_reference=source_reference,
+        model_revision=model_revision,
+    )
+    findings: list[dict[str, Any]] = []
+    photos = payload.get("photos")
+    if not isinstance(photos, list) or not photos:
+        findings.append(_finding("MAGICPLAN_SOURCE_IMAGE_REQUIRED", "Magicplan capture must include at least one source image."))
+        photos = []
+    normalized_photos: list[dict[str, Any]] = []
+    for photo in photos:
+        if not isinstance(photo, dict) or not str(photo.get("id", "")).strip() or not str(photo.get("sourceImage", "")).strip():
+            findings.append(_finding("MAGICPLAN_SOURCE_IMAGE_INVALID", "Each Magicplan photo needs an ID and source image reference."))
+            continue
+        normalized_photos.append(
+            {
+                "id": str(photo["id"]),
+                "sourceImage": str(photo["sourceImage"]),
+                "capturedAt": photo.get("capturedAt"),
+                "captureMetadata": copy.deepcopy(photo.get("captureMetadata", {})),
+            }
+        )
+
+    capture_metadata = payload.get("captureMetadata")
+    if not isinstance(capture_metadata, dict) or not str(capture_metadata.get("device", "")).strip():
+        findings.append(
+            _finding(
+                "MAGICPLAN_CAPTURE_METADATA_REQUIRED",
+                "Capture metadata must identify the capture device or method.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    known_dimensions = payload.get("knownDimensions")
+    if not isinstance(known_dimensions, list) or not known_dimensions:
+        findings.append(_finding("MAGICPLAN_KNOWN_SCALE_REQUIRED", "Magicplan capture must include at least one known dimension."))
+        known_dimensions = []
+    for dimension in known_dimensions:
+        if (
+            not isinstance(dimension, dict)
+            or not str(dimension.get("id", "")).strip()
+            or not isinstance(dimension.get("value"), (int, float))
+            or dimension.get("value", 0) <= 0
+            or str(dimension.get("units", "")).strip().lower() not in {"inch", "in", "foot", "ft", "mm", "m"}
+        ):
+            findings.append(
+                _finding(
+                    "MAGICPLAN_KNOWN_DIMENSION_INVALID",
+                    "Known dimensions require a positive value and supported units.",
+                )
+            )
+
+    scale_evidence = payload.get("scaleEvidence")
+    if not isinstance(scale_evidence, list) or not scale_evidence:
+        findings.append(_finding("MAGICPLAN_SCALE_EVIDENCE_REQUIRED", "Recognition requires explicit scale evidence tied to a source image."))
+        scale_evidence = []
+    normalized_scale_evidence = []
+    for evidence in scale_evidence:
+        if not isinstance(evidence, dict) or not str(evidence.get("photoId", "")).strip() or not str(evidence.get("dimensionId", "")).strip():
+            findings.append(
+                _finding(
+                    "MAGICPLAN_SCALE_EVIDENCE_INVALID",
+                    "Each scale-evidence item must link a photo to a known dimension.",
+                )
+            )
+            continue
+        normalized_scale_evidence.append(copy.deepcopy(evidence))
+
+    objects = payload.get("recognizedObjects")
+    if not isinstance(objects, list) or not objects:
+        findings.append(_finding("MAGICPLAN_RECOGNIZED_OBJECTS_REQUIRED", "Magicplan capture must include recognized objects for review."))
+        objects = []
+    canonical_ids = _canonical_object_ids(model)
+    accepted: list[dict[str, Any]] = []
+    uncertain: list[dict[str, Any]] = []
+    rejected: list[dict[str, Any]] = []
+    promoted: list[dict[str, Any]] = []
+    review_queue: list[dict[str, Any]] = []
+    for recognized in objects:
+        if not isinstance(recognized, dict):
+            findings.append(_finding("MAGICPLAN_OBJECT_INVALID", "Each recognized object must be an object."))
+            continue
+        object_id = str(recognized.get("id", "")).strip()
+        kind = str(recognized.get("kind", "")).strip().lower()
+        queue_status = str(recognized.get("queueStatus", "")).strip().lower()
+        confidence = recognized.get("confidence")
+        proposed_object_id = str(recognized.get("proposedObjectId", "")).strip()
+        manual_confirmation = recognized.get("manualConfirmation") is True
+        item_findings: list[dict[str, Any]] = []
+        if not object_id or kind not in {"room", "opening", "wall"}:
+            item_findings.append(_finding("MAGICPLAN_OBJECT_TYPE_REQUIRED", f"{object_id or 'recognized object'} needs an ID and supported kind.", object_id=object_id))
+        if not isinstance(confidence, (int, float)) or not 0 <= float(confidence) <= 1:
+            item_findings.append(_finding("MAGICPLAN_CONFIDENCE_REQUIRED", f"{object_id or 'recognized object'} needs confidence from 0 to 1.", object_id=object_id))
+            numeric_confidence = 0.0
+        else:
+            numeric_confidence = float(confidence)
+        if queue_status not in {"accepted", "uncertain", "rejected"}:
+            item_findings.append(_finding("MAGICPLAN_QUEUE_STATUS_REQUIRED", f"{object_id or 'recognized object'} needs accepted, uncertain, or rejected status.", object_id=object_id))
+            queue_status = "uncertain"
+        if proposed_object_id and proposed_object_id not in canonical_ids:
+            item_findings.append(
+                _finding(
+                    "MAGICPLAN_PROPOSED_LINK_UNKNOWN",
+                    f"{object_id or 'recognized object'} proposes an unknown canonical object link.",
+                    severity="REVIEW_REQUIRED",
+                    object_id=object_id,
+                )
+            )
+        item_result = {
+            "id": object_id or None,
+            "kind": kind or None,
+            "confidence": numeric_confidence,
+            "proposedObjectId": proposed_object_id or None,
+            "queueStatus": queue_status,
+            "manualConfirmation": manual_confirmation,
+            "findings": item_findings,
+            "sourceImageId": recognized.get("sourceImageId"),
+            "authoritative": False,
+            "editableGeometry": False,
+        }
+        if queue_status == "accepted":
+            if not manual_confirmation:
+                item_findings.append(
+                    _finding(
+                        "MAGICPLAN_MANUAL_CONFIRMATION_REQUIRED",
+                        f"{object_id or 'recognized object'} cannot be promoted without manual confirmation.",
+                        severity="REVIEW_REQUIRED",
+                        object_id=object_id,
+                    )
+                )
+            if numeric_confidence < 0.85:
+                item_findings.append(
+                    _finding(
+                        "MAGICPLAN_CONFIDENCE_REVIEW_REQUIRED",
+                        f"{object_id or 'recognized object'} confidence is below the promotion threshold.",
+                        severity="REVIEW_REQUIRED",
+                        object_id=object_id,
+                    )
+                )
+            if not normalized_scale_evidence:
+                item_findings.append(
+                    _finding(
+                        "MAGICPLAN_SCALE_REQUIRED_FOR_PROMOTION",
+                        f"{object_id or 'recognized object'} has no usable scale evidence.",
+                        severity="REVIEW_REQUIRED",
+                        object_id=object_id,
+                    )
+                )
+            if not proposed_object_id or proposed_object_id not in canonical_ids:
+                item_findings.append(
+                    _finding(
+                        "MAGICPLAN_CANONICAL_LINK_REQUIRED",
+                        f"{object_id or 'recognized object'} needs a known canonical object link before promotion.",
+                        severity="REVIEW_REQUIRED",
+                        object_id=object_id,
+                    )
+                )
+            promotion = recognized.get("promotion")
+            if not isinstance(promotion, dict) or promotion.get("postPromotionModelRevision") is None or not str(promotion.get("validationRerunSignature", "")).strip():
+                item_findings.append(
+                    _finding(
+                        "MAGICPLAN_VALIDATION_RERUN_REQUIRED",
+                        f"{object_id or 'recognized object'} needs a post-promotion revision and topology/clearance rerun signature.",
+                        severity="REVIEW_REQUIRED",
+                        object_id=object_id,
+                    )
+                )
+            if not item_findings:
+                item_result["editableGeometry"] = True
+                item_result["promotion"] = copy.deepcopy(promotion)
+                promoted.append(copy.deepcopy(item_result))
+            accepted.append(item_result)
+        elif queue_status == "rejected":
+            rejected.append(item_result)
+            review_queue.append(item_result)
+        else:
+            uncertain.append(item_result)
+            review_queue.append(item_result)
+        if item_findings:
+            findings.extend(item_findings)
+
+    # Uncertain and rejected recognition is intentionally visible even when it
+    # does not block report generation.
+    queue_requires_review = bool(uncertain or rejected)
+    all_findings = findings
+    has_blocker = any(item["severity"] in {"BLOCKER", "ERROR"} for item in all_findings)
+    status = "blocked" if has_blocker else "review-required" if all_findings or queue_requires_review else "pass"
+    return {
+        "version": MAGICPLAN_INPUT_VERSION,
+        "tool": "Magicplan",
+        "sourceReference": source_reference,
+        "modelRevision": model_revision,
+        "canonicalModelRevision": model_revision,
+        "input": normalized,
+        "photos": normalized_photos,
+        "captureMetadata": copy.deepcopy(capture_metadata) if isinstance(capture_metadata, dict) else {},
+        "knownDimensions": copy.deepcopy(known_dimensions),
+        "scaleEvidence": normalized_scale_evidence,
+        "acceptedObjects": accepted,
+        "uncertainObjects": uncertain,
+        "rejectedObjects": rejected,
+        "promotedObjects": promoted,
+        "reviewQueue": review_queue,
+        "recognitionSummary": {
+            "recognized": len(objects),
+            "accepted": len(accepted),
+            "uncertain": len(uncertain),
+            "rejected": len(rejected),
+            "promoted": len(promoted),
+            "imageOnlyPromotionBlocked": not bool(promoted) and bool(objects),
+        },
+        "findings": all_findings,
+        "status": status,
+        "candidateEligible": status == "pass",
+        "authoritativeGeometryChanged": False,
+        "promotionPolicy": "only manually confirmed, scale-backed objects with a validation rerun may become editable in a later revision",
+        "determinism": {"algorithm": "sha256", "signature": _signature({
+            "sourceReference": source_reference,
+            "modelRevision": model_revision,
+            "recognizedObjects": objects,
+            "scaleEvidence": normalized_scale_evidence,
+        })},
+    }
+
+
 def _rect(value: Any) -> list[float] | None:
     if isinstance(value, dict):
         value = value.get("rect")
@@ -1711,12 +2283,32 @@ def enrichment_report(model: dict[str, Any]) -> dict[str, Any]:
             source_reference=str(floorplanner_payload.get("sourceReference", "floorplanner-fixture")),
             model_revision=model.get("project", {}).get("revision"),
         )
+    roomstyler = None
+    if ROOMSTYLER_FIXTURE_PATH.is_file():
+        roomstyler_payload = json.loads(ROOMSTYLER_FIXTURE_PATH.read_text(encoding="utf-8"))
+        roomstyler = validate_roomstyler_homestyler_input(
+            model,
+            roomstyler_payload,
+            source_reference=str(roomstyler_payload.get("sourceReference", "roomstyler-fixture")),
+            model_revision=model.get("project", {}).get("revision"),
+        )
+    magicplan = None
+    if MAGICPLAN_FIXTURE_PATH.is_file():
+        magicplan_payload = json.loads(MAGICPLAN_FIXTURE_PATH.read_text(encoding="utf-8"))
+        magicplan = validate_magicplan_input(
+            model,
+            magicplan_payload,
+            source_reference=str(magicplan_payload.get("sourceReference", "magicplan-fixture")),
+            model_revision=model.get("project", {}).get("revision"),
+        )
     return {
         "status": "blocked"
         if furnishings["status"] == "blocked"
         or candidates["status"] == "blocked"
         or (archistar_snaptrude and archistar_snaptrude["status"] == "blocked")
         or (floorplanner and floorplanner["status"] == "blocked")
+        or (roomstyler and roomstyler["status"] == "blocked")
+        or (magicplan and magicplan["status"] == "blocked")
         else "pass",
         "aiToolInputs": ai_tool_input_manifest(),
         "week15": furnishings,
@@ -1724,6 +2316,8 @@ def enrichment_report(model: dict[str, Any]) -> dict[str, Any]:
         "planner5d": planner5d,
         "archistarSnaptrude": archistar_snaptrude,
         "floorplanner": floorplanner,
+        "roomstyler": roomstyler,
+        "magicplan": magicplan,
         "designPackage": package,
     }
 
@@ -1756,6 +2350,8 @@ def write_reports() -> dict[str, Any]:
     model["planner5dExchange"] = {"version": PLANNER5D_INPUT_VERSION, "report": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["planner5d"]["candidateEligible"], "status": report["planner5d"]["status"]}
     model["archistarSnaptrudeSiteEvidence"] = {"version": ARCHISTAR_INPUT_VERSION, "report": str(ARCHISTAR_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["archistarSnaptrude"]["candidateEligible"], "status": report["archistarSnaptrude"]["status"]}
     model["floorplannerSynchronizedView"] = {"version": FLOORPLANNER_INPUT_VERSION, "report": str(FLOORPLANNER_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["floorplanner"]["candidateEligible"], "status": report["floorplanner"]["status"], "synchronizationStatus": report["floorplanner"]["synchronizationStatus"]}
+    model["roomstylerPresentation"] = {"version": ROOMSTYLER_INPUT_VERSION, "report": str(ROOMSTYLER_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["roomstyler"]["candidateEligible"], "status": report["roomstyler"]["status"]}
+    model["magicplanRecognitionQueue"] = {"version": MAGICPLAN_INPUT_VERSION, "report": str(MAGICPLAN_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["magicplan"]["candidateEligible"], "status": report["magicplan"]["status"], "promotedObjectCount": len(report["magicplan"]["promotedObjects"])}
     model["designPresentation"] = report["designPackage"]
     ASSET_REPORT_PATH.write_text(json.dumps(report["week15"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     AI_INPUT_REPORT_PATH.write_text(json.dumps(report["aiToolInputs"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -1763,7 +2359,9 @@ def write_reports() -> dict[str, Any]:
     PLANNER5D_REPORT_PATH.write_text(json.dumps(report["planner5d"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     ARCHISTAR_REPORT_PATH.write_text(json.dumps(report["archistarSnaptrude"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     FLOORPLANNER_REPORT_PATH.write_text(json.dumps(report["floorplanner"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    MANIFEST_PATH.write_text(json.dumps({"manifestVersion": "week1516.enrichment-manifest.v1", "status": report["status"], "reports": {"week15": str(ASSET_REPORT_PATH.relative_to(ROOT)), "week16": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "planner5d": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "archistarSnaptrude": str(ARCHISTAR_REPORT_PATH.relative_to(ROOT)), "floorplanner": str(FLOORPLANNER_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT))}, "changelog": str(CHANGELOG_PATH.relative_to(ROOT)), "catalogVersion": WEEK15_VERSION, "candidateVersion": WEEK16_VERSION, "planner5dVersion": PLANNER5D_INPUT_VERSION, "archistarSnaptrudeVersion": ARCHISTAR_INPUT_VERSION, "floorplannerVersion": FLOORPLANNER_INPUT_VERSION, "aiToolInputCatalogVersion": AI_INPUT_VERSION, "bestCandidateId": report["week16"]["bestCandidateId"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    ROOMSTYLER_REPORT_PATH.write_text(json.dumps(report["roomstyler"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    MAGICPLAN_REPORT_PATH.write_text(json.dumps(report["magicplan"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    MANIFEST_PATH.write_text(json.dumps({"manifestVersion": "week1516.enrichment-manifest.v1", "status": report["status"], "reports": {"week15": str(ASSET_REPORT_PATH.relative_to(ROOT)), "week16": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "planner5d": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "archistarSnaptrude": str(ARCHISTAR_REPORT_PATH.relative_to(ROOT)), "floorplanner": str(FLOORPLANNER_REPORT_PATH.relative_to(ROOT)), "roomstyler": str(ROOMSTYLER_REPORT_PATH.relative_to(ROOT)), "magicplan": str(MAGICPLAN_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT))}, "changelog": str(CHANGELOG_PATH.relative_to(ROOT)), "catalogVersion": WEEK15_VERSION, "candidateVersion": WEEK16_VERSION, "planner5dVersion": PLANNER5D_INPUT_VERSION, "archistarSnaptrudeVersion": ARCHISTAR_INPUT_VERSION, "floorplannerVersion": FLOORPLANNER_INPUT_VERSION, "roomstylerVersion": ROOMSTYLER_INPUT_VERSION, "magicplanVersion": MAGICPLAN_INPUT_VERSION, "aiToolInputCatalogVersion": AI_INPUT_VERSION, "bestCandidateId": report["week16"]["bestCandidateId"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     CHANGELOG_PATH.write_text(
         """# Week 15–16 enrichment changelog
 

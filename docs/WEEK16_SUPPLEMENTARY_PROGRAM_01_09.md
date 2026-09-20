@@ -105,6 +105,12 @@ and regression coverage in `tests/test_week1516_enrichment.py`.
 
 **Evidence and gate:** asset dimensions, clearance findings, source reference, render traceability, and review state. A polished render cannot suppress a blocker or change authoritative geometry.
 
+**Implementation status:** Applied in `scripts/week1516.py` through
+`validate_roomstyler_homestyler_input`, with the presentation-options fixture at
+`tests/fixtures/week16/roomstyler-presentation-options.json`, generated evidence
+at `bar-association-hall/standard/week16-roomstyler-presentation-report.json`,
+and regression coverage in `tests/test_week1516_enrichment.py`.
+
 ## W16-06 — Magicplan: photo-assisted recognition queue
 
 **Potential study:** evaluate phone/photo-assisted capture for existing spaces and plans, with explicit scale evidence and human confirmation before promotion.
@@ -117,6 +123,14 @@ and regression coverage in `tests/test_week1516_enrichment.py`.
 **Implementation:** add a recognition-queue fixture covering accepted, uncertain, and rejected objects. Test that an image-only result cannot become issue-ready geometry and that provenance survives export.
 
 **Evidence and gate:** source image, scale evidence, confidence, manual confirmation, object provenance, and validation result. No silent image-to-geometry promotion is allowed.
+
+**Implementation status:** Applied in `scripts/week1516.py` through
+`validate_magicplan_input`, with the recognition-queue fixture at
+`tests/fixtures/week16/magicplan-recognition-queue.json`, generated evidence at
+`bar-association-hall/standard/week16-magicplan-recognition-report.json`, and
+regression coverage in `tests/test_week1516_enrichment.py`. Only the manually
+confirmed, scale-backed object with a topology/clearance rerun is promoted;
+uncertain and rejected recognition remains in the review queue.
 
 ## W16-07 — ChatGPT / Claude / Grok / Gemini: typed brief refinement
 

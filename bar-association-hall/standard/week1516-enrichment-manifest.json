@@ -6,15 +6,19 @@
   "catalogVersion": "week15.parametric-assets.v1",
   "changelog": "bar-association-hall/standard/week1516-changelog.md",
   "floorplannerVersion": "week16-04.floorplanner.v1",
+  "magicplanVersion": "week16-06.magicplan.v1",
   "manifestVersion": "week1516.enrichment-manifest.v1",
   "planner5dVersion": "week16-02.planner5d.v1",
   "reports": {
     "aiToolInputs": "bar-association-hall/standard/week16-ai-tool-inputs.json",
     "archistarSnaptrude": "bar-association-hall/standard/week16-archistar-snaptrude-site-report.json",
     "floorplanner": "bar-association-hall/standard/week16-floorplanner-synchronized-view-report.json",
+    "magicplan": "bar-association-hall/standard/week16-magicplan-recognition-report.json",
     "planner5d": "bar-association-hall/standard/week16-planner5d-exchange-report.json",
+    "roomstyler": "bar-association-hall/standard/week16-roomstyler-presentation-report.json",
     "week15": "bar-association-hall/standard/week15-parametric-assets-report.json",
     "week16": "bar-association-hall/standard/week16-candidate-studio-report.json"
   },
+  "roomstylerVersion": "week16-05.roomstyler-homestyler.v1",
   "status": "pass"
 }

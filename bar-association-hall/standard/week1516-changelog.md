@@ -71,3 +71,27 @@
   and missing validation signatures from silent acceptance.
 - Accepted view edits require a post-edit model revision and validation rerun
   signature; view data remains presentation-only and cannot mutate geometry.
+
+### W16-05 implementation status — Roomstyler / Homestyler
+
+- Added a typed presentation-options fixture with canonical asset mappings,
+  furniture scale, occupancy intent, finish options, render provenance, and a
+  technical-plan side-by-side trace.
+- Added `validate_roomstyler_homestyler_input`, which reuses the Week 15
+  clearance validator for room fit, routes, service zones, door approaches, and
+  overlapping furniture envelopes.
+- A styled option containing a clearance blocker remains rejected and
+  candidate-ineligible; the blocker is retained in the evidence and cannot be
+  hidden by the accepted visual option. Presentation furniture and finishes
+  remain non-authoritative.
+
+### W16-06 implementation status — Magicplan
+
+- Added a photo-assisted recognition fixture with source image metadata, known
+  dimensions, scale evidence, confidence, and accepted, uncertain, and rejected
+  recognition states.
+- Added `validate_magicplan_input`, which keeps recognition in a review queue
+  and only marks a manually confirmed, scale-backed object with a
+  topology/clearance validation rerun as promoted.
+- Image-only recognition cannot be promoted; uncertain and rejected objects
+  retain provenance and remain outside editable authoritative geometry.

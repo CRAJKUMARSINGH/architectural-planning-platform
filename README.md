@@ -559,6 +559,18 @@ The Week 15 and Week 16 enrichment is implemented in the canonical pipeline.
   evidence. Unknown IDs, incomplete level coverage, stale revisions, and
   missing validation reruns remain review-required rather than silently
   accepted.
+- **W16-05 — Roomstyler / Homestyler clearance-aware presentation:** typed
+  furniture and finish options retain asset scale, occupancy, source/render
+  provenance, candidate ID, and canonical model revision. Room fit, route,
+  service-side, door-approach, and overlapping-clearance findings are reused
+  from the Week 15 validator. A polished option cannot suppress a technical
+  blocker or become authoritative geometry.
+- **W16-06 — Magicplan photo-assisted recognition queue:** source images,
+  capture metadata, known dimensions, scale evidence, confidence, proposed
+  canonical links, and manual confirmation are retained. Only a confirmed,
+  scale-backed recognition with a post-promotion topology/clearance rerun is
+  promoted; uncertain, rejected, and image-only results remain review
+  evidence.
 - Moodboards, palettes, materials, lighting presets, non-destructive design
   layers, render/panorama/presentation-sheet job manifests, and
   technical-plan-to-render revision traceability are included.
@@ -577,11 +589,13 @@ The Week 15 and Week 16 enrichment is implemented in the canonical pipeline.
   - `bar-association-hall/standard/week16-planner5d-exchange-report.json`
   - `bar-association-hall/standard/week16-archistar-snaptrude-site-report.json`
   - `bar-association-hall/standard/week16-floorplanner-synchronized-view-report.json`
+  - `bar-association-hall/standard/week16-roomstyler-presentation-report.json`
+  - `bar-association-hall/standard/week16-magicplan-recognition-report.json`
   - `bar-association-hall/standard/week1516-enrichment-manifest.json`
   - `bar-association-hall/standard/week1516-changelog.md`
 - Regression tests live in `tests/test_week1516_enrichment.py`, including
-  Planner 5D mapping, clearance rejection, route blocking, non-mutation, and
-  deterministic comparison coverage.
+  Planner 5D mapping, Roomstyler clearance rejection, Magicplan promotion
+  gating, route blocking, non-mutation, and deterministic comparison coverage.
 
 Commands:
 
@@ -591,6 +605,10 @@ npm run validate:week15
 npm run validate:week16
 npm run test:week1516
 ```
+
+**W16-05 and W16-06 task completion:** Roomstyler/Homestyler
+clearance-aware presentation and Magicplan photo-assisted recognition queue
+are implemented, covered by fixtures and regression tests, and marked done.
 
 **Task completion:** Week 15–16 enrichment is complete and marked done in
 this README. Outputs remain preliminary planning/presentation aids and require

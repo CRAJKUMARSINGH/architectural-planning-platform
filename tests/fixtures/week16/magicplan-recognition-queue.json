@@ -1,0 +1,70 @@
+{
+  "tool": "Magicplan",
+  "sourceReference": "magicplan-fixture-week16-06",
+  "modelRevision": 1,
+  "photos": [
+    {
+      "id": "photo-office-capture-01",
+      "sourceImage": "survey-review-package/magicplan/office-capture-01.jpg",
+      "capturedAt": "2026-09-01T10:30:00+05:30",
+      "captureMetadata": {
+        "device": "phone-camera",
+        "orientation": "landscape",
+        "locationNote": "President Chamber"
+      }
+    }
+  ],
+  "captureMetadata": {
+    "device": "phone-camera",
+    "method": "photo-assisted-room-capture",
+    "operatorReviewState": "pending"
+  },
+  "knownDimensions": [
+    {
+      "id": "known-wall-span-01",
+      "value": 120,
+      "units": "inch",
+      "source": "laser-measured-wall-span"
+    }
+  ],
+  "scaleEvidence": [
+    {
+      "photoId": "photo-office-capture-01",
+      "dimensionId": "known-wall-span-01",
+      "method": "visible-measured-span",
+      "confidence": 0.94
+    }
+  ],
+  "recognizedObjects": [
+    {
+      "id": "recognized-room-office",
+      "kind": "room",
+      "sourceImageId": "photo-office-capture-01",
+      "confidence": 0.96,
+      "proposedObjectId": "GF-03",
+      "queueStatus": "accepted",
+      "manualConfirmation": true,
+      "promotion": {
+        "postPromotionModelRevision": 2,
+        "validationRerunSignature": "topology-clearance-rerun-week16-06-accepted-room"
+      }
+    },
+    {
+      "id": "recognized-opening-uncertain",
+      "kind": "opening",
+      "sourceImageId": "photo-office-capture-01",
+      "confidence": 0.62,
+      "proposedObjectId": "D-GF-03",
+      "queueStatus": "uncertain",
+      "manualConfirmation": false
+    },
+    {
+      "id": "recognized-wall-rejected",
+      "kind": "wall",
+      "sourceImageId": "photo-office-capture-01",
+      "confidence": 0.21,
+      "queueStatus": "rejected",
+      "manualConfirmation": false
+    }
+  ]
+}

@@ -6591,5 +6591,18 @@
     "candidateEligible": true,
     "status": "pass",
     "synchronizationStatus": "synchronized"
+  },
+  "roomstylerPresentation": {
+    "version": "week16-05.roomstyler-homestyler.v1",
+    "report": "bar-association-hall/standard/week16-roomstyler-presentation-report.json",
+    "candidateEligible": false,
+    "status": "review-required"
+  },
+  "magicplanRecognitionQueue": {
+    "version": "week16-06.magicplan.v1",
+    "report": "bar-association-hall/standard/week16-magicplan-recognition-report.json",
+    "candidateEligible": false,
+    "status": "review-required",
+    "promotedObjectCount": 1
   }
 }

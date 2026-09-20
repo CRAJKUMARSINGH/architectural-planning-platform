@@ -14,6 +14,8 @@ from week1516 import (  # noqa: E402
     PLANNER5D_INPUT_VERSION,
     ARCHISTAR_INPUT_VERSION,
     FLOORPLANNER_INPUT_VERSION,
+    ROOMSTYLER_INPUT_VERSION,
+    MAGICPLAN_INPUT_VERSION,
     ai_tool_input_manifest,
     candidate_studio,
     design_package,
@@ -25,6 +27,8 @@ from week1516 import (  # noqa: E402
     validate_planner5d_input,
     validate_archistar_snaptrude_input,
     validate_floorplanner_input,
+    validate_roomstyler_homestyler_input,
+    validate_magicplan_input,
     validate_placement,
 )
 
@@ -368,6 +372,111 @@ class Week1516EnrichmentTests(unittest.TestCase):
         self.assertIn("FLOORPLANNER_UNKNOWN_OBJECT_ID", rules)
         self.assertIn("FLOORPLANNER_VALIDATION_RERUN_REQUIRED", rules)
         self.assertFalse(result["validationEvidence"]["rerunAfterAcceptedEdit"]["performed"])
+
+    def test_w1605_roomstyler_fixture_keeps_valid_option_and_rejects_clearance_conflict(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "roomstyler-presentation-options.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        model = planner_model_fixture()
+        before = copy.deepcopy(model)
+
+        result = validate_roomstyler_homestyler_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=1,
+        )
+
+        self.assertEqual(result["version"], ROOMSTYLER_INPUT_VERSION)
+        self.assertEqual(result["status"], "review-required")
+        self.assertEqual(result["candidateId"], "C-15-02")
+        self.assertEqual(result["technicalPlanSideBySide"]["modelRevision"], 1)
+        self.assertTrue(result["technicalPlanSideBySide"]["validationMarkersRetained"])
+        self.assertEqual(len(result["acceptedOptions"]), 1)
+        self.assertEqual(len(result["rejectedOptions"]), 1)
+        self.assertTrue(result["acceptedOptions"][0]["furniture"][0]["presentationOnly"])
+        self.assertTrue(
+            any(
+                finding["rule"] == "ASSET_CLEARANCES_MUST_NOT_OVERLAP"
+                for finding in result["rejectedOptions"][0]["findings"]
+            )
+        )
+        self.assertFalse(result["candidateEligible"])
+        self.assertFalse(result["authoritativeGeometryChanged"])
+        self.assertEqual(model, before)
+
+    def test_w1605_roomstyler_valid_option_is_traceable_and_non_authoritative(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "roomstyler-presentation-options.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        payload["options"] = payload["options"][:1]
+
+        result = validate_roomstyler_homestyler_input(
+            planner_model_fixture(),
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=1,
+        )
+
+        self.assertEqual(result["status"], "pass")
+        self.assertTrue(result["candidateEligible"])
+        self.assertEqual(result["acceptedOptions"][0]["finishes"][0]["hostSpaceId"], "GF-03")
+        self.assertEqual(result["acceptedOptions"][0]["furniture"][0]["modelRevision"], 1)
+
+    def test_w1606_magicplan_fixture_only_promotes_confirmed_scaled_object(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "magicplan-recognition-queue.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        model_path = ROOT / "bar-association-hall" / "standard" / "model" / "project.json"
+        model = json.loads(model_path.read_text(encoding="utf-8"))
+        before = copy.deepcopy(model)
+
+        result = validate_magicplan_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=1,
+        )
+
+        self.assertEqual(result["version"], MAGICPLAN_INPUT_VERSION)
+        self.assertEqual(result["status"], "review-required")
+        self.assertEqual(result["recognitionSummary"]["recognized"], 3)
+        self.assertEqual(result["recognitionSummary"]["accepted"], 1)
+        self.assertEqual(result["recognitionSummary"]["uncertain"], 1)
+        self.assertEqual(result["recognitionSummary"]["rejected"], 1)
+        self.assertEqual(result["recognitionSummary"]["promoted"], 1)
+        self.assertEqual(result["promotedObjects"][0]["proposedObjectId"], "GF-03")
+        self.assertTrue(result["promotedObjects"][0]["editableGeometry"])
+        self.assertEqual(result["reviewQueue"][0]["queueStatus"], "uncertain")
+        self.assertEqual(result["reviewQueue"][1]["queueStatus"], "rejected")
+        self.assertFalse(result["authoritativeGeometryChanged"])
+        self.assertEqual(model, before)
+
+    def test_w1606_magicplan_image_only_result_cannot_be_promoted(self):
+        payload = {
+            "photos": [{"id": "photo-1", "sourceImage": "capture.jpg"}],
+            "captureMetadata": {"device": "phone-camera"},
+            "recognizedObjects": [
+                {
+                    "id": "room-from-image",
+                    "kind": "room",
+                    "confidence": 0.99,
+                    "proposedObjectId": "GF-OFFICE",
+                    "queueStatus": "accepted",
+                    "manualConfirmation": True,
+                }
+            ],
+        }
+        result = validate_magicplan_input(
+            model_fixture(),
+            payload,
+            source_reference="magicplan-image-only",
+            model_revision=8,
+        )
+
+        rules = {item["rule"] for item in result["findings"]}
+        self.assertEqual(result["status"], "blocked")
+        self.assertEqual(result["promotedObjects"], [])
+        self.assertIn("MAGICPLAN_KNOWN_SCALE_REQUIRED", rules)
+        self.assertIn("MAGICPLAN_SCALE_EVIDENCE_REQUIRED", rules)
+        self.assertIn("MAGICPLAN_VALIDATION_RERUN_REQUIRED", rules)
 
     def test_week16_exposes_tool_inputs_with_review_boundaries(self):
         manifest = ai_tool_input_manifest()

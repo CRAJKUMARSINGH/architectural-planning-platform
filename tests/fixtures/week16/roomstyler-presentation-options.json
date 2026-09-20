@@ -1,0 +1,101 @@
+{
+  "tool": "Roomstyler / Homestyler",
+  "sourceReference": "roomstyler-fixture-week16-05",
+  "renderReference": "roomstyler-export-candidate-c-15-02",
+  "candidateId": "C-15-02",
+  "modelRevision": 1,
+  "units": "inch",
+  "technicalPlan": {
+    "reference": "canonical-technical-plan-revision-1",
+    "candidateId": "C-15-02",
+    "modelRevision": 1,
+    "validationSignature": "canonical-validation-signature-week16-05-fixture"
+  },
+  "assetMappings": [
+    {
+      "sourceAssetId": "roomstyler-desk-01",
+      "sourceLabel": "Styled work desk",
+      "assetId": "work-desk"
+    },
+    {
+      "sourceAssetId": "roomstyler-chair-01",
+      "sourceLabel": "Styled visitor chair",
+      "assetId": "visitor-chair"
+    }
+  ],
+  "options": [
+    {
+      "id": "style-warm-walnut",
+      "label": "Warm walnut and neutral upholstery",
+      "furniture": [
+        {
+          "id": "styled-desk-01",
+          "sourceAssetId": "roomstyler-desk-01",
+          "hostSpaceId": "GF-03",
+          "position": {
+            "x": 300,
+            "y": 30
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 60,
+            "depth": 30
+          },
+          "occupancy": 1
+        }
+      ],
+      "finishes": [
+        {
+          "id": "finish-president-chamber",
+          "hostSpaceId": "GF-03",
+          "material": "wood",
+          "finish": "warm-walnut"
+        }
+      ]
+    },
+    {
+      "id": "style-dense-seating",
+      "label": "Dense visitor seating for review",
+      "furniture": [
+        {
+          "id": "styled-desk-02",
+          "sourceAssetId": "roomstyler-desk-01",
+          "hostSpaceId": "GF-03",
+          "position": {
+            "x": 300,
+            "y": 30
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 60,
+            "depth": 30
+          },
+          "occupancy": 1
+        },
+        {
+          "id": "styled-chair-02",
+          "sourceAssetId": "roomstyler-chair-01",
+          "hostSpaceId": "GF-03",
+          "position": {
+            "x": 300,
+            "y": 30
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 20,
+            "depth": 20
+          },
+          "occupancy": 1
+        }
+      ],
+      "finishes": [
+        {
+          "id": "finish-president-chamber-dense",
+          "hostSpaceId": "GF-03",
+          "material": "textile",
+          "finish": "neutral"
+        }
+      ]
+    }
+  ]
+}

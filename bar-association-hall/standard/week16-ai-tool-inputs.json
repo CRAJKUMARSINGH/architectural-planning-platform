@@ -139,6 +139,8 @@
         "finish intent"
       ],
       "id": "roomstyler-homestyler-furnishing",
+      "implementationFixture": "tests/fixtures/week16/roomstyler-presentation-options.json",
+      "implementationStatus": "applied",
       "inputRole": "furniture-heavy visual exploration",
       "programWeeks": [
         9,
@@ -163,6 +165,8 @@
         "capture metadata"
       ],
       "id": "magicplan-photo-capture",
+      "implementationFixture": "tests/fixtures/week16/magicplan-recognition-queue.json",
+      "implementationStatus": "applied",
       "inputRole": "photo-assisted existing-plan capture",
       "programWeeks": [
         1,

@@ -1,0 +1,320 @@
+{
+  "acceptedOptions": [
+    {
+      "authoritativeGeometryChanged": false,
+      "findings": [],
+      "finishes": [
+        {
+          "authoritative": false,
+          "candidateId": "C-15-02",
+          "finish": "warm-walnut",
+          "hostSpaceId": "GF-03",
+          "id": "finish-president-chamber",
+          "material": "wood",
+          "modelRevision": 1,
+          "presentationOnly": true,
+          "sourceReference": "roomstyler-fixture-week16-05"
+        }
+      ],
+      "furniture": [
+        {
+          "assetId": "work-desk",
+          "authoritative": false,
+          "candidateId": "C-15-02",
+          "clearanceEnvelope": [
+            294.0,
+            24.0,
+            366.0,
+            96.0
+          ],
+          "geometry": {
+            "rect": [
+              300.0,
+              30.0,
+              360.0,
+              60.0
+            ]
+          },
+          "hostSpaceId": "GF-03",
+          "id": "styled-desk-01",
+          "modelRevision": 1,
+          "occupancyIntent": 1,
+          "presentationOnly": true,
+          "rotation": 0,
+          "serviceSideIntent": null,
+          "sourceAssetId": "roomstyler-desk-01",
+          "sourceReference": "roomstyler-fixture-week16-05",
+          "sourceTool": "Roomstyler / Homestyler"
+        }
+      ],
+      "id": "style-warm-walnut",
+      "label": "Warm walnut and neutral upholstery",
+      "presentationOnly": true,
+      "status": "pass"
+    }
+  ],
+  "assetMappingReport": [
+    {
+      "assetId": "work-desk",
+      "sourceAssetId": "roomstyler-desk-01",
+      "status": "mapped"
+    },
+    {
+      "assetId": "visitor-chair",
+      "sourceAssetId": "roomstyler-chair-01",
+      "status": "mapped"
+    }
+  ],
+  "assetScaleToCanonicalInches": 1.0,
+  "authoritativeGeometryChanged": false,
+  "candidateEligible": false,
+  "candidateId": "C-15-02",
+  "canonicalModelRevision": 1,
+  "determinism": {
+    "algorithm": "sha256",
+    "signature": "2f7942ae75639ee9a630f5e1f66d2c73d6d1cac0381604c8aed4ac46a6a0fdc6"
+  },
+  "findings": [
+    {
+      "message": "styled-chair-02 overlaps the clearance envelope of styled-desk-02.",
+      "objectId": "styled-chair-02",
+      "rule": "ASSET_CLEARANCES_MUST_NOT_OVERLAP",
+      "severity": "BLOCKER"
+    }
+  ],
+  "importedModelRevision": 1,
+  "input": {
+    "authoritative": false,
+    "inputRole": "furniture-heavy visual exploration",
+    "modelRevision": 1,
+    "promotionGate": "non-authoritative presentation option; recheck routes and door swings",
+    "promotionStatus": "review-required",
+    "reviewState": "pending",
+    "sourceInput": {
+      "assetMappings": [
+        {
+          "assetId": "work-desk",
+          "sourceAssetId": "roomstyler-desk-01",
+          "sourceLabel": "Styled work desk"
+        },
+        {
+          "assetId": "visitor-chair",
+          "sourceAssetId": "roomstyler-chair-01",
+          "sourceLabel": "Styled visitor chair"
+        }
+      ],
+      "candidateId": "C-15-02",
+      "modelRevision": 1,
+      "options": [
+        {
+          "finishes": [
+            {
+              "finish": "warm-walnut",
+              "hostSpaceId": "GF-03",
+              "id": "finish-president-chamber",
+              "material": "wood"
+            }
+          ],
+          "furniture": [
+            {
+              "dimensions": {
+                "depth": 30,
+                "width": 60
+              },
+              "hostSpaceId": "GF-03",
+              "id": "styled-desk-01",
+              "occupancy": 1,
+              "position": {
+                "x": 300,
+                "y": 30
+              },
+              "rotation": 0,
+              "sourceAssetId": "roomstyler-desk-01"
+            }
+          ],
+          "id": "style-warm-walnut",
+          "label": "Warm walnut and neutral upholstery"
+        },
+        {
+          "finishes": [
+            {
+              "finish": "neutral",
+              "hostSpaceId": "GF-03",
+              "id": "finish-president-chamber-dense",
+              "material": "textile"
+            }
+          ],
+          "furniture": [
+            {
+              "dimensions": {
+                "depth": 30,
+                "width": 60
+              },
+              "hostSpaceId": "GF-03",
+              "id": "styled-desk-02",
+              "occupancy": 1,
+              "position": {
+                "x": 300,
+                "y": 30
+              },
+              "rotation": 0,
+              "sourceAssetId": "roomstyler-desk-01"
+            },
+            {
+              "dimensions": {
+                "depth": 20,
+                "width": 20
+              },
+              "hostSpaceId": "GF-03",
+              "id": "styled-chair-02",
+              "occupancy": 1,
+              "position": {
+                "x": 300,
+                "y": 30
+              },
+              "rotation": 0,
+              "sourceAssetId": "roomstyler-chair-01"
+            }
+          ],
+          "id": "style-dense-seating",
+          "label": "Dense visitor seating for review"
+        }
+      ],
+      "renderReference": "roomstyler-export-candidate-c-15-02",
+      "sourceReference": "roomstyler-fixture-week16-05",
+      "technicalPlan": {
+        "candidateId": "C-15-02",
+        "modelRevision": 1,
+        "reference": "canonical-technical-plan-revision-1",
+        "validationSignature": "canonical-validation-signature-week16-05-fixture"
+      },
+      "tool": "Roomstyler / Homestyler",
+      "units": "inch"
+    },
+    "sourceReference": "roomstyler-fixture-week16-05",
+    "tool": "Roomstyler / Homestyler",
+    "toolId": "roomstyler-homestyler-furnishing",
+    "validationStatus": "pending"
+  },
+  "modelRevision": 1,
+  "options": [
+    {
+      "finishCount": 1,
+      "furnitureCount": 1,
+      "id": "style-warm-walnut",
+      "label": "Warm walnut and neutral upholstery",
+      "status": "pass"
+    },
+    {
+      "finishCount": 1,
+      "furnitureCount": 2,
+      "id": "style-dense-seating",
+      "label": "Dense visitor seating for review",
+      "status": "review-required"
+    }
+  ],
+  "presentationOnly": true,
+  "rejectedOptions": [
+    {
+      "authoritativeGeometryChanged": false,
+      "findings": [
+        {
+          "message": "styled-chair-02 overlaps the clearance envelope of styled-desk-02.",
+          "objectId": "styled-chair-02",
+          "rule": "ASSET_CLEARANCES_MUST_NOT_OVERLAP",
+          "severity": "BLOCKER"
+        }
+      ],
+      "finishes": [
+        {
+          "authoritative": false,
+          "candidateId": "C-15-02",
+          "finish": "neutral",
+          "hostSpaceId": "GF-03",
+          "id": "finish-president-chamber-dense",
+          "material": "textile",
+          "modelRevision": 1,
+          "presentationOnly": true,
+          "sourceReference": "roomstyler-fixture-week16-05"
+        }
+      ],
+      "furniture": [
+        {
+          "assetId": "work-desk",
+          "authoritative": false,
+          "candidateId": "C-15-02",
+          "clearanceEnvelope": [
+            294.0,
+            24.0,
+            366.0,
+            96.0
+          ],
+          "geometry": {
+            "rect": [
+              300.0,
+              30.0,
+              360.0,
+              60.0
+            ]
+          },
+          "hostSpaceId": "GF-03",
+          "id": "styled-desk-02",
+          "modelRevision": 1,
+          "occupancyIntent": 1,
+          "presentationOnly": true,
+          "rotation": 0,
+          "serviceSideIntent": null,
+          "sourceAssetId": "roomstyler-desk-01",
+          "sourceReference": "roomstyler-fixture-week16-05",
+          "sourceTool": "Roomstyler / Homestyler"
+        },
+        {
+          "assetId": "visitor-chair",
+          "authoritative": false,
+          "candidateId": "C-15-02",
+          "clearanceEnvelope": [
+            294.0,
+            24.0,
+            326.0,
+            74.0
+          ],
+          "geometry": {
+            "rect": [
+              300.0,
+              30.0,
+              320.0,
+              50.0
+            ]
+          },
+          "hostSpaceId": "GF-03",
+          "id": "styled-chair-02",
+          "modelRevision": 1,
+          "occupancyIntent": 1,
+          "presentationOnly": true,
+          "rotation": 0,
+          "serviceSideIntent": null,
+          "sourceAssetId": "roomstyler-chair-01",
+          "sourceReference": "roomstyler-fixture-week16-05",
+          "sourceTool": "Roomstyler / Homestyler"
+        }
+      ],
+      "id": "style-dense-seating",
+      "label": "Dense visitor seating for review",
+      "presentationOnly": true,
+      "status": "review-required"
+    }
+  ],
+  "renderReference": "roomstyler-export-candidate-c-15-02",
+  "sourceReference": "roomstyler-fixture-week16-05",
+  "status": "review-required",
+  "technicalPlanSideBySide": {
+    "candidateId": "C-15-02",
+    "modelRevision": 1,
+    "reference": "canonical-technical-plan-revision-1",
+    "validationMarkersRetained": true,
+    "validationSignature": "canonical-validation-signature-week16-05-fixture"
+  },
+  "tool": "Roomstyler / Homestyler",
+  "units": "inch",
+  "version": "week16-05.roomstyler-homestyler.v1"
+}
