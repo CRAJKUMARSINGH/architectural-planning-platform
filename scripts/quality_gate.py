@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Week 21 quality-gate contract and baseline report.
 
-The quality gate combines three future evidence tracks:
+The quality gate combines the evidence tracks delivered in Weeks 22–26:
 
 * adversarial architectural defect detection;
 * independent professional review; and
-* small, medium, and large performance benchmarks.
+* small, medium, and large performance benchmarks;
+* reproducibility and failure recovery.
 
 Week 21 deliberately reports ``INCOMPLETE`` until those tracks have supplied
 results. Missing evidence is not a pass condition. The gate is a coordination
@@ -28,7 +29,9 @@ TEST_ROOT = ROOT / "tests"
 REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "quality-gate-report.json"
 WEEK22_REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "week22-adversarial-foundation-report.json"
 WEEK23_REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "week23-adversarial-expansion-report.json"
+WEEK24_REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "week24-anonymized-review-results.json"
 WEEK25_REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "week25-performance-report.json"
+WEEK26_REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "week26-reproducibility-report.json"
 
 QUALITY_GATE_VERSION = "week21.quality-gate.v1"
 STATES = ("PASS", "REVIEW_REQUIRED", "BLOCKED", "INCOMPLETE")
@@ -123,12 +126,26 @@ def evaluate_professional_review(result: dict[str, Any] | None) -> dict[str, Any
             "message": "Professional review result is missing required measurements",
         }
 
+    if any(result.get(field) is None for field in (
+        "usableAgreement",
+        "criticalDefectsAcceptedAsUsable",
+        "criticalFindingsReproducible",
+    )):
+        return {
+            **result,
+            "status": "REVIEW_REQUIRED",
+            "agreementTargetMet": False,
+            "criticalDefectsRejectedAsUsable": False,
+        }
+
     agreement = float(result["usableAgreement"])
     accepted = int(result["criticalDefectsAcceptedAsUsable"])
     reproducible = bool(result["criticalFindingsReproducible"])
 
     if accepted > 0:
         status = "BLOCKED"
+    elif int(result["reviewers"]) < 2 or int(result["plansReviewed"]) < 25:
+        status = "REVIEW_REQUIRED"
     elif agreement < 0.90 or not reproducible:
         status = "REVIEW_REQUIRED"
     else:
@@ -178,6 +195,34 @@ def evaluate_performance(result: dict[str, Any] | None) -> dict[str, Any]:
     }
 
 
+def evaluate_reproducibility(result: dict[str, Any] | None) -> dict[str, Any]:
+    """Evaluate Week 26 reproducibility and failure-recovery evidence."""
+
+    required = (
+        "status",
+        "tamperedManifestRejected",
+        "missingArtifactsExplicit",
+        "partialGenerationCannotReplaceValidRevision",
+        "softArchiveRestorePreservesRevision",
+        "secondWorkspaceCanVerify",
+        "rerunMatchesOriginal",
+    )
+    if result is None:
+        return _missing_track("reproducibility", required)
+
+    missing = [field for field in required if field not in result]
+    if missing:
+        return {
+            "status": "INCOMPLETE",
+            "missingFields": missing,
+            "message": "Reproducibility result is missing required acceptance checks",
+        }
+
+    checks = {field: bool(result[field]) for field in required[1:]}
+    status = "PASS" if result["status"] == "PASS" and all(checks.values()) else "BLOCKED"
+    return {**result, "status": status, "acceptance": checks}
+
+
 def _evaluate_baseline(baseline: dict[str, Any]) -> dict[str, Any]:
     required = ("suite", "tests", "passed", "failed", "command")
     missing = [field for field in required if field not in baseline]
@@ -202,6 +247,7 @@ def build_quality_gate(
     adversarial: dict[str, Any] | None = None,
     professional_review: dict[str, Any] | None = None,
     performance: dict[str, Any] | None = None,
+    reproducibility: dict[str, Any] | None = None,
     baseline: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build a deterministic quality-gate report from supplied evidence."""
@@ -221,6 +267,7 @@ def build_quality_gate(
         "adversarial": evaluate_adversarial(adversarial),
         "professionalReview": evaluate_professional_review(professional_review),
         "performance": evaluate_performance(performance),
+        "reproducibility": evaluate_reproducibility(reproducibility),
         "regression": baseline_result,
     }
     statuses = [track["status"] for track in tracks.values()]
@@ -230,7 +277,7 @@ def build_quality_gate(
         "dangerousFalseNegatives": tracks["adversarial"]["status"],
         "professionalReview": tracks["professionalReview"]["status"],
         "performanceBenchmark": tracks["performance"]["status"],
-        "reproducibility": tracks["performance"]["status"],
+        "reproducibility": tracks["reproducibility"]["status"],
         "baselineRegression": tracks["regression"]["status"],
     }
     report: dict[str, Any] = {
@@ -264,7 +311,7 @@ def validate_quality_gate(report: dict[str, Any]) -> list[str]:
         errors.append(f"invalid status: {report.get('status')}")
 
     tracks = report.get("tracks", {})
-    for name in ("adversarial", "professionalReview", "performance", "regression"):
+    for name in ("adversarial", "professionalReview", "performance", "reproducibility", "regression"):
         if name not in tracks:
             errors.append(f"missing track: {name}")
         elif tracks[name].get("status") not in STATES:
@@ -293,7 +340,9 @@ def discover_test_count() -> int:
 
 def write_report() -> dict[str, Any]:
     adversarial: dict[str, Any] | None = None
+    professional_review: dict[str, Any] | None = None
     performance: dict[str, Any] | None = None
+    reproducibility: dict[str, Any] | None = None
     source_report = WEEK23_REPORT_PATH if WEEK23_REPORT_PATH.exists() else WEEK22_REPORT_PATH
     if source_report.exists():
         adversarial_report = json.loads(source_report.read_text(encoding="utf-8"))
@@ -320,6 +369,17 @@ def write_report() -> dict[str, Any]:
             "falsePositiveCount": false_positives,
             "sourceReport": str(source_report.relative_to(ROOT)),
         }
+    if WEEK24_REPORT_PATH.exists():
+        week24 = json.loads(WEEK24_REPORT_PATH.read_text(encoding="utf-8"))
+        professional_review = {
+            "reviewers": week24.get("completedReviewers", 0),
+            "plansReviewed": week24.get("plansReviewed", 0),
+            "usableAgreement": week24.get("usableAgreement"),
+            "criticalDefectsAcceptedAsUsable": week24.get("criticalDefectsAcceptedAsUsable"),
+            "criticalFindingsReproducible": week24.get("criticalFindingsReproducible"),
+            "reviewStatus": week24.get("reviewStatus"),
+            "sourceReport": str(WEEK24_REPORT_PATH.relative_to(ROOT)),
+        }
     if WEEK25_REPORT_PATH.exists():
         week25 = json.loads(WEEK25_REPORT_PATH.read_text(encoding="utf-8"))
         failures = week25.get("failures") or {}
@@ -331,6 +391,13 @@ def write_report() -> dict[str, Any]:
             "nondeterministicRuns": failures.get("nondeterministicRuns", 0),
             "sourceReport": str(WEEK25_REPORT_PATH.relative_to(ROOT)),
         }
+    if WEEK26_REPORT_PATH.exists():
+        week26 = json.loads(WEEK26_REPORT_PATH.read_text(encoding="utf-8"))
+        reproducibility = {
+            "status": week26.get("status"),
+            **(week26.get("acceptance") or {}),
+            "sourceReport": str(WEEK26_REPORT_PATH.relative_to(ROOT)),
+        }
     current_test_count = discover_test_count()
     baseline = {
         "suite": "full weekly regression",
@@ -341,7 +408,13 @@ def write_report() -> dict[str, Any]:
         "previousWeek21BaselineTests": 69,
         "verification": "Current regression suite recorded from the Week 26 validation run",
     }
-    report = build_quality_gate(adversarial=adversarial, performance=performance, baseline=baseline)
+    report = build_quality_gate(
+        adversarial=adversarial,
+        professional_review=professional_review,
+        performance=performance,
+        reproducibility=reproducibility,
+        baseline=baseline,
+    )
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
     REPORT_PATH.write_text(
         json.dumps(report, indent=2, ensure_ascii=False, sort_keys=True) + "\n",

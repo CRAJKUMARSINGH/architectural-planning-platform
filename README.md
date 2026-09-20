@@ -87,10 +87,9 @@ performance evidence is supplied.
 - Added the baseline artifact:
   `bar-association-hall/standard/quality-gate-report.json`.
 
-The current Week 21 report is intentionally `INCOMPLETE` because the Week 23–25
-evidence tracks have not yet been executed. The Week 22 adversarial track is
-now connected to the quality gate and reports its own result. Missing
-benchmark evidence is not treated as a pass.
+The current Week 21 report is `REVIEW_REQUIRED` because the Week 22–26
+evidence tracks are present, while independent professional review is still
+pending. Missing benchmark evidence is not treated as a pass.
 
 Run the Week 21 contract checks with:
 
@@ -252,6 +251,13 @@ npm run test:week26
 ```
 
 **Task completion:** Week 26 enrichment is complete and marked done in this README.
+
+**Combined Week 22–26 task completion:** The adversarial corpus, expanded
+benchmark, independent-review package, performance harness, reproducibility
+runner, failure-injection checks, and revision-comparison report are applied
+and validated on `main`. The combined quality gate remains
+`REVIEW_REQUIRED` only until two independent professionals complete the Week
+24 review; no professional approval or permit decision is implied.
 
 
 ## Week 3–4 task status

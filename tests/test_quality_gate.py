@@ -13,6 +13,7 @@ from quality_gate import (  # noqa: E402
     evaluate_adversarial,
     evaluate_performance,
     evaluate_professional_review,
+    evaluate_reproducibility,
     validate_quality_gate,
 )
 
@@ -48,6 +49,18 @@ def passing_performance():
     }
 
 
+def passing_reproducibility():
+    return {
+        "status": "PASS",
+        "tamperedManifestRejected": True,
+        "missingArtifactsExplicit": True,
+        "partialGenerationCannotReplaceValidRevision": True,
+        "softArchiveRestorePreservesRevision": True,
+        "secondWorkspaceCanVerify": True,
+        "rerunMatchesOriginal": True,
+    }
+
+
 class QualityGateTests(unittest.TestCase):
     def test_missing_tracks_are_incomplete_not_pass(self):
         report = build_quality_gate()
@@ -56,6 +69,7 @@ class QualityGateTests(unittest.TestCase):
         self.assertEqual(report["tracks"]["adversarial"]["status"], "INCOMPLETE")
         self.assertEqual(report["tracks"]["professionalReview"]["status"], "INCOMPLETE")
         self.assertEqual(report["tracks"]["performance"]["status"], "INCOMPLETE")
+        self.assertEqual(report["tracks"]["reproducibility"]["status"], "INCOMPLETE")
         self.assertEqual(validate_quality_gate(report), [])
 
     def test_critical_false_negative_blocks_release(self):
@@ -69,6 +83,7 @@ class QualityGateTests(unittest.TestCase):
             adversarial=result,
             professional_review=passing_review(),
             performance=passing_performance(),
+            reproducibility=passing_reproducibility(),
         )
         self.assertEqual(report["status"], "BLOCKED")
         self.assertFalse(report["releaseReady"])
@@ -83,11 +98,17 @@ class QualityGateTests(unittest.TestCase):
         result["nondeterministicRuns"] = 1
         self.assertEqual(evaluate_performance(result)["status"], "BLOCKED")
 
+    def test_reproducibility_failure_blocks_release(self):
+        result = passing_reproducibility()
+        result["secondWorkspaceCanVerify"] = False
+        self.assertEqual(evaluate_reproducibility(result)["status"], "BLOCKED")
+
     def test_all_tracks_pass_only_when_every_hard_gate_passes(self):
         report = build_quality_gate(
             adversarial=passing_adversarial(),
             professional_review=passing_review(),
             performance=passing_performance(),
+            reproducibility=passing_reproducibility(),
         )
         self.assertEqual(report["status"], "PASS")
         self.assertTrue(report["releaseReady"])

@@ -5,14 +5,14 @@
     "criticalDefectDetection": "PASS",
     "dangerousFalseNegatives": "PASS",
     "performanceBenchmark": "PASS",
-    "professionalReview": "INCOMPLETE",
+    "professionalReview": "REVIEW_REQUIRED",
     "reproducibility": "PASS"
   },
   "professionalReviewRequired": true,
   "releaseReady": false,
-  "reportSignature": "5e193b18a7b59445fa3d60810adcfbdc44b504b091f949a406c73fc5ca91fe67",
+  "reportSignature": "365da0385bd7eb7982a4a98e36ebac74b5cb5d0c1f3636fa3f44267632ef73bd",
   "score": null,
-  "status": "INCOMPLETE",
+  "status": "REVIEW_REQUIRED",
   "tracks": {
     "adversarial": {
       "allCriticalFindingsComplete": true,
@@ -48,16 +48,16 @@
       "status": "PASS"
     },
     "professionalReview": {
-      "message": "professional review evidence has not been supplied",
-      "missingEvidence": true,
-      "requiredFields": [
-        "reviewers",
-        "plansReviewed",
-        "usableAgreement",
-        "criticalDefectsAcceptedAsUsable",
-        "criticalFindingsReproducible"
-      ],
-      "status": "INCOMPLETE"
+      "agreementTargetMet": false,
+      "criticalDefectsAcceptedAsUsable": null,
+      "criticalDefectsRejectedAsUsable": false,
+      "criticalFindingsReproducible": null,
+      "plansReviewed": 0,
+      "reviewStatus": "PENDING_EXTERNAL_REVIEW",
+      "reviewers": 0,
+      "sourceReport": "bar-association-hall/standard/week24-anonymized-review-results.json",
+      "status": "REVIEW_REQUIRED",
+      "usableAgreement": null
     },
     "regression": {
       "command": "python3 -m unittest discover -s tests -p 'test_week*.py'",
@@ -68,6 +68,24 @@
       "suite": "full weekly regression",
       "tests": 93,
       "verification": "Current regression suite recorded from the Week 26 validation run"
+    },
+    "reproducibility": {
+      "acceptance": {
+        "missingArtifactsExplicit": true,
+        "partialGenerationCannotReplaceValidRevision": true,
+        "rerunMatchesOriginal": true,
+        "secondWorkspaceCanVerify": true,
+        "softArchiveRestorePreservesRevision": true,
+        "tamperedManifestRejected": true
+      },
+      "missingArtifactsExplicit": true,
+      "partialGenerationCannotReplaceValidRevision": true,
+      "rerunMatchesOriginal": true,
+      "secondWorkspaceCanVerify": true,
+      "softArchiveRestorePreservesRevision": true,
+      "sourceReport": "bar-association-hall/standard/week26-reproducibility-report.json",
+      "status": "PASS",
+      "tamperedManifestRejected": true
     }
   },
   "version": "week21.quality-gate.v1",
