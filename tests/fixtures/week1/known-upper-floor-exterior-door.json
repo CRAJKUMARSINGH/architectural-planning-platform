@@ -1,0 +1,52 @@
+{
+  "fixtureVersion": "week1.regression-fixture.v1",
+  "id": "known-upper-floor-exterior-door",
+  "description": "An upper-floor room with an unqualified exterior door must remain blocked.",
+  "baseModel": "canonical",
+  "mutations": [
+    {
+      "collection": "spaces",
+      "action": "append",
+      "value": {
+        "id": "TEST-FF-ORPHAN",
+        "level": "FF",
+        "name": "Unconnected Upper Room",
+        "rect": [
+          720,
+          6,
+          840,
+          126
+        ],
+        "finish": "public"
+      }
+    },
+    {
+      "collection": "openings",
+      "action": "append",
+      "value": {
+        "id": "D-TEST-FF-ORPHAN",
+        "level": "FF",
+        "type": "door",
+        "tag": "D-TEST",
+        "hostSpace": "TEST-FF-ORPHAN",
+        "wall": "south",
+        "offset": 36,
+        "width": 36,
+        "swing": "in"
+      }
+    }
+  ],
+  "expected": {
+    "status": "fail",
+    "findings": [
+      {
+        "rule": "ROOM_HAS_UNJUSTIFIED_EXTERNAL_DOOR",
+        "severity": "BLOCKER",
+        "spaceId": "TEST-FF-ORPHAN",
+        "openingIds": [
+          "D-TEST-FF-ORPHAN"
+        ]
+      }
+    ]
+  }
+}

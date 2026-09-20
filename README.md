@@ -1,5 +1,23 @@
 # Week 9–10 architectural enrichment — applied
 
+## W1-E-10 — Week 1 regression contract: DONE
+
+The Week 1 baseline contract is now synchronized with the current canonical
+model and has a durable fixture runner:
+
+- `tests/fixtures/week1/known-upper-floor-exterior-door.json` proves that an
+  unjustified upper-floor exterior door remains a `BLOCKER`.
+- `tests/fixtures/week1/valid-connected-model.json` proves that a connected
+  model remains free of blocking findings.
+- `python scripts/week1.py fixtures` runs both fixtures and checks their
+  expected rule/severity/object evidence.
+- `python scripts/week1.py verify-manifest` now detects drift between the
+  committed validation report, source hashes, and fixture files.
+
+The source baseline is currently `pass` because later Week 3–8 work removed
+the original known blocker; the invalid case remains preserved as a regression
+fixture instead of being incorrectly recorded as the live baseline state.
+
 The Week 9 and Week 10 enrichment has been implemented and merged into the
 canonical planning pipeline.
 

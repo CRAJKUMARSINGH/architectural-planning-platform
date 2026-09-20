@@ -18,6 +18,7 @@
     "validate:standard": "python -c \"import sys; sys.path.insert(0, 'bar-association-hall'); from drawing_model import load_model, validate_model; s,p=load_model(); e=validate_model(s,p); print('fail' if e else 'pass'); [print(x) for x in e]\"",
     "validate:week1": "python scripts/week1.py validate --write-report",
     "verify:week1": "python scripts/week1.py verify-manifest",
+    "test:week1-fixtures": "python scripts/week1.py fixtures",
     "test:week1": "python -m unittest discover -s tests -p 'test_week1*.py'",
     "migrate:week2": "python scripts/week2.py migrate",
     "validate:week2": "python scripts/week2.py validate",
