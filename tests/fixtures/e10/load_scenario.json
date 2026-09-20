@@ -1,0 +1,42 @@
+{
+  "_comment": "E10 stabilization load scenario — concurrent multi-project fixture for stress testing.",
+  "scenario": "multi_project_concurrent",
+  "projectTypes": [
+    {
+      "name": "bar-association-hall",
+      "recipe": "institutional",
+      "spaces": 12,
+      "openings": 24,
+      "stairs": 2,
+      "concurrentJobs": 2
+    },
+    {
+      "name": "residential-small",
+      "recipe": "residential",
+      "spaces": 6,
+      "openings": 12,
+      "stairs": 1,
+      "concurrentJobs": 3
+    },
+    {
+      "name": "industrial-light",
+      "recipe": "industrial",
+      "spaces": 8,
+      "openings": 16,
+      "stairs": 1,
+      "concurrentJobs": 2
+    }
+  ],
+  "performanceEnvelopes": {
+    "validate_p95_ms": 500,
+    "enrich_p95_ms": 2000,
+    "quality_gate_p95_ms": 3000
+  },
+  "deterministicSeed": 1010,
+  "acceptanceCriteria": {
+    "noDataLoss": true,
+    "noSilentFailures": true,
+    "reproducibleAcrossRuns": true,
+    "lastValidRevisionPreservedOnFailure": true
+  }
+}

@@ -89,3 +89,20 @@ verify: lint-py typecheck test-baseline
 clean:
 	find . -type d -name __pycache__ -not -path './.kilo/*' -exec rm -rf {} + 2>/dev/null || true
 	find . -name '*.pyc' -not -path './.kilo/*' -delete 2>/dev/null || true
+
+# ---------------------------------------------------------------------------
+# Docker / Compose helpers (E09)
+# ---------------------------------------------------------------------------
+.PHONY: docker-build docker-up docker-staging docker-down
+
+docker-build:
+	docker compose build
+
+docker-up:
+	docker compose up -d
+
+docker-staging:
+	docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d
+
+docker-down:
+	docker compose down

@@ -10,6 +10,37 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 Enterprise E01–E10 programme underway. See `docs/enterprise/ENTERPRISE_ROADMAP.md`.
 
+### Added (2026-09-20) — E03–E10 Fixture & Regression Test Expansion
+
+Comprehensive fixtures and expanded regression tests for all enterprise weeks.
+All 258 enterprise regression tests pass; 34 skip pending SQLAlchemy install.
+
+#### Fixture files
+- `tests/fixtures/e03/` — roles_matrix.json, org_isolation_scenarios.json, dev_jwt_payload.json
+- `tests/fixtures/e04/` — job_payloads.json (state machine transitions), artifact_samples.json
+- `tests/fixtures/e05/` — quality_gate_passing.json, quality_gate_blocked.json, quality_gate_adversarial_regression.json
+- `tests/fixtures/e06/` — openapi_required_paths.json
+- `tests/fixtures/e07/` — structured_log_sample.json
+- `tests/fixtures/e08/` — security_headers_required.json
+- `tests/fixtures/e09/` — release_manifest_sample.json
+- `tests/fixtures/e10/` — load_scenario.json
+
+#### Expanded test files
+- `tests/test_e03_auth_expanded.py` — role weight matrix alignment, cross-org isolation, JWT decode, audit immutability, request-ID propagation
+- `tests/test_e04_jobs_expanded.py` — job state machine, SHA-256 deduplication, path-traversal containment, concurrent store writes
+- `tests/test_e05_quality_gate_expanded.py` — fixture-driven gate enforcement, ERROR/BLOCKER regression, adversarial count regression, SBOM artefact checks
+- `tests/test_e06_api.py` — versioned route structure, Pydantic constraints, auth wiring, OpenAPI schema, ADR-001 geometry boundary
+- `tests/test_e07_observability_expanded.py` — full JSON log field contract, Grafana dashboard, health endpoint, correlation ID round-trip
+- `tests/test_e08_security_expanded.py` — header completeness, rate-limit eviction, tamper detection, OWASP checklist, CORS, staging guards
+- `tests/test_e09_staging_expanded.py` — docker compose service completeness, Dockerfile presence, release workflow, checklist disclaimer
+- `tests/test_e10_stabilization.py` — concurrent job safety, load scenario fixture, ADR completeness, runbook coverage, enterprise candidate readiness
+
+#### Infrastructure fixes (driven by new tests)
+- `scripts/enterprise/check_quality_gate.py` — now fails on `ERROR` severity findings and missing `adversarialSuite` key
+- `.github/workflows/ci.yml` — explicitly calls `check_quality_gate.py` in the quality gate step
+- `docs/enterprise/checklists/release.md` — added "Never mark outputs as automatically issuable" disclaimer
+- `Makefile` — added `docker-build`, `docker-up`, `docker-staging`, `docker-down` targets (E09)
+
 ---
 
 ## [1.0.0-enterprise-baseline] — 2026-09-20

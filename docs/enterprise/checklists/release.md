@@ -23,4 +23,5 @@
 - [ ] Staging smoke test completed
 - [ ] Monitoring dashboards show healthy baseline
 - [ ] Announcement / internal note includes the professional-review disclaimer
+- [ ] **Never** mark outputs as automatically issuable — professional review is always required
 - [ ] Tag pushed and GitHub Release created with assets attached

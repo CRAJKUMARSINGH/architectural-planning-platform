@@ -1,0 +1,27 @@
+{
+  "_comment": "Fixture: quality gate report that represents a passing (green) E05 CI run.",
+  "status": "REVIEW_REQUIRED",
+  "generatedAt": "2026-09-20T00:00:00Z",
+  "applicationCommit": "abc1234",
+  "rulePackVersion": "india-preliminary-review@1.0.0",
+  "adversarialSuite": {
+    "detected": 30,
+    "total": 30,
+    "falseNegatives": 0,
+    "falsePositives": 0
+  },
+  "findings": [],
+  "performanceSuite": {
+    "status": "pass",
+    "operations": {
+      "validate": {"p50_ms": 12, "p95_ms": 45},
+      "enrich": {"p50_ms": 85, "p95_ms": 210}
+    }
+  },
+  "professionalReview": {
+    "status": "pending",
+    "reviewersCompleted": 0,
+    "reviewersRequired": 2
+  },
+  "reportSignature": "sha256:placeholder-for-runtime-calculation"
+}

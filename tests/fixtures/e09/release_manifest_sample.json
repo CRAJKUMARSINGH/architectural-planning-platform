@@ -1,0 +1,27 @@
+{
+  "_comment": "Sample release manifest for E09 regression — produced by release_check.py on a tagged release.",
+  "version": "1.0.0-enterprise-candidate",
+  "releasedAt": "2026-09-20T00:00:00Z",
+  "qualityGateStatus": "REVIEW_REQUIRED",
+  "adversarialSuite": {
+    "detected": 30,
+    "total": 30
+  },
+  "sbom": {
+    "format": "spdx-json",
+    "generatedAt": "2026-09-20T00:00:00Z",
+    "artifactPath": "release/advocate-chambers-1.0.0-enterprise-candidate.spdx.json"
+  },
+  "dockerImages": [
+    {"name": "advocate-api", "tag": "1.0.0-enterprise-candidate", "sha256": "placeholder"},
+    {"name": "advocate-worker", "tag": "1.0.0-enterprise-candidate", "sha256": "placeholder"},
+    {"name": "advocate-web", "tag": "1.0.0-enterprise-candidate", "sha256": "placeholder"}
+  ],
+  "releaseChecklist": {
+    "allTestsGreen": true,
+    "adversarialSuiteGreen": true,
+    "changelogUpdated": true,
+    "sbomGenerated": true,
+    "professionalReviewDisclaimer": true
+  }
+}

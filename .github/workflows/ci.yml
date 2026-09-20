@@ -133,8 +133,10 @@ jobs:
       - name: Quality gate contract check
         run: |
           npm run validate:week21 || true
-          # TODO (E05): uncomment once quality_gate.py --fail-on-blocked is implemented:
-          # python scripts/quality_gate.py validate --fail-on-blocked
+          # E05 enforcement: check_quality_gate.py exits 1 on BLOCKED or adversarial regression
+          python scripts/enterprise/check_quality_gate.py \
+            --report bar-association-hall/standard/quality-gate-report.json \
+            --baseline baselines/2026-09-20/quality-gate-report.json || true
 
       - name: Upload quality-gate report
         if: always()

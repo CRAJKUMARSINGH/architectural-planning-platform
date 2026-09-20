@@ -1,0 +1,27 @@
+{
+  "_comment": "Required HTTP security headers for E08 regression. Every response must include these.",
+  "requiredHeaders": {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "X-XSS-Protection": "1; mode=block",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "geolocation=(), microphone=(), camera=()"
+  },
+  "forbiddenResponseHeaders": ["server", "x-powered-by"],
+  "corsPolicy": {
+    "allowedOrigins": ["http://localhost:5173", "http://127.0.0.1:5173"],
+    "forbiddenOrigins": ["https://evil.example.com", "http://attacker.com"],
+    "allowCredentials": true
+  },
+  "rateLimitPolicy": {
+    "limit": 120,
+    "windowSeconds": 60,
+    "responseStatus": 429,
+    "retryAfterHeader": true
+  },
+  "inputLimits": {
+    "maxBriefTextChars": 12000,
+    "maxProjectNameChars": 200,
+    "maxUrlPathChars": 500
+  }
+}

@@ -51,13 +51,17 @@ def check_gate(report: dict, fail_on_blocked: bool = True) -> list[str]:
                 f"(required: {REQUIRED_ADVERSARIAL_DETECTIONS})"
             )
 
-    # Check for new BLOCKED findings vs baseline
+    # Check for missing adversarialSuite key — treat as a failure
+    if not adversarial:
+        failures.append("adversarialSuite key missing from report — cannot verify detection count")
+
+    # Check for BLOCKER or ERROR findings
     findings = report.get("findings", [])
-    blocked = [f for f in findings if f.get("severity") == "BLOCKER"]
-    if blocked:
-        failures.append(f"{len(blocked)} BLOCKER finding(s) in report:")
-        for b in blocked[:5]:
-            failures.append(f"  - {b.get('code', '?')}: {b.get('message', '?')}")
+    blocking_findings = [f for f in findings if f.get("severity") in ("BLOCKER", "ERROR")]
+    if blocking_findings:
+        failures.append(f"{len(blocking_findings)} BLOCKER/ERROR finding(s) in report:")
+        for b in blocking_findings[:5]:
+            failures.append(f"  - [{b.get('severity','?')}] {b.get('code', '?')}: {b.get('message', '?')}")
 
     return failures
 

@@ -1,0 +1,25 @@
+{
+  "_comment": "Required API paths that must appear in the OpenAPI schema for E06 contract tests.",
+  "requiredV1Paths": [
+    "/v1/projects/",
+    "/v1/projects/{project_id}",
+    "/v1/projects/{project_id}/jobs",
+    "/v1/projects/{project_id}/jobs/{job_id}",
+    "/v1/projects/{project_id}/revisions"
+  ],
+  "requiredMetaPaths": [
+    "/health",
+    "/ready"
+  ],
+  "errorEnvelopeSchema": {
+    "required": ["detail"],
+    "example": {
+      "detail": "Project not found"
+    }
+  },
+  "versioningRules": {
+    "breakingChangesRequireNewMajor": true,
+    "deprecationNoticeRequired": true,
+    "currentVersion": "v1"
+  }
+}

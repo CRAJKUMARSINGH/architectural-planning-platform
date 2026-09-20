@@ -1,0 +1,14 @@
+{
+  "_comment": "Fixture: adversarial regression — only 28/30 detected. CI must fail on this.",
+  "status": "REVIEW_REQUIRED",
+  "generatedAt": "2026-09-20T00:00:00Z",
+  "adversarialSuite": {
+    "detected": 28,
+    "total": 30,
+    "falseNegatives": 2,
+    "falsePositives": 0,
+    "missedCases": ["adversarial-015", "adversarial-023"]
+  },
+  "findings": [],
+  "reportSignature": "sha256:placeholder-for-runtime-calculation"
+}

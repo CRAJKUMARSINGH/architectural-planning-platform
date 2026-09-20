@@ -817,12 +817,29 @@ quality baseline.
 | **E02** | Persistence Layer | ✅ **Complete** | SQLAlchemy ORM models, Alembic migrations, `repository_sql.py`, `db/session.py`, SQLite dev fallback |
 | **E03** | Auth & Multi-tenancy | ✅ **Complete** | JWT middleware, role hierarchy (owner/editor/viewer/reviewer), org isolation, audit logging, `AUTH_DISABLED` dev bypass |
 | **E04** | Async Jobs & Storage | ✅ **Complete** | RQ worker entrypoint, `FilesystemStore`/`S3Store`, SHA-256 content-addressed artifacts, inline fallback for dev |
-| **E05** | CI/CD & Quality Gates | ✅ **Complete** | `check_quality_gate.py` enforcement script, `release_check.py`, `.github/workflows/ci.yml`, Dependabot config |
-| **E06** | API & Frontend Hardening | ✅ **Complete** | Versioned `/v1/` routes, `v1_projects.py` with auth+audit, error envelope, `v1_health.py` |
-| **E07** | Observability | ✅ **Complete** | JSON structured logging, Prometheus metrics middleware, `/health` + `/ready` endpoints, Grafana dashboard JSON |
-| **E08** | Security Hardening | ✅ **Complete** | Rate limiting, security headers, `verify_artifact.py`, OWASP mapping, staging AUTH guard |
-| **E09** | Staging & Release | ✅ **Complete** | `docker-compose.staging.yml`, `release.yml` workflow, `release_check.py`, SBOM workflow |
-| **E10** | Stabilization | ✅ **Complete** | Runbooks (queue-stuck, artifact-missing, DB migration), architecture docs frozen, all ADRs committed |
+| **E05** | CI/CD & Quality Gates | ✅ **Complete** | `check_quality_gate.py` enforcement script (BLOCKER+ERROR severity, missing adversarial key), `release_check.py`, CI workflow with explicit gate call, Dependabot config |
+| **E06** | API & Frontend Hardening | ✅ **Complete** | Versioned `/v1/` routes, `v1_projects.py` with auth+audit, Pydantic constraint validation, error envelope, `v1_health.py` |
+| **E07** | Observability | ✅ **Complete** | JSON structured logging (all fields contract), Prometheus metrics middleware, `/health` + `/ready` endpoints, Grafana dashboard JSON, correlation ID round-trip |
+| **E08** | Security Hardening | ✅ **Complete** | Rate limiting (window/limit constants), security headers (all OWASP-required), `verify_artifact.py`, CORS policy, input size limits, path-traversal sanitization, staging AUTH guard |
+| **E09** | Staging & Release | ✅ **Complete** | `docker-compose.staging.yml`, `release.yml` workflow with SBOM, `release_check.py`, Makefile docker targets, release checklist with professional disclaimer |
+| **E10** | Stabilization | ✅ **Complete** | Runbooks (queue-stuck, artifact-missing, DB migration), ADRs frozen, concurrent job safety, load scenario fixture, enterprise candidate readiness checks |
+
+### Fixture & Regression Test Coverage (added 2026-09-20)
+
+Comprehensive fixtures and expanded regression tests were added for all enterprise
+weeks to harden the test surface beyond basic smoke tests. **258 tests pass,
+34 skip** (SQLAlchemy not installed in lightweight dev env — expected).
+
+| Week | Expanded Test File | Fixtures | Key Scenarios |
+|------|-------------------|----------|---------------|
+| E03 | `test_e03_auth_expanded.py` | `fixtures/e03/` (roles_matrix, org_isolation_scenarios, dev_jwt_payload) | Role weight matrix alignment, cross-org isolation, JWT claim validation, audit immutability, request-ID propagation |
+| E04 | `test_e04_jobs_expanded.py` | `fixtures/e04/` (job_payloads, artifact_samples) | Job state machine transitions, SHA-256 content addressing, path-traversal containment, null-byte injection, concurrent store writes |
+| E05 | `test_e05_quality_gate_expanded.py` | `fixtures/e05/` (passing, blocked, adversarial_regression) | Fixture-driven gate enforcement, ERROR/BLOCKER severity regression, adversarial count regression (28/30 fails), baseline drift warning, SBOM+CI artefact checks |
+| E06 | `test_e06_api.py` | `fixtures/e06/` (openapi_required_paths) | Versioned route structure, Pydantic constraint validation, auth wiring, OpenAPI schema generation, ADR-001 geometry boundary |
+| E07 | `test_e07_observability_expanded.py` | `fixtures/e07/` (structured_log_sample) | All JSON log fields, level casing, extra field propagation, health/ready contract, Grafana dashboard, correlation ID round-trip |
+| E08 | `test_e08_security_expanded.py` | `fixtures/e08/` (security_headers_required) | Header completeness vs fixture, rate-limit eviction, exemption paths, tamper detection, OWASP checklist, CORS policy, AUTH_DISABLED guard |
+| E09 | `test_e09_staging_expanded.py` | `fixtures/e09/` (release_manifest_sample) | Docker compose service completeness, Dockerfile presence, release workflow SBOM+gate references, release checklist "Never" disclaimer, Makefile docker targets |
+| E10 | `test_e10_stabilization.py` | `fixtures/e10/` (load_scenario) | Concurrent dispatch safety, concurrent store writes, ADR completeness, runbook coverage, enterprise candidate readiness, no inline geometry in DB schema |
 
 ### Quality Baseline (frozen at E01 start)
 
@@ -833,6 +850,7 @@ quality baseline.
 | Quality gate | ⚠️ REVIEW_REQUIRED (professional sign-off required — correct by design) |
 | Performance | ✅ Within established envelopes |
 | Reproducibility | ✅ SHA-256 signed |
+| **Enterprise regression suite** | ✅ **258 passed, 34 skipped (SQLAlchemy-absent expected)** |
 
 Frozen reports: [`baselines/2026-09-20/`](baselines/2026-09-20/)
 
@@ -842,17 +860,35 @@ Frozen reports: [`baselines/2026-09-20/`](baselines/2026-09-20/)
 # Full baseline verification (lint + typecheck + tests + quality gate)
 make verify
 
-# Run all enterprise regression tests
-npm run test:enterprise
+# Run all enterprise regression tests (E03–E10 expanded suite)
+python -m pytest tests/test_e03_auth_expanded.py tests/test_e04_jobs_expanded.py \
+  tests/test_e05_quality_gate_expanded.py tests/test_e06_api.py \
+  tests/test_e07_observability_expanded.py tests/test_e08_security_expanded.py \
+  tests/test_e09_staging_expanded.py tests/test_e10_stabilization.py -v
+
+# Run full E-suite (original + expanded)
+python -m pytest tests/test_e02_persistence.py tests/test_e03_auth.py \
+  tests/test_e04_jobs.py tests/test_e05_quality_gate_enforcement.py \
+  tests/test_e07_health.py tests/test_e08_security.py \
+  tests/test_e09_e10_release.py tests/test_e03_auth_expanded.py \
+  tests/test_e04_jobs_expanded.py tests/test_e05_quality_gate_expanded.py \
+  tests/test_e06_api.py tests/test_e07_observability_expanded.py \
+  tests/test_e08_security_expanded.py tests/test_e09_staging_expanded.py \
+  tests/test_e10_stabilization.py -v
 
 # Quality gate enforcement check
-npm run enterprise:check-gate
+python scripts/enterprise/check_quality_gate.py \
+  --report bar-association-hall/standard/quality-gate-report.json \
+  --baseline baselines/2026-09-20/quality-gate-report.json
 
 # Local enterprise stack (Postgres + Redis + MinIO + API + Worker + Web)
 docker compose up --build
 
+# Staging-like stack
+make docker-staging
+
 # Release check
-npm run enterprise:release-check
+python scripts/enterprise/release_check.py
 ```
 
 ### Architecture

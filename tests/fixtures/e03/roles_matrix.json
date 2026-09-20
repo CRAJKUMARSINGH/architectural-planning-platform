@@ -1,0 +1,28 @@
+{
+  "_comment": "Role capability matrix for regression — owner > editor > reviewer > viewer.",
+  "roles": ["owner", "editor", "reviewer", "viewer"],
+  "weightMap": {
+    "viewer": 1,
+    "reviewer": 2,
+    "editor": 3,
+    "owner": 4
+  },
+  "canMutate": {
+    "owner": true,
+    "editor": true,
+    "reviewer": false,
+    "viewer": false
+  },
+  "canDelete": {
+    "owner": true,
+    "editor": false,
+    "reviewer": false,
+    "viewer": false
+  },
+  "canViewAuditLog": {
+    "owner": true,
+    "editor": true,
+    "reviewer": true,
+    "viewer": true
+  }
+}

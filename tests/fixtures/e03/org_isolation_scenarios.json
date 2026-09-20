@@ -1,0 +1,42 @@
+{
+  "_comment": "Cross-organization access control test scenarios (ADR-003).",
+  "orgs": [
+    {"id": "org-alpha-0000-0000-0000-000000000001", "name": "Alpha Firm"},
+    {"id": "org-beta-00000-0000-0000-000000000002", "name": "Beta Chambers"}
+  ],
+  "scenarios": [
+    {
+      "id": "scenario-01",
+      "description": "User from org-alpha cannot read project owned by org-beta",
+      "actorOrgId": "org-alpha-0000-0000-0000-000000000001",
+      "resourceOrgId": "org-beta-00000-0000-0000-000000000002",
+      "expectedResult": "NOT_FOUND",
+      "httpStatus": 404
+    },
+    {
+      "id": "scenario-02",
+      "description": "User from org-alpha can read project owned by org-alpha",
+      "actorOrgId": "org-alpha-0000-0000-0000-000000000001",
+      "resourceOrgId": "org-alpha-0000-0000-0000-000000000001",
+      "expectedResult": "FOUND",
+      "httpStatus": 200
+    },
+    {
+      "id": "scenario-03",
+      "description": "Unauthenticated request to protected endpoint returns 401",
+      "actorOrgId": null,
+      "resourceOrgId": "org-alpha-0000-0000-0000-000000000001",
+      "expectedResult": "UNAUTHORIZED",
+      "httpStatus": 401
+    },
+    {
+      "id": "scenario-04",
+      "description": "Viewer cannot delete a project (requires owner role)",
+      "actorOrgId": "org-alpha-0000-0000-0000-000000000001",
+      "resourceOrgId": "org-alpha-0000-0000-0000-000000000001",
+      "actorRole": "viewer",
+      "expectedResult": "FORBIDDEN",
+      "httpStatus": 403
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "_comment": "Fixture: quality gate report with BLOCKED status — CI must fail on this.",
+  "status": "BLOCKED",
+  "reason": "EGRESS-001: primary corridor exit width below minimum",
+  "generatedAt": "2026-09-20T00:00:00Z",
+  "adversarialSuite": {
+    "detected": 30,
+    "total": 30,
+    "falseNegatives": 0,
+    "falsePositives": 0
+  },
+  "findings": [
+    {
+      "severity": "BLOCKER",
+      "code": "EGRESS-001",
+      "message": "Primary corridor exit width 800mm is below minimum 900mm (NBC Table 4.1)",
+      "affectedIds": ["corridor-gf-01"],
+      "suggestedCorrection": "Widen corridor to minimum 900mm"
+    }
+  ],
+  "reportSignature": "sha256:placeholder-for-runtime-calculation"
+}

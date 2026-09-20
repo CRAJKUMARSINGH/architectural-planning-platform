@@ -1,0 +1,9 @@
+{
+  "_comment": "Sample JWT payload for E03 dev/test mode. Real tokens are signed with JWT_SECRET. DO NOT use real credentials here.",
+  "sub": "00000000-0000-0000-0000-000000000002",
+  "email": "dev@local.example",
+  "org_id": "00000000-0000-0000-0000-000000000001",
+  "role": "owner",
+  "iat": 1726790400,
+  "exp": 9999999999
+}

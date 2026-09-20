@@ -1,0 +1,46 @@
+{
+  "_comment": "Canonical job payload fixtures for E04 async job regression tests.",
+  "jobs": [
+    {
+      "id": "fixture-job-validate-01",
+      "type": "validate",
+      "payload": {
+        "project": {"id": "proj-banswara-bar-association", "units": "inch", "revision": 1},
+        "plans": {"spaces": [], "openings": [], "stairs": []}
+      },
+      "expectedTerminalStatus": "succeeded"
+    },
+    {
+      "id": "fixture-job-quality-gate-01",
+      "type": "quality_gate",
+      "payload": {
+        "reportPath": "bar-association-hall/standard/quality-gate-report.json"
+      },
+      "expectedTerminalStatus": "succeeded"
+    },
+    {
+      "id": "fixture-job-benchmark-01",
+      "type": "benchmark",
+      "payload": {
+        "workload": "small",
+        "seed": 42
+      },
+      "expectedTerminalStatus": "succeeded"
+    },
+    {
+      "id": "fixture-job-bad-type-01",
+      "type": "INVALID_TYPE",
+      "payload": {},
+      "expectedTerminalStatus": "rejected"
+    }
+  ],
+  "stateMachineTransitions": [
+    {"from": "queued", "to": "running", "valid": true},
+    {"from": "running", "to": "succeeded", "valid": true},
+    {"from": "running", "to": "failed", "valid": true},
+    {"from": "running", "to": "cancelled", "valid": true},
+    {"from": "queued", "to": "cancelled", "valid": true},
+    {"from": "succeeded", "to": "running", "valid": false},
+    {"from": "failed", "to": "succeeded", "valid": false}
+  ]
+}
