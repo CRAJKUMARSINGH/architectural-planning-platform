@@ -36,6 +36,7 @@ WEEK15_VERSION = "week15.parametric-assets.v1"
 WEEK16_VERSION = "week16.candidate-studio.v1"
 RENDER_VERSION = "week16.render-pipeline.v1"
 AI_INPUT_VERSION = "week16.ai-tool-inputs.v1"
+MAKET_INPUT_VERSION = "week16-01.maket-ai.v1"
 
 
 AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
@@ -48,6 +49,8 @@ AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
         "requiredEvidence": ["source brief", "units", "tool/export reference", "reviewer"],
         "promotionGate": "candidate only until canonical rooms, openings, routes, and clearances validate",
         "programWeeks": [1, 6, 12, 16],
+        "implementationStatus": "applied",
+        "implementationFixture": "tests/fixtures/week16/maket-ai-text-to-plan.json",
     },
     {
         "id": "planner5d-furnished-layout",
@@ -267,6 +270,72 @@ def ingest_ai_tool_input(
         "authoritative": False,
         "promotionStatus": "review-required",
         "promotionGate": tool["promotionGate"],
+    }
+
+
+def validate_maket_input(
+    model: dict[str, Any],
+    payload: dict[str, Any],
+    *,
+    source_reference: str,
+    model_revision: Any,
+) -> dict[str, Any]:
+    """Validate a Maket.ai-style text-to-plan candidate without mutating model."""
+
+    normalized = ingest_ai_tool_input(
+        "maket-text-to-plan",
+        source_input=payload,
+        source_reference=source_reference,
+        model_revision=model_revision,
+    )
+    findings: list[dict[str, Any]] = []
+    units = str(payload.get("units", "")).strip().lower()
+    unit_scale = {"inch": 1.0, "in": 1.0, "foot": 12.0, "ft": 12.0, "mm": 1 / 25.4, "m": 39.3700787402}
+    if units not in unit_scale:
+        findings.append({"rule": "MAKET_UNITS_REQUIRED", "severity": "BLOCKER", "message": "Maket.ai input must declare supported units."})
+    rooms = payload.get("rooms")
+    if not isinstance(rooms, list) or not rooms:
+        findings.append({"rule": "MAKET_ROOM_SCHEDULE_REQUIRED", "severity": "BLOCKER", "message": "Maket.ai input must contain at least one room with dimensions."})
+        rooms = []
+    canonical_spaces = model.get("spaces", []) or []
+    canonical_by_name = {
+        str(space.get("name", "")).strip().lower(): space
+        for space in canonical_spaces
+        if str(space.get("name", "")).strip()
+    }
+    for room in rooms:
+        if not isinstance(room, dict):
+            findings.append({"rule": "MAKET_ROOM_ENTRY_INVALID", "severity": "BLOCKER", "message": "Each Maket.ai room entry must be an object."})
+            continue
+        name = str(room.get("name", "")).strip()
+        width = room.get("width")
+        depth = room.get("depth")
+        if not name or not isinstance(width, (int, float)) or not isinstance(depth, (int, float)) or width <= 0 or depth <= 0:
+            findings.append({"rule": "MAKET_ROOM_DIMENSIONS_REQUIRED", "severity": "BLOCKER", "message": "Every Maket.ai room must have a name, positive width, and positive depth."})
+            continue
+        canonical = canonical_by_name.get(name.lower())
+        if canonical is None:
+            findings.append({"rule": "MAKET_ROOM_NOT_IN_CANONICAL_MODEL", "severity": "REVIEW_REQUIRED", "message": f"Maket.ai room '{name}' has no canonical room match."})
+            continue
+        rect = _space_rect(canonical)
+        if rect and units in unit_scale:
+            expected_width = (rect[2] - rect[0]) / unit_scale[units]
+            expected_depth = (rect[3] - rect[1]) / unit_scale[units]
+            if abs(float(width) - expected_width) > 0.01 or abs(float(depth) - expected_depth) > 0.01:
+                findings.append({"rule": "MAKET_DIMENSION_CONFLICT", "severity": "REVIEW_REQUIRED", "message": f"Maket.ai dimensions for '{name}' differ from the canonical model."})
+    if len(rooms) != len(canonical_spaces):
+        findings.append({"rule": "MAKET_ROOM_COUNT_CONFLICT", "severity": "REVIEW_REQUIRED", "message": "Maket.ai room count differs from the canonical model."})
+    for field in ("furnitureIntent", "adjacencyIntent"):
+        if not isinstance(payload.get(field), list):
+            findings.append({"rule": f"MAKET_{field.upper()}_SHAPE", "severity": "REVIEW_REQUIRED", "message": f"Maket.ai {field} must be an explicit list for review."})
+    blocking = any(item["severity"] == "BLOCKER" for item in findings)
+    return {
+        "version": MAKET_INPUT_VERSION,
+        "status": "blocked" if blocking else ("review-required" if findings else "pass"),
+        "input": normalized,
+        "findings": findings,
+        "authoritativeGeometryChanged": False,
+        "canonicalModelRevision": model_revision,
     }
 
 
@@ -717,6 +786,15 @@ def write_reports() -> dict[str, Any]:
 - Each accepted tool signal retains its source reference, model revision,
   validation status, and review state; no external tool can silently mutate
   authoritative geometry or bypass a validation rerun.
+
+### W16-01 implementation status — Maket.ai
+
+- Added a text-to-plan fixture with units, room schedule, dimensions,
+  furniture intent, and adjacency intent.
+- Added dimension, unit, room-match, and input-shape checks through
+  `validate_maket_input`.
+- Conflicting dimensions become `review-required`; missing units or dimensions
+  become blockers; the canonical model is never mutated.
 """,
         encoding="utf-8",
     )

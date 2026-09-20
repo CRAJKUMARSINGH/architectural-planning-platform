@@ -1,4 +1,5 @@
 import copy
+import json
 import sys
 import unittest
 from pathlib import Path
@@ -17,6 +18,7 @@ from week1516 import (  # noqa: E402
     find_valid_position,
     furnish_model,
     ingest_ai_tool_input,
+    validate_maket_input,
     validate_placement,
 )
 
@@ -36,6 +38,47 @@ def model_fixture():
 
 
 class Week1516EnrichmentTests(unittest.TestCase):
+    def test_w1601_maket_fixture_matches_canonical_model(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "maket-ai-text-to-plan.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        result = validate_maket_input(
+            model_fixture(),
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=8,
+        )
+        self.assertEqual(result["status"], "pass")
+        self.assertEqual(result["version"], "week16-01.maket-ai.v1")
+        self.assertFalse(result["authoritativeGeometryChanged"])
+        self.assertEqual(result["input"]["tool"], "Maket.ai")
+        self.assertEqual(result["findings"], [])
+
+    def test_w1601_maket_dimension_conflict_requires_review_without_mutation(self):
+        model = model_fixture()
+        before = copy.deepcopy(model)
+        payload = {
+            "units": "inch",
+            "rooms": [{"name": "Office", "width": 180, "depth": 240}],
+            "furnitureIntent": [],
+            "adjacencyIntent": [],
+        }
+        result = validate_maket_input(model, payload, source_reference="maket-conflict", model_revision=8)
+        self.assertEqual(result["status"], "review-required")
+        self.assertTrue(any(item["rule"] == "MAKET_DIMENSION_CONFLICT" for item in result["findings"]))
+        self.assertEqual(model, before)
+
+    def test_w1601_maket_missing_units_and_dimensions_blocks(self):
+        result = validate_maket_input(
+            model_fixture(),
+            {"rooms": [{"name": "Office"}], "furnitureIntent": [], "adjacencyIntent": []},
+            source_reference="maket-invalid",
+            model_revision=8,
+        )
+        rules = {item["rule"] for item in result["findings"]}
+        self.assertEqual(result["status"], "blocked")
+        self.assertIn("MAKET_UNITS_REQUIRED", rules)
+        self.assertIn("MAKET_ROOM_DIMENSIONS_REQUIRED", rules)
+
     def test_week16_exposes_tool_inputs_with_review_boundaries(self):
         manifest = ai_tool_input_manifest()
         self.assertEqual(manifest["version"], AI_INPUT_VERSION)

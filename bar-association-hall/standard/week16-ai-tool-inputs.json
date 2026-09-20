@@ -33,6 +33,8 @@
         "furniture intent"
       ],
       "id": "maket-text-to-plan",
+      "implementationFixture": "tests/fixtures/week16/maket-ai-text-to-plan.json",
+      "implementationStatus": "applied",
       "inputRole": "text-to-plan ideation",
       "programWeeks": [
         1,

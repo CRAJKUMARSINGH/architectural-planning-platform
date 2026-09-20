@@ -28,3 +28,12 @@
 - Each accepted tool signal retains its source reference, model revision,
   validation status, and review state; no external tool can silently mutate
   authoritative geometry or bypass a validation rerun.
+
+### W16-01 implementation status — Maket.ai
+
+- Added a text-to-plan fixture with units, room schedule, dimensions,
+  furniture intent, and adjacency intent.
+- Added dimension, unit, room-match, and input-shape checks through
+  `validate_maket_input`.
+- Conflicting dimensions become `review-required`; missing units or dimensions
+  become blockers; the canonical model is never mutated.

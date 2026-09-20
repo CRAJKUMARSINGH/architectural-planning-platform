@@ -1,0 +1,25 @@
+{
+  "tool": "Maket.ai",
+  "sourceReference": "maket-fixture-week16-01",
+  "units": "inch",
+  "rooms": [
+    {
+      "id": "GF-OFFICE",
+      "name": "Office",
+      "use": "office",
+      "width": 240,
+      "depth": 240
+    }
+  ],
+  "furnitureIntent": [
+    {
+      "assetId": "work-desk",
+      "count": 1
+    },
+    {
+      "assetId": "visitor-chair",
+      "count": 2
+    }
+  ],
+  "adjacencyIntent": []
+}
