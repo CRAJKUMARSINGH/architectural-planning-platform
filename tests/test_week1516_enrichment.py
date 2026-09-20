@@ -9,11 +9,14 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from week1516 import (  # noqa: E402
     ASSET_CATALOG,
     ROOM_TEMPLATES,
+    AI_INPUT_VERSION,
+    ai_tool_input_manifest,
     candidate_studio,
     design_package,
     edit_placements,
     find_valid_position,
     furnish_model,
+    ingest_ai_tool_input,
     validate_placement,
 )
 
@@ -33,6 +36,47 @@ def model_fixture():
 
 
 class Week1516EnrichmentTests(unittest.TestCase):
+    def test_week16_exposes_tool_inputs_with_review_boundaries(self):
+        manifest = ai_tool_input_manifest()
+        self.assertEqual(manifest["version"], AI_INPUT_VERSION)
+        self.assertEqual(manifest["status"], "review-first")
+        tools = {item["tool"] for item in manifest["tools"]}
+        self.assertEqual(
+            {
+                "Maket.ai",
+                "Planner 5D",
+                "Archistar / Snaptrude",
+                "Floorplanner",
+                "Roomstyler / Homestyler",
+                "Magicplan",
+                "ChatGPT / Claude / Grok / Gemini",
+                "4Lines.ai",
+                "Archiagent",
+            },
+            tools,
+        )
+        self.assertTrue(manifest["promotionPolicy"]["rerunValidationAfterAcceptance"])
+
+    def test_week16_tool_input_is_typed_and_non_authoritative(self):
+        item = ingest_ai_tool_input(
+            "maket-text-to-plan",
+            source_input={"rooms": [{"name": "living", "width": 240}]},
+            source_reference="maket-export-001",
+            model_revision=8,
+            validation_status="pending",
+        )
+        self.assertEqual(item["tool"], "Maket.ai")
+        self.assertEqual(item["modelRevision"], 8)
+        self.assertFalse(item["authoritative"])
+        self.assertEqual(item["promotionStatus"], "review-required")
+        with self.assertRaises(ValueError):
+            ingest_ai_tool_input(
+                "unknown-tool",
+                source_input={},
+                source_reference="unknown",
+                model_revision=8,
+            )
+
     def test_catalog_and_templates_cover_week15_categories(self):
         categories = {item["category"] for item in ASSET_CATALOG.values()}
         self.assertTrue({"furniture", "fixtures", "appliance", "sanitaryware", "seating", "dais", "library", "counter", "vehicle", "industrial-equipment"} & categories)
@@ -84,6 +128,19 @@ class Week1516EnrichmentTests(unittest.TestCase):
         self.assertIsNotNone(first["bestCandidateId"])
         blocked = candidate_studio(model, seeds=(1,), inherited_findings=[{"severity": "BLOCKER", "rule": "TEST"}])
         self.assertIsNone(blocked["bestCandidateId"])
+
+    def test_candidate_studio_carries_external_inputs_without_geometry_authority(self):
+        model = model_fixture()
+        external = ingest_ai_tool_input(
+            "planner5d-furnished-layout",
+            source_input={"layoutId": "candidate-01"},
+            source_reference="planner5d-export-01",
+            model_revision=8,
+        )
+        result = candidate_studio(model, seeds=(1,), ai_tool_inputs=(external,))
+        self.assertEqual(result["aiToolInputCatalogVersion"], AI_INPUT_VERSION)
+        self.assertEqual(result["aiToolInputs"][0]["tool"], "Planner 5D")
+        self.assertFalse(result["aiToolInputs"][0]["authoritative"])
 
     def test_design_package_is_revision_traceable_and_non_destructive(self):
         package = design_package(model_fixture(), "C-15-01")

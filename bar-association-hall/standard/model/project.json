@@ -88,6 +88,7 @@
   "candidateStudio": {
     "version": "week16.candidate-studio.v1",
     "report": "bar-association-hall/standard/week16-candidate-studio-report.json",
+    "aiToolInputs": "bar-association-hall/standard/week16-ai-tool-inputs.json",
     "bestCandidateId": "C-15-02",
     "status": "pass",
     "seeds": [
@@ -405,6 +406,8 @@
       "modelRevision": 1,
       "candidateId": "C-15-02"
     },
+    "aiToolInputsReport": "bar-association-hall/standard/week16-ai-tool-inputs.json",
+    "aiToolInputCatalogVersion": "week16.ai-tool-inputs.v1",
     "authoritativeGeometryChanged": false
   },
   "drawingQuality": {

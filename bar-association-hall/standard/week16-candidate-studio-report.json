@@ -1,5 +1,261 @@
 {
+  "aiToolInputs": {
+    "authority": "canonical model and focused validators remain authoritative",
+    "promotionPolicy": {
+      "acceptedFor": [
+        "brief refinement",
+        "candidate comparison",
+        "furnishing",
+        "presentation"
+      ],
+      "notAcceptedFor": [
+        "silent wall edits",
+        "unvalidated openings",
+        "route overrides",
+        "permit or construction approval"
+      ],
+      "rerunValidationAfterAcceptance": true
+    },
+    "requiredCandidateFields": [
+      "sourceTool",
+      "sourceInput",
+      "sourceReference",
+      "modelRevision",
+      "validationStatus",
+      "reviewState"
+    ],
+    "status": "review-first",
+    "tools": [
+      {
+        "acceptedInputs": [
+          "typed brief",
+          "room schedule",
+          "dimensions",
+          "furniture intent"
+        ],
+        "id": "maket-text-to-plan",
+        "inputRole": "text-to-plan ideation",
+        "programWeeks": [
+          1,
+          6,
+          12,
+          16
+        ],
+        "promotionGate": "candidate only until canonical rooms, openings, routes, and clearances validate",
+        "requiredEvidence": [
+          "source brief",
+          "units",
+          "tool/export reference",
+          "reviewer"
+        ],
+        "tool": "Maket.ai",
+        "usableOutput": "candidate room arrangement and furniture suggestions"
+      },
+      {
+        "acceptedInputs": [
+          "validated room geometry",
+          "scaled furniture choices",
+          "occupancy intent"
+        ],
+        "id": "planner5d-furnished-layout",
+        "inputRole": "furnished 2D/3D exploration",
+        "programWeeks": [
+          8,
+          9,
+          15,
+          16
+        ],
+        "promotionGate": "presentation layer only; never authoritative geometry",
+        "requiredEvidence": [
+          "model revision",
+          "asset scale",
+          "clearance result",
+          "tool/export reference"
+        ],
+        "tool": "Planner 5D",
+        "usableOutput": "furnished presentation candidate"
+      },
+      {
+        "acceptedInputs": [
+          "north",
+          "frontage",
+          "setbacks",
+          "access points",
+          "levels",
+          "site assumptions"
+        ],
+        "id": "archistar-snaptrude-site-model",
+        "inputRole": "site and building-scale feasibility",
+        "programWeeks": [
+          6,
+          7,
+          14,
+          16
+        ],
+        "promotionGate": "review evidence only; never a permit, code, or construction approval",
+        "requiredEvidence": [
+          "site source",
+          "assumption status",
+          "rule-pack version",
+          "professional review state"
+        ],
+        "tool": "Archistar / Snaptrude",
+        "usableOutput": "site-context and massing candidate"
+      },
+      {
+        "acceptedInputs": [
+          "canonical model revision",
+          "object IDs",
+          "validated room boundaries"
+        ],
+        "id": "floorplanner-synchronized-view",
+        "inputRole": "fast 2D/3D planning reference",
+        "programWeeks": [
+          8,
+          9,
+          14,
+          16
+        ],
+        "promotionGate": "view-only until synchronized with the canonical revision",
+        "requiredEvidence": [
+          "model revision",
+          "object-ID map",
+          "view/export reference"
+        ],
+        "tool": "Floorplanner",
+        "usableOutput": "comparison view and presentation reference"
+      },
+      {
+        "acceptedInputs": [
+          "validated room geometry",
+          "scaled asset candidates",
+          "finish intent"
+        ],
+        "id": "roomstyler-homestyler-furnishing",
+        "inputRole": "furniture-heavy visual exploration",
+        "programWeeks": [
+          9,
+          15,
+          16
+        ],
+        "promotionGate": "non-authoritative presentation option; recheck routes and door swings",
+        "requiredEvidence": [
+          "asset dimensions",
+          "clearance result",
+          "model revision",
+          "source reference"
+        ],
+        "tool": "Roomstyler / Homestyler",
+        "usableOutput": "material, furniture, and presentation options"
+      },
+      {
+        "acceptedInputs": [
+          "photos",
+          "known scale",
+          "location/context notes",
+          "capture metadata"
+        ],
+        "id": "magicplan-photo-capture",
+        "inputRole": "photo-assisted existing-plan capture",
+        "programWeeks": [
+          1,
+          13,
+          14,
+          16
+        ],
+        "promotionGate": "review queue only; do not silently promote recognition to editable geometry",
+        "requiredEvidence": [
+          "source image",
+          "scale evidence",
+          "confidence",
+          "manual confirmation"
+        ],
+        "tool": "Magicplan",
+        "usableOutput": "assisted recognition queue"
+      },
+      {
+        "acceptedInputs": [
+          "natural-language brief",
+          "constraints",
+          "missing-fact questions",
+          "candidate feedback"
+        ],
+        "id": "llm-brief-refinement",
+        "inputRole": "brief refinement and explanation",
+        "programWeeks": [
+          1,
+          6,
+          12,
+          16
+        ],
+        "promotionGate": "text assistance only; never mutate geometry without typed validation",
+        "requiredEvidence": [
+          "source text",
+          "extracted facts",
+          "assumptions",
+          "accepted revision"
+        ],
+        "tool": "ChatGPT / Claude / Grok / Gemini",
+        "usableOutput": "typed brief suggestions, assumptions, and comparison notes"
+      },
+      {
+        "acceptedInputs": [
+          "canonical object IDs",
+          "levels",
+          "openings",
+          "dimensions",
+          "validation provenance"
+        ],
+        "id": "4lines-plan-section-workflow",
+        "inputRole": "plan, section, and elevation workflow reference",
+        "programWeeks": [
+          2,
+          8,
+          14,
+          16
+        ],
+        "promotionGate": "accept only when every view traces to the validated canonical revision",
+        "requiredEvidence": [
+          "model revision",
+          "object-ID map",
+          "view type",
+          "validation result"
+        ],
+        "tool": "4Lines.ai",
+        "usableOutput": "view-generation and exchange reference"
+      },
+      {
+        "acceptedInputs": [
+          "dimensioned model",
+          "units",
+          "levels",
+          "review target"
+        ],
+        "id": "archiagent-live-dimensions",
+        "inputRole": "scaled floor-plan and live-dimension review",
+        "programWeeks": [
+          2,
+          4,
+          5,
+          8,
+          16
+        ],
+        "promotionGate": "review aid only; accuracy claims do not replace jurisdictional or professional checks",
+        "requiredEvidence": [
+          "units",
+          "dimension source",
+          "model revision",
+          "rerun validation result"
+        ],
+        "tool": "Archiagent",
+        "usableOutput": "dimension review and candidate comparison notes"
+      }
+    ],
+    "version": "week16.ai-tool-inputs.v1"
+  },
   "candidateStudio": {
+    "aiToolInputCatalogVersion": "week16.ai-tool-inputs.v1",
+    "aiToolInputs": [],
     "bestCandidateId": "C-15-02",
     "candidates": [
       {
@@ -84,6 +340,8 @@
     "version": "week16.candidate-studio.v1"
   },
   "designPackage": {
+    "aiToolInputCatalogVersion": "week16.ai-tool-inputs.v1",
+    "aiToolInputsReport": "bar-association-hall/standard/week16-ai-tool-inputs.json",
     "authoritativeGeometryChanged": false,
     "candidateId": "C-15-02",
     "designLayers": [

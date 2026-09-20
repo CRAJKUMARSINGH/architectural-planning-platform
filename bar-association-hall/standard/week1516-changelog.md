@@ -22,3 +22,9 @@
   and traceable render, panorama, and presentation-sheet job manifests.
 - Technical plan and presentation output carry the same model revision and
   candidate identifier.
+- Added explicit review-first intake adapters for Maket.ai, Planner 5D,
+  Archistar/Snaptrude, Floorplanner, Roomstyler/Homestyler, Magicplan,
+  ChatGPT/Claude/Grok/Gemini, 4Lines.ai, and Archiagent.
+- Each accepted tool signal retains its source reference, model revision,
+  validation status, and review state; no external tool can silently mutate
+  authoritative geometry or bypass a validation rerun.

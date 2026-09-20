@@ -2,9 +2,8 @@
 
 **Repository:** Advocate-Chambers  
 **Purpose:** A clean execution program for the first sixteen enrichment weeks.  
-**Status:** Weeks 1–5 are applied through the common drafting kernel; Weeks 6–16
-remain the forward delivery sequence unless their implementation status is
-recorded in the repository README.
+**Status:** Weeks 1–16 are applied through the common drafting kernel and focused weekly validators.
+The repository README records the delivery and validation status.
 
 This document is an execution contract, not a replacement for the historical
 roadmap. It keeps one common drafting kernel at the root and small,
@@ -193,6 +192,23 @@ to-render traceability.
 
 **Gate:** the render is traceable to a valid model revision and cannot hide a
 blocker.
+
+
+### Week 16 AI-tool inputs
+
+Week 16 accepts external tool output only through a typed, review-first intake boundary. The supported inputs are:
+
+- **Maket.ai** — text-to-plan briefs, dimensions, room schedules, and furniture intent.
+- **Planner 5D** — validated room geometry, scaled furniture choices, and occupancy intent.
+- **Archistar / Snaptrude** — north, frontage, setbacks, access points, levels, and site assumptions.
+- **Floorplanner** — canonical revision, object IDs, and validated room boundaries for synchronized views.
+- **Roomstyler / Homestyler** — scaled furniture, finish intent, and presentation options.
+- **Magicplan** — photos, scale evidence, capture metadata, and manual-confirmation state.
+- **ChatGPT / Claude / Grok / Gemini** — natural-language briefs, constraints, missing-fact questions, and candidate feedback.
+- **4Lines.ai** — object IDs, levels, openings, dimensions, and validation provenance for plan/section workflows.
+- **Archiagent** — dimensioned model, units, levels, and review targets for live-dimension review.
+
+Every accepted signal records its source reference, model revision, validation status, and review state. It remains non-authoritative until canonical geometry and focused validators pass; it cannot silently edit walls, openings, routes, or stairs, and it cannot provide permit or construction approval.
 
 ## Safe visual-tool optimization ideas
 

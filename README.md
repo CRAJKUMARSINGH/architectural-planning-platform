@@ -3,7 +3,7 @@
 The Week 9 and Week 10 enrichment has been implemented and merged into the
 canonical planning pipeline.
 
-## Fresh Week 01–16 program — Weeks 01–05 applied
+## Fresh Week 01–16 program — Weeks 01–16 applied
 
 The fresh execution program now uses a common root drafting kernel plus small
 building-type recipes instead of duplicating planning logic in one weekly file.
@@ -19,6 +19,10 @@ professional review.
   [`packages/recipes/visual-tool-patterns.json`](packages/recipes/visual-tool-patterns.json)
 - Fresh Week 01–05 report:
   `bar-association-hall/standard/fresh-week01-05-kernel-report.json`
+- Week 06–16 reports and manifests:
+  `bar-association-hall/standard/`
+- Week 16 AI-tool input contract:
+  `bar-association-hall/standard/week16-ai-tool-inputs.json`
 
 Run the fresh Week 01–05 contract with:
 
@@ -28,8 +32,11 @@ npm run validate:fresh-week01-05
 npm run test:fresh-week01-05
 ```
 
-**Task completion:** the fresh Week 01–05 kernel/recipe enrichment and the
-fresh Week 01–16 program are applied in this branch and marked complete here.
+**Task completion:** the fresh Week 01–16 program is applied in this branch and
+marked complete here. Week 16 now accepts explicit, review-first inputs from
+Maket.ai, Planner 5D, Archistar/Snaptrude, Floorplanner,
+Roomstyler/Homestyler, Magicplan, ChatGPT/Claude/Grok/Gemini, 4Lines.ai, and
+Archiagent without allowing those tools to override the canonical model.
 Outputs remain preliminary planning aids and are not construction, permit, code,
 accessibility, fire/life-safety, structural, MEP, survey, or authority
 certification.

@@ -28,12 +28,108 @@ REPORT_ROOT = MODEL_ROOT / "standard"
 CANONICAL_PATH = REPORT_ROOT / "model" / "project.json"
 ASSET_REPORT_PATH = REPORT_ROOT / "week15-parametric-assets-report.json"
 CANDIDATE_REPORT_PATH = REPORT_ROOT / "week16-candidate-studio-report.json"
+AI_INPUT_REPORT_PATH = REPORT_ROOT / "week16-ai-tool-inputs.json"
 MANIFEST_PATH = REPORT_ROOT / "week1516-enrichment-manifest.json"
 CHANGELOG_PATH = REPORT_ROOT / "week1516-changelog.md"
 
 WEEK15_VERSION = "week15.parametric-assets.v1"
 WEEK16_VERSION = "week16.candidate-studio.v1"
 RENDER_VERSION = "week16.render-pipeline.v1"
+AI_INPUT_VERSION = "week16.ai-tool-inputs.v1"
+
+
+AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
+    {
+        "id": "maket-text-to-plan",
+        "tool": "Maket.ai",
+        "inputRole": "text-to-plan ideation",
+        "acceptedInputs": ["typed brief", "room schedule", "dimensions", "furniture intent"],
+        "usableOutput": "candidate room arrangement and furniture suggestions",
+        "requiredEvidence": ["source brief", "units", "tool/export reference", "reviewer"],
+        "promotionGate": "candidate only until canonical rooms, openings, routes, and clearances validate",
+        "programWeeks": [1, 6, 12, 16],
+    },
+    {
+        "id": "planner5d-furnished-layout",
+        "tool": "Planner 5D",
+        "inputRole": "furnished 2D/3D exploration",
+        "acceptedInputs": ["validated room geometry", "scaled furniture choices", "occupancy intent"],
+        "usableOutput": "furnished presentation candidate",
+        "requiredEvidence": ["model revision", "asset scale", "clearance result", "tool/export reference"],
+        "promotionGate": "presentation layer only; never authoritative geometry",
+        "programWeeks": [8, 9, 15, 16],
+    },
+    {
+        "id": "archistar-snaptrude-site-model",
+        "tool": "Archistar / Snaptrude",
+        "inputRole": "site and building-scale feasibility",
+        "acceptedInputs": ["north", "frontage", "setbacks", "access points", "levels", "site assumptions"],
+        "usableOutput": "site-context and massing candidate",
+        "requiredEvidence": ["site source", "assumption status", "rule-pack version", "professional review state"],
+        "promotionGate": "review evidence only; never a permit, code, or construction approval",
+        "programWeeks": [6, 7, 14, 16],
+    },
+    {
+        "id": "floorplanner-synchronized-view",
+        "tool": "Floorplanner",
+        "inputRole": "fast 2D/3D planning reference",
+        "acceptedInputs": ["canonical model revision", "object IDs", "validated room boundaries"],
+        "usableOutput": "comparison view and presentation reference",
+        "requiredEvidence": ["model revision", "object-ID map", "view/export reference"],
+        "promotionGate": "view-only until synchronized with the canonical revision",
+        "programWeeks": [8, 9, 14, 16],
+    },
+    {
+        "id": "roomstyler-homestyler-furnishing",
+        "tool": "Roomstyler / Homestyler",
+        "inputRole": "furniture-heavy visual exploration",
+        "acceptedInputs": ["validated room geometry", "scaled asset candidates", "finish intent"],
+        "usableOutput": "material, furniture, and presentation options",
+        "requiredEvidence": ["asset dimensions", "clearance result", "model revision", "source reference"],
+        "promotionGate": "non-authoritative presentation option; recheck routes and door swings",
+        "programWeeks": [9, 15, 16],
+    },
+    {
+        "id": "magicplan-photo-capture",
+        "tool": "Magicplan",
+        "inputRole": "photo-assisted existing-plan capture",
+        "acceptedInputs": ["photos", "known scale", "location/context notes", "capture metadata"],
+        "usableOutput": "assisted recognition queue",
+        "requiredEvidence": ["source image", "scale evidence", "confidence", "manual confirmation"],
+        "promotionGate": "review queue only; do not silently promote recognition to editable geometry",
+        "programWeeks": [1, 13, 14, 16],
+    },
+    {
+        "id": "llm-brief-refinement",
+        "tool": "ChatGPT / Claude / Grok / Gemini",
+        "inputRole": "brief refinement and explanation",
+        "acceptedInputs": ["natural-language brief", "constraints", "missing-fact questions", "candidate feedback"],
+        "usableOutput": "typed brief suggestions, assumptions, and comparison notes",
+        "requiredEvidence": ["source text", "extracted facts", "assumptions", "accepted revision"],
+        "promotionGate": "text assistance only; never mutate geometry without typed validation",
+        "programWeeks": [1, 6, 12, 16],
+    },
+    {
+        "id": "4lines-plan-section-workflow",
+        "tool": "4Lines.ai",
+        "inputRole": "plan, section, and elevation workflow reference",
+        "acceptedInputs": ["canonical object IDs", "levels", "openings", "dimensions", "validation provenance"],
+        "usableOutput": "view-generation and exchange reference",
+        "requiredEvidence": ["model revision", "object-ID map", "view type", "validation result"],
+        "promotionGate": "accept only when every view traces to the validated canonical revision",
+        "programWeeks": [2, 8, 14, 16],
+    },
+    {
+        "id": "archiagent-live-dimensions",
+        "tool": "Archiagent",
+        "inputRole": "scaled floor-plan and live-dimension review",
+        "acceptedInputs": ["dimensioned model", "units", "levels", "review target"],
+        "usableOutput": "dimension review and candidate comparison notes",
+        "requiredEvidence": ["units", "dimension source", "model revision", "rerun validation result"],
+        "promotionGate": "review aid only; accuracy claims do not replace jurisdictional or professional checks",
+        "programWeeks": [2, 4, 5, 8, 16],
+    },
+)
 
 
 def _asset(
@@ -107,6 +203,71 @@ ROOM_TEMPLATES: dict[str, dict[str, Any]] = {
     "retail": {"recommendedAssets": ["reception-counter", "appliance-block"], "minimumClearRoute": 48},
     "light-industrial": {"recommendedAssets": ["vehicle-bay", "equipment-bench"], "minimumClearRoute": 48},
 }
+
+
+def ai_tool_input_manifest() -> dict[str, Any]:
+    """Return the explicit Week 16 intake boundary for external AI tools.
+
+    These are workflow inputs and review references, not geometry authorities.
+    Keeping the manifest in the candidate package makes every presentation
+    candidate explain which external signal was accepted and what evidence is
+    still required before it can influence a validated revision.
+    """
+
+    return {
+        "version": AI_INPUT_VERSION,
+        "status": "review-first",
+        "authority": "canonical model and focused validators remain authoritative",
+        "tools": [copy.deepcopy(item) for item in AI_TOOL_INPUTS],
+        "requiredCandidateFields": [
+            "sourceTool",
+            "sourceInput",
+            "sourceReference",
+            "modelRevision",
+            "validationStatus",
+            "reviewState",
+        ],
+        "promotionPolicy": {
+            "acceptedFor": ["brief refinement", "candidate comparison", "furnishing", "presentation"],
+            "notAcceptedFor": ["silent wall edits", "unvalidated openings", "route overrides", "permit or construction approval"],
+            "rerunValidationAfterAcceptance": True,
+        },
+    }
+
+
+def ingest_ai_tool_input(
+    tool_id: str,
+    *,
+    source_input: Any,
+    source_reference: str,
+    model_revision: Any,
+    validation_status: str = "pending",
+    review_state: str = "pending",
+) -> dict[str, Any]:
+    """Normalize one external-tool signal into a review-first candidate input."""
+
+    tool = next((item for item in AI_TOOL_INPUTS if item["id"] == tool_id), None)
+    if tool is None:
+        raise ValueError(f"unknown AI tool input: {tool_id}")
+    if not source_reference.strip():
+        raise ValueError("source_reference is required for AI tool input")
+    if review_state not in {"pending", "accepted", "rejected"}:
+        raise ValueError("review_state must be pending, accepted, or rejected")
+    if validation_status not in {"pending", "pass", "fail", "review-required"}:
+        raise ValueError("validation_status is not supported")
+    return {
+        "toolId": tool["id"],
+        "tool": tool["tool"],
+        "inputRole": tool["inputRole"],
+        "sourceInput": copy.deepcopy(source_input),
+        "sourceReference": source_reference,
+        "modelRevision": model_revision,
+        "validationStatus": validation_status,
+        "reviewState": review_state,
+        "authoritative": False,
+        "promotionStatus": "review-required",
+        "promotionGate": tool["promotionGate"],
+    }
 
 
 def _rect(value: Any) -> list[float] | None:
@@ -376,8 +537,15 @@ def _inherited_blocker(findings: Iterable[dict[str, Any]]) -> bool:
     return any(str(item.get("severity", "")).upper() in {"BLOCKER", "ERROR"} for item in findings)
 
 
-def candidate_studio(model: dict[str, Any], *, seeds: Iterable[int] = (1516, 1523, 1547), inherited_findings: Iterable[dict[str, Any]] = ()) -> dict[str, Any]:
+def candidate_studio(
+    model: dict[str, Any],
+    *,
+    seeds: Iterable[int] = (1516, 1523, 1547),
+    inherited_findings: Iterable[dict[str, Any]] = (),
+    ai_tool_inputs: Iterable[dict[str, Any]] = (),
+) -> dict[str, Any]:
     inherited = list(inherited_findings)
+    normalized_inputs = [copy.deepcopy(item) for item in ai_tool_inputs]
     candidates: list[dict[str, Any]] = []
     for index, seed in enumerate(seeds, 1):
         furnishing = furnish_model(model, seed=int(seed))
@@ -416,6 +584,8 @@ def candidate_studio(model: dict[str, Any], *, seeds: Iterable[int] = (1516, 152
     return {
         "version": WEEK16_VERSION,
         "seeds": [int(value) for value in seeds],
+        "aiToolInputs": normalized_inputs,
+        "aiToolInputCatalogVersion": AI_INPUT_VERSION,
         "candidates": candidates,
         "ranking": ranking,
         "bestCandidateId": best,
@@ -452,6 +622,8 @@ def design_package(model: dict[str, Any], candidate_id: str | None, *, seed: int
         "designLayers": layers,
         "renderJobs": jobs,
         "technicalPlanSideBySide": {"required": True, "modelRevision": model_revision, "candidateId": candidate_id},
+        "aiToolInputsReport": str(AI_INPUT_REPORT_PATH.relative_to(ROOT)),
+        "aiToolInputCatalogVersion": AI_INPUT_VERSION,
         "authoritativeGeometryChanged": False,
     }
 
@@ -475,7 +647,13 @@ def enrichment_report(model: dict[str, Any]) -> dict[str, Any]:
     furnishings = furnish_model(model)
     candidates = candidate_studio(model, inherited_findings=model.get("findings", []) or [])
     package = design_package(model, candidates["bestCandidateId"])
-    return {"status": "blocked" if furnishings["status"] == "blocked" or candidates["status"] == "blocked" else "pass", "week15": furnishings, "week16": candidates, "designPackage": package}
+    return {
+        "status": "blocked" if furnishings["status"] == "blocked" or candidates["status"] == "blocked" else "pass",
+        "aiToolInputs": ai_tool_input_manifest(),
+        "week15": furnishings,
+        "week16": candidates,
+        "designPackage": package,
+    }
 
 
 # Public names used by the roadmap and by the editor adapter.
@@ -487,12 +665,27 @@ presentation_pipeline = design_package
 def write_reports() -> dict[str, Any]:
     model = json.loads(CANONICAL_PATH.read_text(encoding="utf-8"))
     report = enrichment_report(model)
-    model["parametricAssets"] = {"version": WEEK15_VERSION, "report": str(ASSET_REPORT_PATH.relative_to(ROOT)), "catalog": asset_catalog(), "presentation": report["week15"]}
-    model["candidateStudio"] = {"version": WEEK16_VERSION, "report": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "bestCandidateId": report["week16"]["bestCandidateId"], "status": report["week16"]["status"], "seeds": report["week16"]["seeds"]}
+    existing_parametric = model.get("parametricAssets", {})
+    existing_catalog = existing_parametric.get("catalog", {}) if isinstance(existing_parametric, dict) else {}
+    catalog = copy.deepcopy(existing_catalog) if isinstance(existing_catalog, dict) else {}
+    generated_catalog = asset_catalog()
+    existing_assets = catalog.get("assets", {}) if isinstance(catalog.get("assets"), dict) else {}
+    merged_assets = copy.deepcopy(existing_assets)
+    merged_assets.update(generated_catalog["assets"])
+    catalog.update(
+        {
+            "version": generated_catalog["version"],
+            "assets": merged_assets,
+            "roomTemplates": generated_catalog["roomTemplates"],
+        }
+    )
+    model["parametricAssets"] = {"version": WEEK15_VERSION, "report": str(ASSET_REPORT_PATH.relative_to(ROOT)), "catalog": catalog, "presentation": report["week15"]}
+    model["candidateStudio"] = {"version": WEEK16_VERSION, "report": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT)), "bestCandidateId": report["week16"]["bestCandidateId"], "status": report["week16"]["status"], "seeds": report["week16"]["seeds"]}
     model["designPresentation"] = report["designPackage"]
     ASSET_REPORT_PATH.write_text(json.dumps(report["week15"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    CANDIDATE_REPORT_PATH.write_text(json.dumps({"candidateStudio": report["week16"], "designPackage": report["designPackage"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    MANIFEST_PATH.write_text(json.dumps({"manifestVersion": "week1516.enrichment-manifest.v1", "status": report["status"], "reports": {"week15": str(ASSET_REPORT_PATH.relative_to(ROOT)), "week16": str(CANDIDATE_REPORT_PATH.relative_to(ROOT))}, "changelog": str(CHANGELOG_PATH.relative_to(ROOT)), "catalogVersion": WEEK15_VERSION, "candidateVersion": WEEK16_VERSION, "bestCandidateId": report["week16"]["bestCandidateId"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    AI_INPUT_REPORT_PATH.write_text(json.dumps(report["aiToolInputs"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    CANDIDATE_REPORT_PATH.write_text(json.dumps({"aiToolInputs": report["aiToolInputs"], "candidateStudio": report["week16"], "designPackage": report["designPackage"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    MANIFEST_PATH.write_text(json.dumps({"manifestVersion": "week1516.enrichment-manifest.v1", "status": report["status"], "reports": {"week15": str(ASSET_REPORT_PATH.relative_to(ROOT)), "week16": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT))}, "changelog": str(CHANGELOG_PATH.relative_to(ROOT)), "catalogVersion": WEEK15_VERSION, "candidateVersion": WEEK16_VERSION, "aiToolInputCatalogVersion": AI_INPUT_VERSION, "bestCandidateId": report["week16"]["bestCandidateId"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     CHANGELOG_PATH.write_text(
         """# Week 15–16 enrichment changelog
 
@@ -518,6 +711,12 @@ def write_reports() -> dict[str, Any]:
   and traceable render, panorama, and presentation-sheet job manifests.
 - Technical plan and presentation output carry the same model revision and
   candidate identifier.
+- Added explicit review-first intake adapters for Maket.ai, Planner 5D,
+  Archistar/Snaptrude, Floorplanner, Roomstyler/Homestyler, Magicplan,
+  ChatGPT/Claude/Grok/Gemini, 4Lines.ai, and Archiagent.
+- Each accepted tool signal retains its source reference, model revision,
+  validation status, and review state; no external tool can silently mutate
+  authoritative geometry or bypass a validation rerun.
 """,
         encoding="utf-8",
     )
