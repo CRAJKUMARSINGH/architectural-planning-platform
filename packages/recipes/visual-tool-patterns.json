@@ -1,0 +1,55 @@
+{
+  "catalogVersion": "advocate-chambers.visual-tool-patterns.v1",
+  "purpose": "Workflow references for safe ideation, review, furnishing, and presentation.",
+  "policy": "These patterns improve interaction and presentation; they are not geometry, code, permit, or professional-review authority.",
+  "patterns": [
+    {
+      "id": "text-to-brief",
+      "references": ["Maket.ai", "Planner 5D", "ChatGPT", "Claude", "Grok", "Gemini"],
+      "bestFor": "Turning a detailed natural-language description into a structured brief.",
+      "safeAction": "Extract dimensions, room uses, occupancy, access intent, adjacency intent, style, and requested outputs into a reviewable brief.",
+      "mustNotDo": "Do not turn generated prose or an attractive image directly into authoritative walls, doors, routes, or stairs.",
+      "programWeeks": [1, 6, 12]
+    },
+    {
+      "id": "furnished-2d-3d-exploration",
+      "references": ["Planner 5D", "Floorplanner", "Roomstyler", "Homestyler"],
+      "bestFor": "Exploring furniture arrangements and coloured 2D/3D presentation.",
+      "safeAction": "Generate presentation candidates only from validated rooms, scaled assets, route widths, door swings, and clearance envelopes.",
+      "mustNotDo": "Do not let furniture, materials, lighting, or a render hide a blocker or mutate authoritative geometry.",
+      "programWeeks": [8, 9, 15, 16]
+    },
+    {
+      "id": "site-and-professional-modelling",
+      "references": ["Archistar", "Snaptrude"],
+      "bestFor": "Site context, building-scale modelling, and feasibility review.",
+      "safeAction": "Store north, frontage, setbacks, access points, levels, site assumptions, and rule-pack evidence as explicit inputs.",
+      "mustNotDo": "Do not convert a product claim or automated score into a local-code, permit, or construction approval.",
+      "programWeeks": [6, 7, 14, 17]
+    },
+    {
+      "id": "photo-to-plan-review",
+      "references": ["Magicplan", "Style2AI", "Massing Labs", "ArkViz", "Planlift"],
+      "bestFor": "Capturing an existing plan or space from photographs or images.",
+      "safeAction": "Create an assisted-recognition queue with scale evidence, confidence, source provenance, and manual confirmation before promotion.",
+      "mustNotDo": "Do not silently promote image recognition into measured, editable, or issue-ready geometry.",
+      "programWeeks": [1, 13, 14]
+    },
+    {
+      "id": "architectural-model-and-sections",
+      "references": ["4Lines.ai"],
+      "bestFor": "Plans, sections, elevations, and architectural model workflows.",
+      "safeAction": "Keep object IDs, levels, openings, dimensions, and validation provenance synchronized across every view and exchange.",
+      "mustNotDo": "Do not accept a section or elevation that is disconnected from the canonical model revision.",
+      "programWeeks": [2, 8, 14]
+    },
+    {
+      "id": "scaled-dimension-review",
+      "references": ["Archiagent"],
+      "bestFor": "Live dimensions and scaled floor-plan review.",
+      "safeAction": "Use live dimensions as an explainable review aid and rerun topology, clearance, and rule-pack checks after edits.",
+      "mustNotDo": "Do not treat a millimetre-accuracy claim as evidence of jurisdictional compliance or professional sign-off.",
+      "programWeeks": [2, 4, 5, 8]
+    }
+  ]
+}
