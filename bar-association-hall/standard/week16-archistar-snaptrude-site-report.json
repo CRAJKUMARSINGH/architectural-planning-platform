@@ -1,0 +1,490 @@
+{
+  "assumptions": [
+    "Imported coordinates are nominal planning dimensions, not a survey.",
+    "Setbacks are imported planning inputs and are not jurisdictional approvals.",
+    "Imported Archistar/Snaptrude facts are a review overlay and do not edit canonical geometry.",
+    "North, frontage, access, setbacks, levels, and massing require survey and professional confirmation.",
+    "Rule-pack results are preliminary planning evidence and do not grant permit, code, or construction approval."
+  ],
+  "authoritativeGeometryChanged": false,
+  "candidateEligible": false,
+  "canonicalModelRevision": 1,
+  "evidenceStatus": "review-required",
+  "findings": [],
+  "input": {
+    "authoritative": false,
+    "inputRole": "site and building-scale feasibility",
+    "modelRevision": 1,
+    "promotionGate": "review evidence only; never a permit, code, or construction approval",
+    "promotionStatus": "review-required",
+    "reviewState": "pending",
+    "sourceInput": {
+      "assumptions": [
+        "Imported coordinates are nominal planning dimensions, not a survey.",
+        "Setbacks are imported planning inputs and are not jurisdictional approvals."
+      ],
+      "confidence": {
+        "access": 0.4,
+        "frontage": 0.45,
+        "massing": 0.7,
+        "north": 0.65,
+        "overall": 0.68,
+        "plot": 0.72,
+        "setbacks": 0.5
+      },
+      "coordinateSystem": "local-planar-origin-at-south-west-plot-corner",
+      "modelRevision": 1,
+      "professionalReviewState": "pending",
+      "site": {
+        "accessPoints": [
+          {
+            "hostSpace": "GF-06",
+            "id": "ENTRY-MAIN",
+            "kind": "public",
+            "side": "east"
+          },
+          {
+            "hostSpace": "GF-07",
+            "id": "ENTRY-VIP",
+            "kind": "controlled",
+            "side": "east"
+          },
+          {
+            "id": "SERVICE-ACCESS-ASSUMED",
+            "kind": "service",
+            "side": "west",
+            "status": "assumption"
+          }
+        ],
+        "assumptions": [
+          "The plot vertices and orientation are provisional until checked against a licensed survey.",
+          "The west service approach is an intent only; vehicle turning and loading geometry are not supplied."
+        ],
+        "frontage": {
+          "confirmation": "licensed-survey-required",
+          "side": "east",
+          "status": "assumption"
+        },
+        "levels": [
+          {
+            "elevation": 0,
+            "floorToFloor": 178,
+            "id": "GF"
+          },
+          {
+            "elevation": 178,
+            "floorToFloor": 178,
+            "id": "FF"
+          }
+        ],
+        "massingAssumptions": [
+          {
+            "footprintSource": "canonical-space-envelope",
+            "id": "MASSING-GF-01",
+            "levelId": "GF",
+            "status": "candidate-only"
+          },
+          {
+            "footprintSource": "canonical-space-envelope",
+            "id": "MASSING-FF-01",
+            "levelId": "FF",
+            "status": "candidate-only"
+          }
+        ],
+        "north": "up",
+        "plotVertices": [
+          [
+            0,
+            0
+          ],
+          [
+            35,
+            0
+          ],
+          [
+            35,
+            30
+          ],
+          [
+            60,
+            30
+          ],
+          [
+            60,
+            98
+          ],
+          [
+            0,
+            98
+          ]
+        ],
+        "serviceAccess": {
+          "confirmation": "vehicle-and-site-review-required",
+          "side": "west",
+          "status": "assumption"
+        },
+        "setbacks": {
+          "east": 5,
+          "north": 60,
+          "south": 5,
+          "west": 0
+        }
+      },
+      "siteSource": "survey-review-package/site-context-001",
+      "sourceReference": "archistar-snaptrude-fixture-week16-03",
+      "tool": "Archistar / Snaptrude",
+      "units": "inch"
+    },
+    "sourceReference": "archistar-snaptrude-fixture-week16-03",
+    "tool": "Archistar / Snaptrude",
+    "toolId": "archistar-snaptrude-site-model",
+    "validationStatus": "pending"
+  },
+  "modelRevision": 1,
+  "presentationOnly": true,
+  "professionalReview": {
+    "approvalClaim": false,
+    "required": true,
+    "state": "pending"
+  },
+  "rulePackLinkage": {
+    "dashboard": {
+      "approvalClaim": false,
+      "counts": {
+        "fail": 0,
+        "pass": 2,
+        "professional-review": 2,
+        "review": 10,
+        "unknown": 8
+      },
+      "professionalReviewRequired": true,
+      "status": "review"
+    },
+    "findingLinks": [
+      {
+        "category": "coverage",
+        "confidence": 0.0,
+        "ruleId": "SITE-COVERAGE",
+        "severity": "REVIEW",
+        "source": "rule pack site.maximumCoverage + canonical spaces",
+        "status": "unknown"
+      },
+      {
+        "category": "setbacks",
+        "confidence": 0.0,
+        "ruleId": "SITE-SETBACKS",
+        "severity": "REVIEW",
+        "source": "canonical site geometry and orientation.setbacks",
+        "status": "unknown"
+      },
+      {
+        "category": "height",
+        "confidence": 0.0,
+        "ruleId": "SITE-HEIGHT",
+        "severity": "REVIEW",
+        "source": "rule pack site.maximumHeight + canonical levels",
+        "status": "unknown"
+      },
+      {
+        "category": "parking",
+        "confidence": 0.0,
+        "ruleId": "SITE-PARKING",
+        "severity": "REVIEW",
+        "source": "canonical program.parking",
+        "status": "unknown"
+      },
+      {
+        "category": "fire-access",
+        "confidence": 0.0,
+        "ruleId": "FIRE-ACCESS",
+        "severity": "REVIEW",
+        "source": "site.fireAccess",
+        "status": "unknown"
+      },
+      {
+        "category": "service-access",
+        "confidence": 0.0,
+        "ruleId": "SERVICE-ACCESS",
+        "severity": "REVIEW",
+        "source": "site.serviceAccess",
+        "status": "unknown"
+      }
+    ],
+    "rulePack": {
+      "id": "india-preliminary-review",
+      "jurisdiction": "India / preliminary planning review",
+      "path": "bar-association-hall/standard/rule-packs/india-preliminary-review.v1.json",
+      "version": "1.0.0"
+    }
+  },
+  "siteEvidence": {
+    "accessPoints": [
+      {
+        "hostSpace": "GF-06",
+        "id": "ENTRY-MAIN",
+        "kind": "public",
+        "side": "east"
+      },
+      {
+        "hostSpace": "GF-07",
+        "id": "ENTRY-VIP",
+        "kind": "controlled",
+        "side": "east"
+      },
+      {
+        "id": "SERVICE-ACCESS-ASSUMED",
+        "kind": "service",
+        "side": "west",
+        "status": "assumption"
+      }
+    ],
+    "confidence": {
+      "access": 0.4,
+      "frontage": 0.45,
+      "massing": 0.7,
+      "north": 0.65,
+      "overall": 0.68,
+      "plot": 0.72,
+      "setbacks": 0.5
+    },
+    "coordinateSystem": "local-planar-origin-at-south-west-plot-corner",
+    "levels": [
+      {
+        "elevation": 0,
+        "floorToFloor": 178,
+        "id": "GF"
+      },
+      {
+        "elevation": 178,
+        "floorToFloor": 178,
+        "id": "FF"
+      }
+    ],
+    "massingAssumptions": [
+      {
+        "footprintSource": "canonical-space-envelope",
+        "id": "MASSING-GF-01",
+        "levelId": "GF",
+        "status": "candidate-only"
+      },
+      {
+        "footprintSource": "canonical-space-envelope",
+        "id": "MASSING-FF-01",
+        "levelId": "FF",
+        "status": "candidate-only"
+      }
+    ],
+    "orientation": {
+      "frontage": {
+        "confirmation": "licensed-survey-required",
+        "side": "east",
+        "status": "assumption"
+      },
+      "north": "up"
+    },
+    "setbacks": {
+      "east": 5,
+      "north": 60,
+      "south": 5,
+      "west": 0
+    },
+    "siteSource": "survey-review-package/site-context-001",
+    "units": "inch"
+  },
+  "sourceReference": "archistar-snaptrude-fixture-week16-03",
+  "status": "review-required",
+  "tool": "Archistar / Snaptrude",
+  "version": "week16-03.archistar-snaptrude.v1",
+  "week6Comparison": {
+    "factComparisons": {
+      "accessPointIds": {
+        "canonical": [
+          "ENTRY-MAIN",
+          "ENTRY-VIP"
+        ],
+        "imported": [
+          "ENTRY-MAIN",
+          "ENTRY-VIP",
+          "SERVICE-ACCESS-ASSUMED"
+        ],
+        "match": false
+      },
+      "frontage": {
+        "canonical": null,
+        "imported": {
+          "confirmation": "licensed-survey-required",
+          "side": "east",
+          "status": "assumption"
+        },
+        "match": false,
+        "status": "provided"
+      },
+      "levels": {
+        "canonical": [
+          {
+            "elevation": 0,
+            "id": "GF"
+          },
+          {
+            "elevation": 178,
+            "id": "FF"
+          }
+        ],
+        "imported": [
+          {
+            "elevation": 0,
+            "floorToFloor": 178,
+            "id": "GF"
+          },
+          {
+            "elevation": 178,
+            "floorToFloor": 178,
+            "id": "FF"
+          }
+        ],
+        "match": true
+      },
+      "north": {
+        "canonical": "up",
+        "imported": "up",
+        "match": true
+      },
+      "plotVertices": {
+        "canonical": [
+          [
+            0,
+            0
+          ],
+          [
+            35,
+            0
+          ],
+          [
+            35,
+            30
+          ],
+          [
+            60,
+            30
+          ],
+          [
+            60,
+            98
+          ],
+          [
+            0,
+            98
+          ]
+        ],
+        "imported": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            35.0,
+            0.0
+          ],
+          [
+            35.0,
+            30.0
+          ],
+          [
+            60.0,
+            30.0
+          ],
+          [
+            60.0,
+            98.0
+          ],
+          [
+            0.0,
+            98.0
+          ]
+        ],
+        "match": true
+      },
+      "serviceAccess": {
+        "canonical": null,
+        "imported": {
+          "confirmation": "vehicle-and-site-review-required",
+          "side": "west",
+          "status": "assumption"
+        },
+        "match": false,
+        "status": "provided"
+      },
+      "setbacks": {
+        "canonical": {
+          "east": 5,
+          "north": 60,
+          "south": 5,
+          "west": 0
+        },
+        "imported": {
+          "east": 5,
+          "north": 60,
+          "south": 5,
+          "west": 0
+        },
+        "match": true
+      },
+      "units": {
+        "canonical": "inch",
+        "imported": "inch",
+        "match": true
+      }
+    },
+    "findings": [
+      {
+        "connectorIds": [],
+        "id": "VAL6-ORIENTATION-FRONTAGE",
+        "levelId": null,
+        "message": "Road/frontage is not explicitly defined in the site model.",
+        "rule": "SITE_ROAD_FRONTAGE_MUST_BE_CONFIRMED",
+        "severity": "WARNING",
+        "spaceIds": [],
+        "suggestedFixes": [
+          "Record the public road or frontage edge before final entry and setback decisions."
+        ]
+      },
+      {
+        "connectorIds": [],
+        "id": "VAL6-SERVICE-ACCESS",
+        "levelId": null,
+        "message": "No dedicated service-access intent is recorded.",
+        "rule": "SERVICE_ACCESS_INTENT_MUST_BE_CONFIRMED",
+        "severity": "WARNING",
+        "spaceIds": [],
+        "suggestedFixes": [
+          "Identify the service approach and keep it separate from public entry where required."
+        ]
+      }
+    ],
+    "orientation": {
+      "assumptions": [
+        "North and frontage must be confirmed against a licensed site survey.",
+        "Setbacks are planning inputs, not a jurisdictional compliance determination."
+      ],
+      "north": "up",
+      "plotBounds": {
+        "depth": 98.0,
+        "maxX": 60.0,
+        "maxY": 98.0,
+        "minX": 0.0,
+        "minY": 0.0,
+        "width": 60.0
+      },
+      "roadFrontage": null,
+      "serviceAccess": null,
+      "setbacks": {
+        "east": 5,
+        "north": 60,
+        "south": 5,
+        "west": 0
+      },
+      "source": "explicit"
+    },
+    "templateVersion": "week6.program-template.v1"
+  }
+}

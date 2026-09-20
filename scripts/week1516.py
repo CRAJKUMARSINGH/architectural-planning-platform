@@ -31,6 +31,8 @@ CANDIDATE_REPORT_PATH = REPORT_ROOT / "week16-candidate-studio-report.json"
 AI_INPUT_REPORT_PATH = REPORT_ROOT / "week16-ai-tool-inputs.json"
 PLANNER5D_REPORT_PATH = REPORT_ROOT / "week16-planner5d-exchange-report.json"
 PLANNER5D_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "planner5d-furnished-layout.json"
+ARCHISTAR_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "archistar-snaptrude-site-model.json"
+ARCHISTAR_REPORT_PATH = REPORT_ROOT / "week16-archistar-snaptrude-site-report.json"
 MANIFEST_PATH = REPORT_ROOT / "week1516-enrichment-manifest.json"
 CHANGELOG_PATH = REPORT_ROOT / "week1516-changelog.md"
 
@@ -40,6 +42,7 @@ RENDER_VERSION = "week16.render-pipeline.v1"
 AI_INPUT_VERSION = "week16.ai-tool-inputs.v1"
 MAKET_INPUT_VERSION = "week16-01.maket-ai.v1"
 PLANNER5D_INPUT_VERSION = "week16-02.planner5d.v1"
+ARCHISTAR_INPUT_VERSION = "week16-03.archistar-snaptrude.v1"
 
 
 AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
@@ -76,6 +79,8 @@ AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
         "requiredEvidence": ["site source", "assumption status", "rule-pack version", "professional review state"],
         "promotionGate": "review evidence only; never a permit, code, or construction approval",
         "programWeeks": [6, 7, 14, 16],
+        "implementationStatus": "applied",
+        "implementationFixture": "tests/fixtures/week16/archistar-snaptrude-site-model.json",
     },
     {
         "id": "floorplanner-synchronized-view",
@@ -614,6 +619,329 @@ def validate_planner5d_input(
     return result
 
 
+def _site_vertices(value: Any) -> list[list[float]] | None:
+    if not isinstance(value, list) or len(value) < 3:
+        return None
+    vertices: list[list[float]] = []
+    for point in value:
+        if not isinstance(point, (list, tuple)) or len(point) != 2:
+            return None
+        if not all(isinstance(part, (int, float)) for part in point):
+            return None
+        vertices.append([float(point[0]), float(point[1])])
+    return vertices
+
+
+def _site_fact_match(imported: Any, canonical: Any) -> bool:
+    if imported is None or canonical is None:
+        return False
+    if isinstance(imported, (dict, list)) or isinstance(canonical, (dict, list)):
+        return imported == canonical
+    return str(imported).strip().lower() == str(canonical).strip().lower()
+
+
+def validate_archistar_snaptrude_input(
+    model: dict[str, Any],
+    payload: dict[str, Any],
+    *,
+    source_reference: str,
+    model_revision: Any,
+) -> dict[str, Any]:
+    """Review an Archistar/Snaptrude site signal against canonical evidence.
+
+    The imported package is intentionally an evidence overlay.  Week 6
+    orientation/program findings and Week 7 rule-pack results are evaluated
+    against the canonical model, then linked to the imported facts for review.
+    The external site or massing proposal never becomes authoritative geometry.
+    """
+
+    normalized = ingest_ai_tool_input(
+        "archistar-snaptrude-site-model",
+        source_input=payload,
+        source_reference=source_reference,
+        model_revision=model_revision,
+    )
+    findings: list[dict[str, Any]] = []
+    site = payload.get("site") if isinstance(payload.get("site"), dict) else {}
+    imported_units = str(payload.get("units") or site.get("units") or "").strip().lower()
+    supported_units = {"inch", "in", "foot", "ft", "mm", "m"}
+    if imported_units not in supported_units:
+        findings.append(
+            _finding(
+                "ARCHISTAR_UNITS_REQUIRED",
+                "Archistar/Snaptrude site evidence must declare supported coordinate units.",
+            )
+        )
+
+    coordinate_system = str(
+        payload.get("coordinateSystem") or site.get("coordinateSystem") or ""
+    ).strip()
+    if not coordinate_system:
+        findings.append(
+            _finding(
+                "ARCHISTAR_COORDINATE_SYSTEM_REQUIRED",
+                "Site evidence must declare its coordinate-system assumption.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    vertices = _site_vertices(site.get("plotVertices") or site.get("vertices"))
+    if vertices is None:
+        findings.append(
+            _finding(
+                "ARCHISTAR_PLOT_GEOMETRY_REQUIRED",
+                "Site evidence must contain at least three numeric plot vertices.",
+            )
+        )
+
+    north = site.get("north")
+    frontage = site.get("frontage") or site.get("roadFrontage")
+    service_access = site.get("serviceAccess")
+    if not north:
+        findings.append(
+            _finding(
+                "ARCHISTAR_NORTH_REQUIRED",
+                "North orientation is missing and remains a survey confirmation item.",
+                severity="WARNING",
+            )
+        )
+    if not frontage:
+        findings.append(
+            _finding(
+                "ARCHISTAR_FRONTAGE_REQUIRED",
+                "Road frontage is missing; site feasibility cannot treat the access edge as confirmed.",
+                severity="WARNING",
+            )
+        )
+    if not service_access:
+        findings.append(
+            _finding(
+                "ARCHISTAR_SERVICE_ACCESS_REQUIRED",
+                "Service-access intent is missing; it remains a warning rather than a hidden pass.",
+                severity="WARNING",
+            )
+        )
+
+    setbacks = site.get("setbacks")
+    if not isinstance(setbacks, dict) or any(setbacks.get(edge) is None for edge in ("north", "south", "east", "west")):
+        findings.append(
+            _finding(
+                "ARCHISTAR_SETBACKS_REQUIRED",
+                "All four preliminary setback inputs are required for a measurable comparison.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    access_points = site.get("accessPoints")
+    if not isinstance(access_points, list) or not access_points:
+        findings.append(
+            _finding(
+                "ARCHISTAR_ACCESS_POINTS_REQUIRED",
+                "Site evidence must list public, staff, or service access points.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    levels = site.get("levels")
+    if not isinstance(levels, list) or not levels:
+        findings.append(
+            _finding(
+                "ARCHISTAR_LEVELS_REQUIRED",
+                "Site/massing evidence must identify the levels used by the massing assumptions.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    massing_assumptions = payload.get("massingAssumptions", site.get("massingAssumptions"))
+    if not isinstance(massing_assumptions, list) or not massing_assumptions:
+        findings.append(
+            _finding(
+                "ARCHISTAR_MASSING_ASSUMPTIONS_REQUIRED",
+                "Massing proposals must be labeled as explicit assumptions.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    confidence = payload.get("confidence")
+    if not isinstance(confidence, dict) or not isinstance(confidence.get("overall"), (int, float)):
+        findings.append(
+            _finding(
+                "ARCHISTAR_CONFIDENCE_REQUIRED",
+                "Site evidence must include an overall confidence value.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+        confidence = confidence if isinstance(confidence, dict) else {}
+
+    professional_review_state = str(payload.get("professionalReviewState") or "required")
+    if professional_review_state not in {"required", "pending", "complete"}:
+        findings.append(
+            _finding(
+                "ARCHISTAR_REVIEW_STATE_INVALID",
+                "Professional review state must be required, pending, or complete.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+        professional_review_state = "required"
+
+    # These two calls are the Week 6/7 comparison boundary.  They read the
+    # canonical model only; no imported site fact is written into ``model``.
+    from week56 import program_report  # type: ignore
+    from week1718 import evaluate_rule_pack  # type: ignore
+
+    week6_program, week6_findings = program_report(model)
+    rule_pack_report = evaluate_rule_pack(model)
+    canonical_orientation = week6_program.get("orientation", {})
+    canonical_site = model.get("site") if isinstance(model.get("site"), dict) else {}
+    canonical_geometry = canonical_site.get("geometry") if isinstance(canonical_site.get("geometry"), dict) else {}
+    canonical_plot_vertices = canonical_geometry.get("plotVertices")
+    canonical_access_points = model.get("entries") or []
+    canonical_levels = model.get("levels") or []
+    canonical_setbacks = (
+        canonical_orientation.get("setbacks")
+        or canonical_geometry.get("setbacks")
+        or {}
+    )
+    comparisons = {
+        "units": {
+            "imported": imported_units or None,
+            "canonical": model.get("units"),
+            "match": _site_fact_match(imported_units, model.get("units")),
+        },
+        "north": {
+            "imported": north,
+            "canonical": canonical_orientation.get("north"),
+            "match": _site_fact_match(north, canonical_orientation.get("north")),
+        },
+        "frontage": {
+            "imported": frontage,
+            "canonical": canonical_orientation.get("roadFrontage"),
+            "match": _site_fact_match(frontage, canonical_orientation.get("roadFrontage")),
+            "status": "unconfirmed" if not frontage else "provided",
+        },
+        "serviceAccess": {
+            "imported": service_access,
+            "canonical": canonical_orientation.get("serviceAccess"),
+            "match": _site_fact_match(service_access, canonical_orientation.get("serviceAccess")),
+            "status": "unconfirmed" if not service_access else "provided",
+        },
+        "setbacks": {
+            "imported": copy.deepcopy(setbacks) if isinstance(setbacks, dict) else None,
+            "canonical": copy.deepcopy(canonical_setbacks),
+            "match": _site_fact_match(setbacks, canonical_setbacks),
+        },
+        "plotVertices": {
+            "imported": vertices,
+            "canonical": copy.deepcopy(canonical_plot_vertices),
+            "match": _site_fact_match(vertices, canonical_plot_vertices),
+        },
+        "accessPointIds": {
+            "imported": [item.get("id") for item in access_points if isinstance(item, dict)]
+            if isinstance(access_points, list)
+            else [],
+            "canonical": [item.get("id") for item in canonical_access_points if isinstance(item, dict)],
+            "match": _site_fact_match(
+                [item.get("id") for item in access_points if isinstance(item, dict)]
+                if isinstance(access_points, list)
+                else [],
+                [item.get("id") for item in canonical_access_points if isinstance(item, dict)],
+            ),
+        },
+        "levels": {
+            "imported": copy.deepcopy(levels) if isinstance(levels, list) else None,
+            "canonical": [
+                {"id": item.get("id"), "elevation": item.get("elevation")}
+                for item in canonical_levels
+                if isinstance(item, dict)
+            ],
+            "match": False,
+        },
+    }
+    if isinstance(levels, list):
+        comparisons["levels"]["match"] = _site_fact_match(
+            [(item.get("id"), item.get("elevation")) for item in levels if isinstance(item, dict)],
+            [
+                (item.get("id"), item.get("elevation"))
+                for item in canonical_levels
+                if isinstance(item, dict)
+            ],
+        )
+
+    linked_rule_findings = [
+        {
+            "ruleId": item.get("ruleId"),
+            "category": item.get("category"),
+            "status": item.get("status"),
+            "severity": item.get("severity"),
+            "confidence": item.get("confidence"),
+            "source": item.get("source"),
+        }
+        for item in rule_pack_report.get("results", [])
+        if item.get("category")
+        in {"coverage", "setbacks", "height", "parking", "fire-access", "service-access"}
+    ]
+    assumptions = [
+        str(item)
+        for item in (
+            payload.get("assumptions")
+            or site.get("assumptions")
+            or []
+        )
+    ]
+    assumptions.extend(
+        [
+            "Imported Archistar/Snaptrude facts are a review overlay and do not edit canonical geometry.",
+            "North, frontage, access, setbacks, levels, and massing require survey and professional confirmation.",
+            "Rule-pack results are preliminary planning evidence and do not grant permit, code, or construction approval.",
+        ]
+    )
+    unique_assumptions = list(dict.fromkeys(assumptions))
+    has_blocker = any(item["severity"] in {"BLOCKER", "ERROR"} for item in findings)
+    status = "blocked" if has_blocker else "review-required" if findings or professional_review_state != "complete" else "pass"
+    return {
+        "version": ARCHISTAR_INPUT_VERSION,
+        "tool": "Archistar / Snaptrude",
+        "sourceReference": source_reference,
+        "modelRevision": model_revision,
+        "canonicalModelRevision": model_revision,
+        "input": normalized,
+        "siteEvidence": {
+            "siteSource": payload.get("siteSource") or source_reference,
+            "coordinateSystem": coordinate_system or None,
+            "units": imported_units or None,
+            "orientation": {"north": north, "frontage": frontage},
+            "accessPoints": copy.deepcopy(access_points) if isinstance(access_points, list) else [],
+            "setbacks": copy.deepcopy(setbacks) if isinstance(setbacks, dict) else None,
+            "levels": copy.deepcopy(levels) if isinstance(levels, list) else [],
+            "massingAssumptions": copy.deepcopy(massing_assumptions) if isinstance(massing_assumptions, list) else [],
+            "confidence": copy.deepcopy(confidence),
+        },
+        "week6Comparison": {
+            "templateVersion": week6_program.get("templateVersion"),
+            "orientation": copy.deepcopy(canonical_orientation),
+            "findings": copy.deepcopy(week6_findings),
+            "factComparisons": comparisons,
+        },
+        "rulePackLinkage": {
+            "rulePack": copy.deepcopy(rule_pack_report.get("rulePack")),
+            "findingLinks": linked_rule_findings,
+            "dashboard": copy.deepcopy(rule_pack_report.get("dashboard")),
+        },
+        "assumptions": unique_assumptions,
+        "professionalReview": {
+            "state": professional_review_state,
+            "required": True,
+            "approvalClaim": False,
+        },
+        "findings": findings,
+        "status": status,
+        "evidenceStatus": "review-required" if status != "blocked" else "blocked",
+        "candidateEligible": False,
+        "authoritativeGeometryChanged": False,
+        "presentationOnly": True,
+    }
+
+
 def _rect(value: Any) -> list[float] | None:
     if isinstance(value, dict):
         value = value.get("rect")
@@ -1000,12 +1328,26 @@ def enrichment_report(model: dict[str, Any]) -> dict[str, Any]:
             source_reference=str(planner_payload.get("sourceReference", "planner5d-fixture")),
             model_revision=model.get("project", {}).get("revision"),
         )
+    archistar_snaptrude = None
+    if ARCHISTAR_FIXTURE_PATH.is_file():
+        archistar_payload = json.loads(ARCHISTAR_FIXTURE_PATH.read_text(encoding="utf-8"))
+        archistar_snaptrude = validate_archistar_snaptrude_input(
+            model,
+            archistar_payload,
+            source_reference=str(archistar_payload.get("sourceReference", "archistar-snaptrude-fixture")),
+            model_revision=model.get("project", {}).get("revision"),
+        )
     return {
-        "status": "blocked" if furnishings["status"] == "blocked" or candidates["status"] == "blocked" else "pass",
+        "status": "blocked"
+        if furnishings["status"] == "blocked"
+        or candidates["status"] == "blocked"
+        or (archistar_snaptrude and archistar_snaptrude["status"] == "blocked")
+        else "pass",
         "aiToolInputs": ai_tool_input_manifest(),
         "week15": furnishings,
         "week16": candidates,
         "planner5d": planner5d,
+        "archistarSnaptrude": archistar_snaptrude,
         "designPackage": package,
     }
 
@@ -1036,12 +1378,14 @@ def write_reports() -> dict[str, Any]:
     model["parametricAssets"] = {"version": WEEK15_VERSION, "report": str(ASSET_REPORT_PATH.relative_to(ROOT)), "catalog": catalog, "presentation": report["week15"]}
     model["candidateStudio"] = {"version": WEEK16_VERSION, "report": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT)), "bestCandidateId": report["week16"]["bestCandidateId"], "status": report["week16"]["status"], "seeds": report["week16"]["seeds"]}
     model["planner5dExchange"] = {"version": PLANNER5D_INPUT_VERSION, "report": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["planner5d"]["candidateEligible"], "status": report["planner5d"]["status"]}
+    model["archistarSnaptrudeSiteEvidence"] = {"version": ARCHISTAR_INPUT_VERSION, "report": str(ARCHISTAR_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["archistarSnaptrude"]["candidateEligible"], "status": report["archistarSnaptrude"]["status"]}
     model["designPresentation"] = report["designPackage"]
     ASSET_REPORT_PATH.write_text(json.dumps(report["week15"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     AI_INPUT_REPORT_PATH.write_text(json.dumps(report["aiToolInputs"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     CANDIDATE_REPORT_PATH.write_text(json.dumps({"aiToolInputs": report["aiToolInputs"], "candidateStudio": report["week16"], "designPackage": report["designPackage"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     PLANNER5D_REPORT_PATH.write_text(json.dumps(report["planner5d"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    MANIFEST_PATH.write_text(json.dumps({"manifestVersion": "week1516.enrichment-manifest.v1", "status": report["status"], "reports": {"week15": str(ASSET_REPORT_PATH.relative_to(ROOT)), "week16": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "planner5d": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT))}, "changelog": str(CHANGELOG_PATH.relative_to(ROOT)), "catalogVersion": WEEK15_VERSION, "candidateVersion": WEEK16_VERSION, "planner5dVersion": PLANNER5D_INPUT_VERSION, "aiToolInputCatalogVersion": AI_INPUT_VERSION, "bestCandidateId": report["week16"]["bestCandidateId"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    ARCHISTAR_REPORT_PATH.write_text(json.dumps(report["archistarSnaptrude"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    MANIFEST_PATH.write_text(json.dumps({"manifestVersion": "week1516.enrichment-manifest.v1", "status": report["status"], "reports": {"week15": str(ASSET_REPORT_PATH.relative_to(ROOT)), "week16": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "planner5d": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "archistarSnaptrude": str(ARCHISTAR_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT))}, "changelog": str(CHANGELOG_PATH.relative_to(ROOT)), "catalogVersion": WEEK15_VERSION, "candidateVersion": WEEK16_VERSION, "planner5dVersion": PLANNER5D_INPUT_VERSION, "archistarSnaptrudeVersion": ARCHISTAR_INPUT_VERSION, "aiToolInputCatalogVersion": AI_INPUT_VERSION, "bestCandidateId": report["week16"]["bestCandidateId"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     CHANGELOG_PATH.write_text(
         """# Week 15–16 enrichment changelog
 
@@ -1093,6 +1437,18 @@ def write_reports() -> dict[str, Any]:
 - Added a deterministic comparison with the Week 15 furnishing baseline.
   Imported items remain presentation-only and a rejected item cannot make the
   Planner 5D candidate eligible.
+
+### W16-03 implementation status — Archistar / Snaptrude
+
+- Added a site-model evidence fixture with coordinate and unit assumptions,
+  orientation, access points, setbacks, levels, massing assumptions, confidence,
+  and professional-review state.
+- Added `validate_archistar_snaptrude_input`, which compares imported facts with
+  the Week 6 orientation/program contract and links the canonical Week 7
+  rule-pack findings without mutating geometry.
+- Missing frontage or service access remains an explicit warning; imported
+  massing remains review evidence and cannot become permit, code, or construction
+  approval.
 """,
         encoding="utf-8",
     )

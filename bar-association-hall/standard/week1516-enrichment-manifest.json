@@ -1,5 +1,6 @@
 {
   "aiToolInputCatalogVersion": "week16.ai-tool-inputs.v1",
+  "archistarSnaptrudeVersion": "week16-03.archistar-snaptrude.v1",
   "bestCandidateId": "C-15-02",
   "candidateVersion": "week16.candidate-studio.v1",
   "catalogVersion": "week15.parametric-assets.v1",
@@ -8,6 +9,7 @@
   "planner5dVersion": "week16-02.planner5d.v1",
   "reports": {
     "aiToolInputs": "bar-association-hall/standard/week16-ai-tool-inputs.json",
+    "archistarSnaptrude": "bar-association-hall/standard/week16-archistar-snaptrude-site-report.json",
     "planner5d": "bar-association-hall/standard/week16-planner5d-exchange-report.json",
     "week15": "bar-association-hall/standard/week15-parametric-assets-report.json",
     "week16": "bar-association-hall/standard/week16-candidate-studio-report.json"

@@ -12,6 +12,7 @@ from week1516 import (  # noqa: E402
     ROOM_TEMPLATES,
     AI_INPUT_VERSION,
     PLANNER5D_INPUT_VERSION,
+    ARCHISTAR_INPUT_VERSION,
     ai_tool_input_manifest,
     candidate_studio,
     design_package,
@@ -21,6 +22,7 @@ from week1516 import (  # noqa: E402
     ingest_ai_tool_input,
     validate_maket_input,
     validate_planner5d_input,
+    validate_archistar_snaptrude_input,
     validate_placement,
 )
 
@@ -52,6 +54,48 @@ def planner_model_fixture():
     ]
     model["routes"] = []
     model["openings"] = []
+    return model
+
+
+def archistar_model_fixture():
+    model = {
+        "project": {"id": "site-fixture", "revision": 1},
+        "units": "inch",
+        "site": {
+            "geometry": {
+                "north": "up",
+                "plotVertices": [[0, 0], [35, 0], [35, 30], [60, 30], [60, 98], [0, 98]],
+                "setbacks": {"east": 5, "north": 60, "south": 5, "west": 0},
+            }
+        },
+        "orientation": {
+            "north": "up",
+            "roadFrontage": "east",
+            "serviceAccess": {"side": "west", "status": "assumption"},
+            "setbacks": {"east": 5, "north": 60, "south": 5, "west": 0},
+        },
+        "levels": [
+            {"id": "GF", "elevation": 0, "floorToFloor": 178},
+            {"id": "FF", "elevation": 178, "floorToFloor": 178},
+        ],
+        "spaces": [
+            {
+                "id": "GF-HALL",
+                "levelId": "GF",
+                "name": "Assembly Hall",
+                "roomUse": "assembly",
+                "geometry": {"rect": [6, 6, 666, 174]},
+            }
+        ],
+        "entries": [
+            {"id": "ENTRY-MAIN", "hostSpace": "GF-HALL", "exteriorZoneId": "EXT-MAIN"},
+            {"id": "ENTRY-VIP", "hostSpace": "GF-HALL", "exteriorZoneId": "EXT-VIP"},
+        ],
+        "openings": [{"id": "D-1", "hostSpace": "GF-HALL", "geometry": {"width": 36}}],
+        "windows": [{"id": "W-1", "hostSpace": "GF-HALL", "geometry": {"width": 60}}],
+        "circulationZones": [{"id": "ROUTE-1", "geometry": {"width": 48}}],
+        "assumptions": ["Fixture site facts are nominal."],
+    }
     return model
 
 
@@ -179,6 +223,75 @@ class Week1516EnrichmentTests(unittest.TestCase):
         self.assertEqual(first["baselineComparison"], second["baselineComparison"])
         self.assertEqual(first["determinism"], second["determinism"])
         self.assertTrue(first["baselineComparison"]["deterministic"])
+
+    def test_w1603_archistar_fixture_links_week6_and_week7_evidence(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "archistar-snaptrude-site-model.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        result = validate_archistar_snaptrude_input(
+            archistar_model_fixture(),
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=1,
+        )
+
+        self.assertEqual(result["version"], ARCHISTAR_INPUT_VERSION)
+        self.assertEqual(result["status"], "review-required")
+        self.assertEqual(result["findings"], [])
+        self.assertFalse(result["candidateEligible"])
+        self.assertFalse(result["authoritativeGeometryChanged"])
+        self.assertEqual(result["week6Comparison"]["templateVersion"], "week6.program-template.v1")
+        self.assertEqual(result["week6Comparison"]["factComparisons"]["north"]["match"], True)
+        self.assertIn("rulePack", result["rulePackLinkage"])
+        self.assertIn(
+            "SERVICE-ACCESS",
+            {item["ruleId"] for item in result["rulePackLinkage"]["findingLinks"]},
+        )
+        self.assertFalse(result["professionalReview"]["approvalClaim"])
+
+    def test_w1603_missing_frontage_and_service_access_stays_explicit_warning(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "archistar-snaptrude-site-model.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        payload["site"].pop("frontage")
+        payload["site"].pop("serviceAccess")
+        before = copy.deepcopy(archistar_model_fixture())
+
+        result = validate_archistar_snaptrude_input(
+            archistar_model_fixture(),
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=1,
+        )
+
+        warnings = {
+            item["rule"]
+            for item in result["findings"]
+            if item["severity"] == "WARNING"
+        }
+        self.assertIn("ARCHISTAR_FRONTAGE_REQUIRED", warnings)
+        self.assertIn("ARCHISTAR_SERVICE_ACCESS_REQUIRED", warnings)
+        self.assertEqual(result["status"], "review-required")
+        self.assertTrue(
+            any(
+                item["ruleId"] == "SERVICE-ACCESS" and item["status"] == "unknown"
+                for item in result["rulePackLinkage"]["findingLinks"]
+            )
+        )
+        self.assertEqual(archistar_model_fixture(), before)
+
+    def test_w1603_site_evidence_does_not_mutate_canonical_model(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "archistar-snaptrude-site-model.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        model = archistar_model_fixture()
+        before = copy.deepcopy(model)
+
+        validate_archistar_snaptrude_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=1,
+        )
+
+        self.assertEqual(model, before)
 
     def test_week16_exposes_tool_inputs_with_review_boundaries(self):
         manifest = ai_tool_input_manifest()

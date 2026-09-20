@@ -6578,5 +6578,11 @@
     "report": "bar-association-hall/standard/week16-planner5d-exchange-report.json",
     "candidateEligible": false,
     "status": "review-required"
+  },
+  "archistarSnaptrudeSiteEvidence": {
+    "version": "week16-03.archistar-snaptrude.v1",
+    "report": "bar-association-hall/standard/week16-archistar-snaptrude-site-report.json",
+    "candidateEligible": false,
+    "status": "review-required"
   }
 }

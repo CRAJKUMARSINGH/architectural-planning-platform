@@ -67,6 +67,12 @@ The implementation surface is the Week 16 contract in scripts/week1516.py, the m
 
 **Evidence and gate:** site source, assumption status, rule-pack version, confidence, and professional-review state. Product output cannot be labeled permit, code, or construction approval.
 
+**Implementation status:** Applied in `scripts/week1516.py` through
+`validate_archistar_snaptrude_input`, with fixture tests at
+`tests/fixtures/week16/archistar-snaptrude-site-model.json`, generated evidence at
+`bar-association-hall/standard/week16-archistar-snaptrude-site-report.json`, and
+regression coverage in `tests/test_week1516_enrichment.py`.
+
 ## W16-04 — Floorplanner: synchronized 2D/3D view intake
 
 **Potential study:** evaluate fast 2D/3D planning views as a presentation and comparison surface tied to one model revision and one object-ID map.

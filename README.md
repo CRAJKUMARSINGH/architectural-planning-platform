@@ -546,6 +546,13 @@ The Week 15 and Week 16 enrichment is implemented in the canonical pipeline.
   stair/service-zone, and overlapping-clearance conflicts are reported as
   rejected placements; imported items remain presentation-only, and a
   rejected item makes the Planner 5D candidate ineligible.
+- **W16-03 — Archistar / Snaptrude site-feasibility evidence:** imported site
+  facts now retain source, coordinate/unit assumptions, north/frontage,
+  access points, setbacks, levels, massing assumptions, confidence, and
+  professional-review state. The adapter compares those facts with the Week 6
+  orientation/program contract and links the canonical Week 7 rule-pack
+  findings without mutating authoritative geometry. Missing frontage or
+  service-access facts remain explicit warnings rather than hidden passes.
 - Moodboards, palettes, materials, lighting presets, non-destructive design
   layers, render/panorama/presentation-sheet job manifests, and
   technical-plan-to-render revision traceability are included.
@@ -562,6 +569,7 @@ The Week 15 and Week 16 enrichment is implemented in the canonical pipeline.
   - `bar-association-hall/standard/week15-parametric-assets-report.json`
   - `bar-association-hall/standard/week16-candidate-studio-report.json`
   - `bar-association-hall/standard/week16-planner5d-exchange-report.json`
+  - `bar-association-hall/standard/week16-archistar-snaptrude-site-report.json`
   - `bar-association-hall/standard/week1516-enrichment-manifest.json`
   - `bar-association-hall/standard/week1516-changelog.md`
 - Regression tests live in `tests/test_week1516_enrichment.py`, including
@@ -585,6 +593,11 @@ appointed architect, engineers, surveyor, and local-authority review.
 tested, evidence-backed, and marked done. The fixture intentionally retains one
 clearance-conflicting placement as rejected review evidence; it is not promoted
 to the presentation candidate.
+
+**W16-03 completion:** Archistar / Snaptrude site-feasibility evidence is
+implemented, tested, evidence-backed, and marked done. Imported site and
+massing signals remain review evidence only; they cannot override canonical
+geometry or imply permit, code, or construction approval.
 
 ## Week 17–18 task status — applied and marked done
 

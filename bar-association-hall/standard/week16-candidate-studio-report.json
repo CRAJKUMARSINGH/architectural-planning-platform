@@ -89,6 +89,8 @@
           "site assumptions"
         ],
         "id": "archistar-snaptrude-site-model",
+        "implementationFixture": "tests/fixtures/week16/archistar-snaptrude-site-model.json",
+        "implementationStatus": "applied",
         "inputRole": "site and building-scale feasibility",
         "programWeeks": [
           6,

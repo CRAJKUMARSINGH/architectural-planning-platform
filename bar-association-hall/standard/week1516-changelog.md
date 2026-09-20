@@ -48,3 +48,15 @@
 - Added a deterministic comparison with the Week 15 furnishing baseline.
   Imported items remain presentation-only and a rejected item cannot make the
   Planner 5D candidate eligible.
+
+### W16-03 implementation status — Archistar / Snaptrude
+
+- Added a site-model evidence fixture with coordinate and unit assumptions,
+  orientation, access points, setbacks, levels, massing assumptions, confidence,
+  and professional-review state.
+- Added `validate_archistar_snaptrude_input`, which compares imported facts with
+  the Week 6 orientation/program contract and links the canonical Week 7
+  rule-pack findings without mutating geometry.
+- Missing frontage or service access remains an explicit warning; imported
+  massing remains review evidence and cannot become permit, code, or construction
+  approval.
