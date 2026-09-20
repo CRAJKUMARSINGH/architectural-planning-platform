@@ -1,0 +1,51 @@
+{
+  "acceptance": {
+    "missingArtifactsExplicit": true,
+    "partialGenerationCannotReplaceValidRevision": true,
+    "rerunMatchesOriginal": true,
+    "secondWorkspaceCanVerify": true,
+    "softArchiveRestorePreservesRevision": true,
+    "tamperedManifestRejected": true
+  },
+  "applicationCommit": "c9b3a73c5b64783c03e80f98545abccf439171ed",
+  "failureInjection": {
+    "archiveRestorePreservesCurrentRevision": true,
+    "artifactManifestSignature": "aafc16d0b7dfc5dc1bab21b2425ec93110c19773ffa094281a606b7cab8fa994",
+    "missingArtifactErrors": [
+      "missing artifact: validation-findings.json"
+    ],
+    "missingArtifactExplicitlyMarked": true,
+    "partialExportPreservesCurrentValidRevision": true,
+    "revisionComparison": {
+      "differences": [],
+      "same": true
+    },
+    "secondWorkspaceErrors": [],
+    "secondWorkspaceVerified": true,
+    "tamperedManifestErrors": [
+      "artifact manifest signature mismatch",
+      "artifact hash mismatch: input-model.json"
+    ],
+    "tamperedManifestRejected": true
+  },
+  "inputModelSha256": "8d3d325f4f2ab3418c4692cec8caef0c749792193fc72c6c028a908b2a14713c",
+  "manifestSignature": "aafc16d0b7dfc5dc1bab21b2425ec93110c19773ffa094281a606b7cab8fa994",
+  "modelSignature": "51b1fa974af684dd0e67bb6146b1d8c5054ca25b07d87f500f40c7df7a936c31",
+  "packagePath": "bar-association-hall/standard/week26-reproducibility-package",
+  "reportSignature": null,
+  "rerun": {
+    "rerunModelSignature": "51b1fa974af684dd0e67bb6146b1d8c5054ca25b07d87f500f40c7df7a936c31",
+    "rerunValidationSignature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "sameFindings": true,
+    "sameModelSignature": true,
+    "sameValidationSignature": true
+  },
+  "revisionComparison": {
+    "differences": [],
+    "same": true
+  },
+  "rulePackVersion": "week22.adversarial-fixture.v1",
+  "status": "PASS",
+  "validationSignature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "version": "week26.reproducibility.v1"
+}

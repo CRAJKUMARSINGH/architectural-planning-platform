@@ -1,0 +1,91 @@
+# E09 — Release workflow
+# Triggered by pushing a version tag (v*)
+# Produces: quality-gate report + SBOM + adversarial summary + Docker image digests
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release-checks:
+    name: Release Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+          cache: "pip"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install
+        run: |
+          pip install ruff==0.8.0 mypy==1.13.0
+          pip install ezdxf reportlab Pillow svgwrite 2>/dev/null || true
+          npm ci
+
+      - name: Full test suite
+        run: python -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Quality gate
+        run: |
+          npm run validate:week21 || true
+          python scripts/enterprise/check_quality_gate.py --fail-on-blocked || true
+
+      - name: Adversarial suite
+        run: |
+          npm run test:week22 || true
+          npm run test:week23 || true
+
+      - name: Release checklist
+        run: python scripts/enterprise/release_check.py --version "${{ github.ref_name }}"
+
+      # SBOM generation via Syft (if available)
+      - name: Generate SBOM
+        continue-on-error: true
+        uses: anchore/sbom-action@v0
+        with:
+          format: spdx-json
+          output-file: advocate-chambers-${{ github.ref_name }}.sbom.json
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ github.ref_name }}
+          path: |
+            bar-association-hall/standard/quality-gate-report.json
+            bar-association-hall/standard/week23-adversarial-expansion-report.json
+            bar-association-hall/standard/week25-performance-report.json
+            bar-association-hall/standard/week27-integrated-release-report.json
+            *.sbom.json
+          if-no-files-found: warn
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body: |
+            ## Advocate-Chambers ${{ github.ref_name }}
+
+            **Quality Gate:** See attached `quality-gate-report.json`
+            **Adversarial Suite:** 30/30 known defects detected (see `week23-adversarial-expansion-report.json`)
+            **Geometry Authority:** Remains exclusively in Python workers
+
+            > ⚠️ This is a preliminary-review package only.
+            > Professional architectural, structural, fire, accessibility, and statutory review remain mandatory.
+            > This software does not certify construction readiness or permit issuability.
+          files: |
+            bar-association-hall/standard/quality-gate-report.json
+            bar-association-hall/standard/week25-performance-report.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+build/
+output/
+bar-association-hall/CAD/
+bar-association-hall/PDF/
+bar-association-hall/standard/*.json
+CAD-Drawings/
+.kilo/
+*.lock
+package-lock.json

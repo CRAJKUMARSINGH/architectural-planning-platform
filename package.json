@@ -9,6 +9,11 @@
     "services/*"
   ],
   "scripts": {
+    "lint:py": "ruff check scripts services packages && ruff format --check scripts services packages",
+    "lint:web": "eslint apps/web/src --ext .ts,.tsx --max-warnings 0",
+    "lint": "npm run lint:py && npm run lint:web",
+    "format:py": "ruff format scripts services packages",
+    "verify:baseline": "python -m unittest discover -s tests -p 'test_*.py' && npm run typecheck:web && npm run validate:week21",
     "dev:web": "npm --prefix apps/web run dev",
     "dev:api": "uvicorn services.api.main:app --reload --port 8000",
     "build:web": "npm --prefix apps/web run build",
@@ -86,7 +91,18 @@
     "enrich:week28": "python scripts/week28.py report",
     "validate:week28": "python scripts/week28.py validate",
     "test:week28": "python -m unittest discover -s tests -p 'test_week28*.py'",
-    "docs:patch-guide": "start code-junction/future-react-cad-transformation-patch-guide/deliverables/TRANSFORMATION_PATCH_GUIDE.md"
+    "docs:patch-guide": "start code-junction/future-react-cad-transformation-patch-guide/deliverables/TRANSFORMATION_PATCH_GUIDE.md",
+    "enterprise:check-gate": "python scripts/enterprise/check_quality_gate.py",
+    "enterprise:verify-artifact": "python scripts/enterprise/verify_artifact.py",
+    "enterprise:release-check": "python scripts/enterprise/release_check.py",
+    "test:e02": "python -m unittest discover -s tests -p 'test_e02*.py'",
+    "test:e03": "python -m unittest discover -s tests -p 'test_e03*.py'",
+    "test:e04": "python -m unittest discover -s tests -p 'test_e04*.py'",
+    "test:e05": "python -m unittest discover -s tests -p 'test_e05*.py'",
+    "test:e07": "python -m unittest discover -s tests -p 'test_e07*.py'",
+    "test:e08": "python -m unittest discover -s tests -p 'test_e08*.py'",
+    "test:e09-e10": "python -m unittest discover -s tests -p 'test_e09*.py'",
+    "test:enterprise": "python -m unittest discover -s tests -p 'test_e0*.py'"
   },
   "devDependencies": {
     "markdown-pdf": "^11.0.0"

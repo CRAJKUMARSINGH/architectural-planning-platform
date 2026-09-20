@@ -799,3 +799,79 @@ Week 15 furnishing engine and translate only the legacy response shape.
 - Migration tests verify that the Week 9 compatibility wrapper and Week 15
   engine return the same placement-validation result and that legacy library
   values are sourced from the Week 15 catalog.
+
+
+---
+
+## Enterprise Enrichment Programme — Status (2026-09-20)
+
+10-week enterprise programme to transform the platform into professional-grade
+infrastructure. Domain enrichment through Week 28 is complete and frozen as the
+quality baseline.
+
+### Programme Status
+
+| Week | Focus | Status | Key Deliverables |
+|------|-------|--------|-----------------|
+| **E01** | Foundation & Hygiene | ✅ **Complete** | `pyproject.toml`, Ruff/mypy, ESLint/Prettier, `.editorconfig`, `.nvmrc`, `CONTRIBUTING.md`, `SECURITY.md`, `CODEOWNERS`, `CHANGELOG.md`, `Makefile`, `baselines/2026-09-20/` |
+| **E02** | Persistence Layer | ✅ **Complete** | SQLAlchemy ORM models, Alembic migrations, `repository_sql.py`, `db/session.py`, SQLite dev fallback |
+| **E03** | Auth & Multi-tenancy | ✅ **Complete** | JWT middleware, role hierarchy (owner/editor/viewer/reviewer), org isolation, audit logging, `AUTH_DISABLED` dev bypass |
+| **E04** | Async Jobs & Storage | ✅ **Complete** | RQ worker entrypoint, `FilesystemStore`/`S3Store`, SHA-256 content-addressed artifacts, inline fallback for dev |
+| **E05** | CI/CD & Quality Gates | ✅ **Complete** | `check_quality_gate.py` enforcement script, `release_check.py`, `.github/workflows/ci.yml`, Dependabot config |
+| **E06** | API & Frontend Hardening | ✅ **Complete** | Versioned `/v1/` routes, `v1_projects.py` with auth+audit, error envelope, `v1_health.py` |
+| **E07** | Observability | ✅ **Complete** | JSON structured logging, Prometheus metrics middleware, `/health` + `/ready` endpoints, Grafana dashboard JSON |
+| **E08** | Security Hardening | ✅ **Complete** | Rate limiting, security headers, `verify_artifact.py`, OWASP mapping, staging AUTH guard |
+| **E09** | Staging & Release | ✅ **Complete** | `docker-compose.staging.yml`, `release.yml` workflow, `release_check.py`, SBOM workflow |
+| **E10** | Stabilization | ✅ **Complete** | Runbooks (queue-stuck, artifact-missing, DB migration), architecture docs frozen, all ADRs committed |
+
+### Quality Baseline (frozen at E01 start)
+
+| Check | Status |
+|-------|--------|
+| Unit tests (37+) | ✅ PASS |
+| Adversarial suite | ✅ 30/30 detected |
+| Quality gate | ⚠️ REVIEW_REQUIRED (professional sign-off required — correct by design) |
+| Performance | ✅ Within established envelopes |
+| Reproducibility | ✅ SHA-256 signed |
+
+Frozen reports: [`baselines/2026-09-20/`](baselines/2026-09-20/)
+
+### Enterprise Quick-Start
+
+```bash
+# Full baseline verification (lint + typecheck + tests + quality gate)
+make verify
+
+# Run all enterprise regression tests
+npm run test:enterprise
+
+# Quality gate enforcement check
+npm run enterprise:check-gate
+
+# Local enterprise stack (Postgres + Redis + MinIO + API + Worker + Web)
+docker compose up --build
+
+# Release check
+npm run enterprise:release-check
+```
+
+### Architecture
+
+| Document | Location |
+|----------|----------|
+| Geometry Authority (ADR-001) | [`docs/architecture/ADR-001-Geometry-Authority.md`](docs/architecture/ADR-001-Geometry-Authority.md) |
+| Quality Gates (ADR-002) | [`docs/architecture/ADR-002-Quality-Gates.md`](docs/architecture/ADR-002-Quality-Gates.md) |
+| Tenancy Model (ADR-003) | [`docs/architecture/ADR-003-Tenancy-Model.md`](docs/architecture/ADR-003-Tenancy-Model.md) |
+| Data Model | [`docs/architecture/data-model.md`](docs/architecture/data-model.md) |
+| System Context | [`docs/architecture/system-context.md`](docs/architecture/system-context.md) |
+| Enterprise Roadmap | [`docs/enterprise/ENTERPRISE_ROADMAP.md`](docs/enterprise/ENTERPRISE_ROADMAP.md) |
+
+### Professional Review Boundary
+
+> ⚠️ This software aids architectural planning. It does **not** certify:
+> construction readiness, permit/sanction readiness, fire/life-safety compliance,
+> structural adequacy, or accessibility (RPwD) final compliance. All outputs
+> require independent professional review by licensed architects, engineers,
+> and statutory authorities before use in regulated contexts.
+
+---

@@ -1,0 +1,525 @@
+{
+  "acceptance": {
+    "noDataLoss": true,
+    "noOutOfMemoryFailure": true,
+    "noSilentTimeout": true,
+    "repeatedInputsAreDeterministic": true
+  },
+  "applicationCommit": "c9b3a73c5b64783c03e80f98545abccf439171ed",
+  "failures": {
+    "dataLossEvents": 0,
+    "nondeterministicRuns": 0,
+    "operationErrors": 0,
+    "outOfMemoryFailures": 0,
+    "silentTimeouts": 0
+  },
+  "iterations": 7,
+  "machine": {
+    "machine": "x86_64",
+    "python": "3.13.11",
+    "release": "6.18.52",
+    "system": "Linux"
+  },
+  "profiles": [
+    {
+      "counts": {
+        "floors": 2,
+        "furniture": 30,
+        "openings": 25,
+        "rooms": 15
+      },
+      "cpuSeconds": 0.00045317,
+      "failureRecoveryMs": 0.167738,
+      "failures": {
+        "dataLossEvents": 0,
+        "nondeterministicRuns": 0,
+        "operationErrors": 0,
+        "outOfMemoryFailures": 0,
+        "silentTimeouts": 0
+      },
+      "fixture": "benchmarks/fixtures/small.json",
+      "inputSignature": "fdca9db7a7581d54f66e178d202029055353fade5ac7b87b0031f570358161ab",
+      "iterations": 7,
+      "maximumSupported": {
+        "floors": 2,
+        "furniture": 30,
+        "openings": 25,
+        "rooms": 15
+      },
+      "modelSignature": "0be43a3f7dec5c4b0480d0cb328a6e8bc8743b035483ba52f7bf2cc3790e720e",
+      "operations": {
+        "apiValidation": {
+          "errors": 0,
+          "p50Ms": 0.028405,
+          "p95Ms": 0.029182,
+          "samplesMs": [
+            0.034378,
+            0.029182,
+            0.028405,
+            0.028739,
+            0.027833,
+            0.027527,
+            0.027752
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "7001df781dc6189665d6cc245a8f3a0b28606767664bdbf0c4b0644aac4adc7d"
+        },
+        "dxfExport": {
+          "errors": 0,
+          "p50Ms": 0.102456,
+          "p95Ms": 0.107534,
+          "samplesMs": [
+            0.104803,
+            0.102074,
+            0.100261,
+            0.101056,
+            0.120663,
+            0.107534,
+            0.102456
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "146f40af722cef2d07dd262edbf0c2a8e0eca086d5b44bf38cb9cef7bba28854"
+        },
+        "furnitureClearance": {
+          "errors": 0,
+          "p50Ms": 0.001552,
+          "p95Ms": 0.002382,
+          "samplesMs": [
+            0.003827,
+            0.002382,
+            0.00169,
+            0.001534,
+            0.001513,
+            0.001497,
+            0.001552
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "e3305abb4c86a95bd8040e65c0dff558a11cf648157f8e1fe83a20ab733f9485"
+        },
+        "modelGeneration": {
+          "errors": 0,
+          "p50Ms": 0.084439,
+          "p95Ms": 0.092519,
+          "samplesMs": [
+            0.121056,
+            0.092519,
+            0.086546,
+            0.084439,
+            0.084321,
+            0.083363,
+            0.083478
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "0be43a3f7dec5c4b0480d0cb328a6e8bc8743b035483ba52f7bf2cc3790e720e"
+        },
+        "presentationExport": {
+          "errors": 0,
+          "p50Ms": 0.104433,
+          "p95Ms": 0.106269,
+          "samplesMs": [
+            0.106269,
+            0.104433,
+            0.124909,
+            0.105188,
+            0.1021,
+            0.100408,
+            0.100447
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "214398f1c4f0858300f615fcfecc64ce64574d0ade033583e5af57cc353f0680"
+        },
+        "siteFeasibility": {
+          "errors": 0,
+          "p50Ms": 0.00142,
+          "p95Ms": 0.002763,
+          "samplesMs": [
+            0.004969,
+            0.002763,
+            0.001696,
+            0.00142,
+            0.001366,
+            0.001285,
+            0.001277
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "bfd2a2107f301d3f72eb2d7232283cb3a03f7cfb28a350e4279148ac49727596"
+        },
+        "technicalPdfExport": {
+          "errors": 0,
+          "p50Ms": 0.104083,
+          "p95Ms": 0.109624,
+          "samplesMs": [
+            0.13882,
+            0.109624,
+            0.107464,
+            0.10302,
+            0.104083,
+            0.102357,
+            0.10386
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "0df31c46d538059a4fbfb8d37d420f6fe5e6380405576a05e386fbbca0cc7b66"
+        },
+        "validation": {
+          "errors": 0,
+          "p50Ms": 0.014792,
+          "p95Ms": 0.017189,
+          "samplesMs": [
+            0.023551,
+            0.017189,
+            0.015338,
+            0.014792,
+            0.014234,
+            0.014732,
+            0.014264
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      },
+      "peakMemoryKb": 22196,
+      "profile": "small",
+      "validationSignature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "counts": {
+        "floors": 3,
+        "furniture": 150,
+        "openings": 100,
+        "rooms": 50
+      },
+      "cpuSeconds": 0.000496826,
+      "failureRecoveryMs": 0.491513,
+      "failures": {
+        "dataLossEvents": 0,
+        "nondeterministicRuns": 0,
+        "operationErrors": 0,
+        "outOfMemoryFailures": 0,
+        "silentTimeouts": 0
+      },
+      "fixture": "benchmarks/fixtures/medium.json",
+      "inputSignature": "a713c9f7f76deccac25fb3a4db769d933b32d1b1e0e5a964c1b31efc1e322069",
+      "iterations": 7,
+      "maximumSupported": {
+        "floors": 3,
+        "furniture": 150,
+        "openings": 100,
+        "rooms": 50
+      },
+      "modelSignature": "cd9d4713e5173e756fd77f915a5ada34353d1e5bad16172a2b0f56256b024bea",
+      "operations": {
+        "apiValidation": {
+          "errors": 0,
+          "p50Ms": 0.096033,
+          "p95Ms": 0.108781,
+          "samplesMs": [
+            0.108781,
+            0.096033,
+            0.093973,
+            0.114981,
+            0.096666,
+            0.091334,
+            0.091063
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "7001df781dc6189665d6cc245a8f3a0b28606767664bdbf0c4b0644aac4adc7d"
+        },
+        "dxfExport": {
+          "errors": 0,
+          "p50Ms": 0.391697,
+          "p95Ms": 0.502302,
+          "samplesMs": [
+            0.559356,
+            0.420212,
+            0.363077,
+            0.391697,
+            0.502302,
+            0.389439,
+            0.369672
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "6e3dcfeb65a47c125d45f602442e7430b650e61c8d9dd9fcdd9c8f729819f755"
+        },
+        "furnitureClearance": {
+          "errors": 0,
+          "p50Ms": 0.006142,
+          "p95Ms": 0.007662,
+          "samplesMs": [
+            0.006737,
+            0.005694,
+            0.005299,
+            0.007662,
+            0.060287,
+            0.006142,
+            0.005368
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "e3305abb4c86a95bd8040e65c0dff558a11cf648157f8e1fe83a20ab733f9485"
+        },
+        "modelGeneration": {
+          "errors": 0,
+          "p50Ms": 0.395507,
+          "p95Ms": 0.551414,
+          "samplesMs": [
+            0.445144,
+            4.959008,
+            0.395507,
+            0.375164,
+            0.324642,
+            0.324214,
+            0.551414
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "cd9d4713e5173e756fd77f915a5ada34353d1e5bad16172a2b0f56256b024bea"
+        },
+        "presentationExport": {
+          "errors": 0,
+          "p50Ms": 0.400718,
+          "p95Ms": 0.514522,
+          "samplesMs": [
+            0.363265,
+            0.515972,
+            0.461058,
+            0.39838,
+            0.514522,
+            0.400718,
+            0.389303
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "ad20b9dcf03038b602ba334dc61ccdf0ec567d3d0092c25e62ae1efdaf843e60"
+        },
+        "siteFeasibility": {
+          "errors": 0,
+          "p50Ms": 0.001367,
+          "p95Ms": 0.001849,
+          "samplesMs": [
+            0.003477,
+            0.001849,
+            0.001424,
+            0.001252,
+            0.001367,
+            0.001241,
+            0.00128
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "bfd2a2107f301d3f72eb2d7232283cb3a03f7cfb28a350e4279148ac49727596"
+        },
+        "technicalPdfExport": {
+          "errors": 0,
+          "p50Ms": 0.382713,
+          "p95Ms": 0.402539,
+          "samplesMs": [
+            0.374575,
+            0.409448,
+            0.402539,
+            0.384318,
+            0.366672,
+            0.359986,
+            0.382713
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "f9bea960df83f29578457d057c165fd385b19103dd991ebb4bd9cb2df9abda8b"
+        },
+        "validation": {
+          "errors": 0,
+          "p50Ms": 0.04639,
+          "p95Ms": 0.048906,
+          "samplesMs": [
+            0.085854,
+            0.048906,
+            0.04639,
+            0.046422,
+            0.046098,
+            0.046343,
+            0.046336
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      },
+      "peakMemoryKb": 22196,
+      "profile": "medium",
+      "validationSignature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "counts": {
+        "floors": 4,
+        "furniture": 600,
+        "openings": 400,
+        "rooms": 150
+      },
+      "cpuSeconds": 0.001848166,
+      "failureRecoveryMs": 1.842646,
+      "failures": {
+        "dataLossEvents": 0,
+        "nondeterministicRuns": 0,
+        "operationErrors": 0,
+        "outOfMemoryFailures": 0,
+        "silentTimeouts": 0
+      },
+      "fixture": "benchmarks/fixtures/large.json",
+      "inputSignature": "db38c35bc1831a3e98e421847bb31048e62df6bc8ae5e7a9c051cabab456c1e2",
+      "iterations": 7,
+      "maximumSupported": {
+        "floors": 4,
+        "furniture": 600,
+        "openings": 400,
+        "rooms": 150
+      },
+      "modelSignature": "98e4c48ba5398c420ba1f8639c4a02e127fc2cec8f94b67baac6387dbf41b906",
+      "operations": {
+        "apiValidation": {
+          "errors": 0,
+          "p50Ms": 0.356836,
+          "p95Ms": 0.371113,
+          "samplesMs": [
+            0.365547,
+            0.46124,
+            0.349445,
+            0.371113,
+            0.356836,
+            0.321836,
+            0.344609
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "7001df781dc6189665d6cc245a8f3a0b28606767664bdbf0c4b0644aac4adc7d"
+        },
+        "dxfExport": {
+          "errors": 0,
+          "p50Ms": 1.391265,
+          "p95Ms": 1.394337,
+          "samplesMs": [
+            1.391742,
+            1.408263,
+            1.384545,
+            1.394337,
+            1.391265,
+            1.384306,
+            1.390386
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "84313bcfbcb814b3f945759eefd83002f88d85c06c8b73651465d004140267e6"
+        },
+        "furnitureClearance": {
+          "errors": 0,
+          "p50Ms": 0.019521,
+          "p95Ms": 0.020419,
+          "samplesMs": [
+            0.020926,
+            0.019794,
+            0.019521,
+            0.020419,
+            0.019355,
+            0.019374,
+            0.019426
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "e3305abb4c86a95bd8040e65c0dff558a11cf648157f8e1fe83a20ab733f9485"
+        },
+        "modelGeneration": {
+          "errors": 0,
+          "p50Ms": 1.329323,
+          "p95Ms": 1.557587,
+          "samplesMs": [
+            1.545239,
+            1.557587,
+            1.2588,
+            1.567747,
+            1.269577,
+            1.329323,
+            1.288259
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "98e4c48ba5398c420ba1f8639c4a02e127fc2cec8f94b67baac6387dbf41b906"
+        },
+        "presentationExport": {
+          "errors": 0,
+          "p50Ms": 1.42388,
+          "p95Ms": 1.448233,
+          "samplesMs": [
+            1.448233,
+            1.441067,
+            1.358958,
+            1.485511,
+            1.42388,
+            1.356247,
+            1.403953
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "2401cb6abe2ea2186c0711bb68f9b06cdfc0e8be59b7461179e64bf87946d154"
+        },
+        "siteFeasibility": {
+          "errors": 0,
+          "p50Ms": 0.001353,
+          "p95Ms": 0.001888,
+          "samplesMs": [
+            0.003775,
+            0.001888,
+            0.001353,
+            0.001516,
+            0.001281,
+            0.001324,
+            0.001204
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "bfd2a2107f301d3f72eb2d7232283cb3a03f7cfb28a350e4279148ac49727596"
+        },
+        "technicalPdfExport": {
+          "errors": 0,
+          "p50Ms": 1.399687,
+          "p95Ms": 1.407552,
+          "samplesMs": [
+            1.462355,
+            1.399687,
+            1.393191,
+            1.407552,
+            1.396742,
+            1.380342,
+            1.402897
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "d3a5d00d9957f8668a2b7058b5e23eb5ca8c1e20cc01f2320eb371010bfbe9ab"
+        },
+        "validation": {
+          "errors": 0,
+          "p50Ms": 0.162348,
+          "p95Ms": 0.185534,
+          "samplesMs": [
+            0.187921,
+            0.162962,
+            0.185534,
+            0.16206,
+            0.162348,
+            0.161777,
+            0.157608
+          ],
+          "silentTimeouts": 0,
+          "valueSignature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      },
+      "peakMemoryKb": 23624,
+      "profile": "large",
+      "validationSignature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  ],
+  "rulePackVersion": "week22.adversarial-fixture.v1",
+  "status": "PASS",
+  "targets": {
+    "modelGenerationP95Ms": {
+      "large": 60000,
+      "medium": 15000,
+      "small": 5000
+    },
+    "technicalExportP95Ms": {
+      "large": 120000,
+      "medium": 30000,
+      "small": 10000
+    },
+    "validationP95Ms": {
+      "large": 60000,
+      "medium": 15000,
+      "small": 5000
+    }
+  },
+  "version": "week25.performance-benchmark.v1"
+}

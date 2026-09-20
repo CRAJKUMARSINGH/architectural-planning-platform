@@ -1,0 +1,95 @@
+[project]
+name = "advocate-chambers"
+version = "1.0.0"
+description = "Advocate-Chambers / Bar Association Banswara — hybrid React 19.3 + Python parametric CAD platform."
+requires-python = ">=3.11"
+readme = "README.md"
+
+[project.optional-dependencies]
+dev = [
+    "ruff==0.8.0",
+    "mypy==1.13.0",
+]
+api = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.9.0",
+    "sqlalchemy>=2.0.36",
+    "alembic>=1.14.0",
+    "psycopg[binary]>=3.2.0",
+]
+worker = [
+    "rq>=1.16.0",
+    "redis>=5.2.0",
+    "boto3>=1.35.0",
+]
+
+# ---------------------------------------------------------------------------
+# Ruff — lint + format
+# ---------------------------------------------------------------------------
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+extend-exclude = [
+    ".git",
+    ".kilo",
+    "node_modules",
+    "output",
+    "bar-association-hall/CAD",
+    "bar-association-hall/PDF",
+    "bar-association-hall/standard",
+    "CAD-Drawings",
+    "__pycache__",
+    "*.pyi",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "SIM", # flake8-simplify
+    "C4",  # flake8-comprehensions
+    "RUF", # ruff-specific
+]
+ignore = [
+    "E501",  # line too long — handled by formatter
+    "B008",  # function call in default argument (common in FastAPI)
+    "RUF012", # mutable class vars without ClassVar (common in data models)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["advocate_chambers", "traecad_engine", "drafting_kernel"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+# ---------------------------------------------------------------------------
+# mypy
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+exclude = [
+    "bar-association-hall/",
+    "output/",
+    "CAD-Drawings/",
+    "node_modules/",
+    ".kilo/",
+]
+
+[[tool.mypy.overrides]]
+module = "scripts.*"
+ignore_errors = false
+warn_return_any = false
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = false

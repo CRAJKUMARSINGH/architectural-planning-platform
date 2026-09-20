@@ -1,0 +1,133 @@
+{
+  "acceptance": {
+    "allUnknownsVisible": true,
+    "archiveAndRevisionVerificationPass": true,
+    "noUnresolvedDangerousFalseNegative": true,
+    "performanceResultsReproducible": true,
+    "reviewerDisagreementsRecorded": true
+  },
+  "applicationCommit": "92b800d80ec9c22535203acb866f56fa8209af29",
+  "decision": "Automated validation evidence is coordinated, but the package requires independent professional and authority review before issue.",
+  "evidence": {
+    "adversarial": {
+      "sourceReport": "bar-association-hall/standard/week23-adversarial-expansion-report.json",
+      "status": "PASS"
+    },
+    "performance": {
+      "sourceReport": "bar-association-hall/standard/week25-performance-report.json",
+      "status": "PASS"
+    },
+    "professionalReview": {
+      "sourceReport": "bar-association-hall/standard/week24-anonymized-review-results.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    "regression": {
+      "sourceReport": null,
+      "status": "PASS"
+    },
+    "reproducibility": {
+      "sourceReport": "bar-association-hall/standard/week26-reproducibility-report.json",
+      "status": "PASS"
+    }
+  },
+  "issuable": false,
+  "knownLimitations": [
+    {
+      "category": "independent-professional-review",
+      "evidence": {
+        "qualityGateStatus": "REVIEW_REQUIRED",
+        "sourceReport": "bar-association-hall/standard/week24-anonymized-review-results.json"
+      },
+      "exitCriteria": [
+        "Two independent reviewers submit signed scorecards.",
+        "Usable/not-usable agreement is at least 90%.",
+        "No critical defect is accepted as usable by both reviewers.",
+        "Critical software findings are reproducible from model and rule evidence."
+      ],
+      "id": "LIM-027-001",
+      "severity": "REVIEW_REQUIRED",
+      "statement": "Two independent professional reviews, usable/not-usable agreement, and finding reproducibility are still pending.",
+      "status": "OPEN"
+    },
+    {
+      "category": "statutory-and-site-verification",
+      "evidence": {
+        "automaticApproval": false,
+        "source": "Validation program scope and project review notes"
+      },
+      "exitCriteria": [
+        "Appointed professionals verify the current site and governing requirements.",
+        "Authority-specific corrections are recorded against a project revision.",
+        "A signed issue decision is stored with the delivered package."
+      ],
+      "id": "LIM-027-002",
+      "severity": "REVIEW_REQUIRED",
+      "statement": "Survey, jurisdictional code, fire/life-safety, accessibility, structural, MEP, and authority sign-off remain outside automated release evidence.",
+      "status": "OPEN"
+    },
+    {
+      "category": "drawing-status",
+      "evidence": {
+        "automaticIssuance": false,
+        "releaseClassification": "REVIEW_REQUIRED"
+      },
+      "exitCriteria": [
+        "Professional review is complete.",
+        "Site and authority evidence is complete.",
+        "A separately approved issue package is generated and archived."
+      ],
+      "id": "LIM-027-003",
+      "severity": "REVIEW_REQUIRED",
+      "statement": "Repository drawing packages remain preliminary planning and coordination aids, not construction or permit drawings.",
+      "status": "OPEN"
+    }
+  ],
+  "qualityGateStatus": "REVIEW_REQUIRED",
+  "releaseClassification": "REVIEW_REQUIRED",
+  "releaseReady": false,
+  "remediationBacklog": [
+    {
+      "acceptance": [
+        "Two independent reviewers submit signed scorecards.",
+        "Usable/not-usable agreement is at least 90%.",
+        "No critical defect is accepted as usable by both reviewers.",
+        "Critical software findings are reproducible from model and rule evidence."
+      ],
+      "action": "Complete the Week 24 blinded professional review package.",
+      "id": "REM-027-001",
+      "linkedLimitation": "LIM-027-001",
+      "owner": "appointed independent reviewers",
+      "priority": "HIGH",
+      "status": "OPEN"
+    },
+    {
+      "acceptance": [
+        "Appointed professionals verify the current site and governing requirements.",
+        "Authority-specific corrections are recorded against a project revision.",
+        "A signed issue decision is stored with the delivered package."
+      ],
+      "action": "Verify site, statutory, fire, accessibility, structural, and MEP assumptions.",
+      "id": "REM-027-002",
+      "linkedLimitation": "LIM-027-002",
+      "owner": "appointed architect, engineers, surveyor, and authority",
+      "priority": "HIGH",
+      "status": "OPEN"
+    },
+    {
+      "acceptance": [
+        "Every tracked project artifact has a project, role, source path, and review state.",
+        "Legacy paths remain unchanged until a separately approved migration.",
+        "Each delivered revision has a manifest and validation status."
+      ],
+      "action": "Keep the multi-project inventory and proposed canonical paths updated for every future delivery.",
+      "id": "REM-027-003",
+      "linkedLimitation": "W28-DATA-001",
+      "owner": "repository maintainer",
+      "priority": "MEDIUM",
+      "status": "IN_PROGRESS"
+    }
+  ],
+  "reportSignature": "233850917aadffbe7bdc5155d95a61165f8b28cccef57e90a3361f72596447f8",
+  "sourceQualityGate": "bar-association-hall/standard/quality-gate-report.json",
+  "version": "week27.integrated-release.v1"
+}

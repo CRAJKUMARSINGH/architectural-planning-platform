@@ -1,0 +1,22 @@
+# Advocate-Chambers — Python Worker
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# System deps (for ezdxf, reportlab, Pillow)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential libfreetype6-dev libjpeg-dev zlib1g-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Python deps
+COPY pyproject.toml .
+RUN pip install --no-cache-dir -e ".[api,worker]"
+RUN pip install --no-cache-dir ezdxf reportlab Pillow svgwrite 2>/dev/null || true
+
+# Application code
+COPY scripts ./scripts
+COPY bar-association-hall ./bar-association-hall
+COPY benchmarks ./benchmarks
+COPY packages ./packages
+
+CMD ["python", "-m", "rq", "worker", "--url", "$REDIS_URL"]
