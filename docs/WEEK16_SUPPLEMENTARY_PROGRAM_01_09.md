@@ -37,6 +37,8 @@ The implementation surface is the Week 16 contract in scripts/week1516.py, the m
 
 **Evidence and gate:** source brief, units, export/reference ID, extracted facts, and reviewer state. The sprint passes only when a visually attractive suggestion with invalid topology remains review-required.
 
+**Implementation status:** Applied in scripts/week1516.py through validate_maket_input, with fixture tests at tests/fixtures/week16/maket-ai-text-to-plan.json and regression coverage in tests/test_week1516_enrichment.py.
+
 ## W16-02 — Planner 5D: furnishing candidate exchange
 
 **Potential study:** assess rapid 2D/3D furnishing and furniture-placement ideas against scaled room geometry, occupancy, route widths, door swings, and clearance envelopes.
