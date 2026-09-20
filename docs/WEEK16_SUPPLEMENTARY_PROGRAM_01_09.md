@@ -186,6 +186,15 @@ and cross-view identity regression coverage in
 
 **Evidence and gate:** units, dimension source, model revision, changed-object list, rerun result, and professional-review state. Millimetre-accuracy claims never replace local-code or professional checks.
 
+**Implementation status:** Applied in `scripts/week1516.py` through
+`validate_archiagent_input`, with the fixture at
+`tests/fixtures/week16/archiagent-live-dimension-review.json`, generated
+evidence at `bar-association-hall/standard/week16-archiagent-live-dimension-report.json`,
+and regression coverage in `tests/test_week1516_enrichment.py`. The adapter
+normalizes units, retains source-object identity, flags stale/conflicting
+measurements, and requires topology/clearance/rule-pack rerun evidence after an
+accepted edit.
+
 ## Supplementary program definition of done
 
 - All nine tool IDs map to the Week 16 machine-readable intake manifest.

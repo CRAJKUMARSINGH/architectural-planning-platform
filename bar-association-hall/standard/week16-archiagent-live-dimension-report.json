@@ -1,0 +1,318 @@
+{
+  "acceptedEdits": [
+    {
+      "accepted": true,
+      "authoritativeGeometryChanged": false,
+      "dimensionId": "DIM-ROOM-WIDTH",
+      "id": "EDIT-ROOM-WIDTH-01",
+      "sourceObjectId": "GF-01",
+      "units": "foot",
+      "value": 12
+    }
+  ],
+  "accuracyClaimAccepted": false,
+  "authoritativeGeometryChanged": false,
+  "candidateEligible": false,
+  "canonicalModelRevision": 1,
+  "canonicalUnits": "inch",
+  "changedObjects": [
+    "GF-01",
+    "GF-03"
+  ],
+  "conflictCount": 1,
+  "determinism": {
+    "algorithm": "sha256",
+    "signature": "b82ccd62f9adec720e9d708f456903ffef9d0d819951e0957447037866293d58"
+  },
+  "dimensions": [
+    {
+      "canonicalSource": "geometry.rect.x-span",
+      "canonicalUnits": "inch",
+      "canonicalValue": 144.0,
+      "changed": false,
+      "conflict": false,
+      "difference": 0.0,
+      "id": "DIM-ROOM-WIDTH",
+      "normalizedValue": 144.0,
+      "sourceKind": "space",
+      "sourceModelRevision": 1,
+      "sourceObjectId": "GF-01",
+      "status": "matched",
+      "target": "width",
+      "tolerance": 0.12,
+      "units": "foot",
+      "value": 12
+    },
+    {
+      "canonicalSource": "geometry.rect.area",
+      "canonicalUnits": "inch",
+      "canonicalValue": 24192.0,
+      "changed": false,
+      "conflict": false,
+      "difference": 0.0,
+      "id": "DIM-ROOM-AREA",
+      "normalizedValue": 24192.0,
+      "sourceKind": "space",
+      "sourceModelRevision": 1,
+      "sourceObjectId": "GF-01",
+      "status": "matched",
+      "target": "area",
+      "tolerance": 0.01,
+      "units": "inch",
+      "value": 24192
+    },
+    {
+      "canonicalSource": "geometry.width",
+      "canonicalUnits": "inch",
+      "canonicalValue": 84.0,
+      "changed": false,
+      "conflict": false,
+      "difference": 0.0,
+      "id": "DIM-DOOR-WIDTH",
+      "normalizedValue": 84.0,
+      "sourceKind": "opening",
+      "sourceModelRevision": 1,
+      "sourceObjectId": "D-GF-06",
+      "status": "matched",
+      "target": "width",
+      "tolerance": 0.01,
+      "units": "inch",
+      "value": 84
+    },
+    {
+      "canonicalSource": "geometry.floorToFloor",
+      "canonicalUnits": "inch",
+      "canonicalValue": 178.0,
+      "changed": false,
+      "conflict": false,
+      "difference": 0.0,
+      "id": "DIM-STAIR-FLOOR-TO-FLOOR",
+      "normalizedValue": 178.0,
+      "sourceKind": "stair",
+      "sourceModelRevision": 1,
+      "sourceObjectId": "STAIR-01",
+      "status": "matched",
+      "target": "floorToFloor",
+      "tolerance": 0.01,
+      "units": "inch",
+      "value": 178
+    },
+    {
+      "canonicalSource": "fixture/reference value",
+      "canonicalUnits": "inch",
+      "canonicalValue": 48.0,
+      "changed": false,
+      "conflict": false,
+      "difference": 0.0,
+      "id": "DIM-VERTICAL-CLEARANCE",
+      "normalizedValue": 48.0,
+      "sourceKind": "clearance",
+      "sourceModelRevision": 1,
+      "sourceObjectId": "CIRC-GF-02",
+      "status": "matched",
+      "target": "clearance",
+      "tolerance": 0.01,
+      "units": "inch",
+      "value": 48
+    },
+    {
+      "canonicalSource": "geometry.rect.x-span",
+      "canonicalUnits": "inch",
+      "canonicalValue": 144.0,
+      "changed": false,
+      "conflict": false,
+      "difference": 0.0,
+      "id": "DIM-STALE-ROOM-WIDTH",
+      "normalizedValue": 144.0,
+      "sourceKind": "space",
+      "sourceModelRevision": 0,
+      "sourceObjectId": "GF-03",
+      "status": "review-required",
+      "target": "width",
+      "tolerance": 0.12,
+      "units": "foot",
+      "value": 12
+    },
+    {
+      "canonicalSource": "geometry.rect.x-span",
+      "canonicalUnits": "inch",
+      "canonicalValue": 144.0,
+      "changed": true,
+      "conflict": true,
+      "difference": 12.0,
+      "id": "DIM-CONFLICTING-ROOM-WIDTH",
+      "normalizedValue": 156.0,
+      "sourceKind": "space",
+      "sourceModelRevision": 1,
+      "sourceObjectId": "GF-03",
+      "status": "conflict",
+      "target": "width",
+      "tolerance": 0.12,
+      "units": "foot",
+      "value": 13
+    }
+  ],
+  "findings": [
+    {
+      "message": "Dimension DIM-STALE-ROOM-WIDTH references model revision 0, not canonical revision 1.",
+      "objectId": "GF-03",
+      "rule": "ARCHIAGENT_DIMENSION_STALE",
+      "severity": "REVIEW_REQUIRED"
+    },
+    {
+      "message": "Dimension DIM-CONFLICTING-ROOM-WIDTH differs from geometry.rect.x-span for GF-03 by 12.0 inch.",
+      "objectId": "GF-03",
+      "rule": "ARCHIAGENT_DIMENSION_CONFLICT",
+      "severity": "REVIEW_REQUIRED"
+    },
+    {
+      "message": "Live-dimension evidence remains review-required until the professional-review state is complete.",
+      "rule": "ARCHIAGENT_PROFESSIONAL_REVIEW_REQUIRED",
+      "severity": "REVIEW_REQUIRED"
+    }
+  ],
+  "importedModelRevision": 1,
+  "input": {
+    "authoritative": false,
+    "inputRole": "scaled floor-plan and live-dimension review",
+    "modelRevision": 1,
+    "promotionGate": "review aid only; accuracy claims do not replace jurisdictional or professional checks",
+    "promotionStatus": "review-required",
+    "reviewState": "pending",
+    "sourceInput": {
+      "acceptedEdits": [
+        {
+          "accepted": true,
+          "dimensionId": "DIM-ROOM-WIDTH",
+          "id": "EDIT-ROOM-WIDTH-01",
+          "sourceObjectId": "GF-01",
+          "units": "foot",
+          "value": 12
+        }
+      ],
+      "assumptions": [
+        "Archiagent values are nominal planning dimensions and are not a survey.",
+        "Live-dimension accuracy does not establish local-code or construction compliance."
+      ],
+      "dimensions": [
+        {
+          "baselineUnits": "inch",
+          "baselineValue": 144,
+          "id": "DIM-ROOM-WIDTH",
+          "modelRevision": 1,
+          "sourceObjectId": "GF-01",
+          "target": "width",
+          "units": "foot",
+          "value": 12
+        },
+        {
+          "id": "DIM-ROOM-AREA",
+          "modelRevision": 1,
+          "sourceObjectId": "GF-01",
+          "target": "area",
+          "units": "inch",
+          "value": 24192
+        },
+        {
+          "id": "DIM-DOOR-WIDTH",
+          "modelRevision": 1,
+          "sourceObjectId": "D-GF-06",
+          "target": "width",
+          "units": "inch",
+          "value": 84
+        },
+        {
+          "id": "DIM-STAIR-FLOOR-TO-FLOOR",
+          "modelRevision": 1,
+          "sourceObjectId": "STAIR-01",
+          "target": "floorToFloor",
+          "units": "inch",
+          "value": 178
+        },
+        {
+          "expectedValue": 48,
+          "id": "DIM-VERTICAL-CLEARANCE",
+          "modelRevision": 1,
+          "sourceObjectId": "CIRC-GF-02",
+          "target": "clearance",
+          "units": "inch",
+          "value": 48
+        },
+        {
+          "id": "DIM-STALE-ROOM-WIDTH",
+          "modelRevision": 0,
+          "sourceObjectId": "GF-03",
+          "target": "width",
+          "units": "foot",
+          "value": 12
+        },
+        {
+          "baselineUnits": "inch",
+          "baselineValue": 144,
+          "id": "DIM-CONFLICTING-ROOM-WIDTH",
+          "modelRevision": 1,
+          "sourceObjectId": "GF-03",
+          "target": "width",
+          "units": "foot",
+          "value": 13
+        }
+      ],
+      "exportReference": "archiagent-live-dimensions-project-revision-1",
+      "modelRevision": 1,
+      "professionalReview": {
+        "required": true,
+        "reviewer": null,
+        "state": "pending"
+      },
+      "reviewTarget": "canonical-room-opening-stair-and-clearance-dimensions",
+      "sourceReference": "archiagent-fixture-week16-09",
+      "tool": "Archiagent",
+      "units": "inch",
+      "validationRerun": {
+        "checks": {
+          "clearance": "pass",
+          "rulePack": "pass",
+          "topology": "pass"
+        },
+        "modelRevision": 1,
+        "performed": true,
+        "signature": "canonical-validation-signature-week16-09-fixture",
+        "sourceReports": [
+          "week4-openings-report.json",
+          "week5-stair-coordination-report.json",
+          "week7-rule-pack-report.json"
+        ],
+        "status": "pass"
+      }
+    },
+    "sourceReference": "archiagent-fixture-week16-09",
+    "tool": "Archiagent",
+    "toolId": "archiagent-live-dimensions",
+    "validationStatus": "pending"
+  },
+  "modelRevision": 1,
+  "presentationOnly": true,
+  "professionalReview": {
+    "required": true,
+    "reviewer": null,
+    "state": "pending"
+  },
+  "revisionMatch": true,
+  "sourceReference": "archiagent-fixture-week16-09",
+  "status": "review-required",
+  "tool": "Archiagent",
+  "validationRerun": {
+    "checks": {
+      "clearance": "pass",
+      "rulePack": "pass",
+      "topology": "pass"
+    },
+    "invalidChecks": [],
+    "missingChecks": [],
+    "modelRevision": 1,
+    "performed": true,
+    "signature": "canonical-validation-signature-week16-09-fixture",
+    "status": "pass"
+  },
+  "version": "week16-09.archiagent-live-dimensions.v1"
+}

@@ -1,0 +1,106 @@
+{
+  "tool": "Archiagent",
+  "sourceReference": "archiagent-fixture-week16-09",
+  "exportReference": "archiagent-live-dimensions-project-revision-1",
+  "modelRevision": 1,
+  "units": "inch",
+  "reviewTarget": "canonical-room-opening-stair-and-clearance-dimensions",
+  "dimensions": [
+    {
+      "id": "DIM-ROOM-WIDTH",
+      "value": 12,
+      "units": "foot",
+      "target": "width",
+      "sourceObjectId": "GF-01",
+      "baselineValue": 144,
+      "baselineUnits": "inch",
+      "modelRevision": 1
+    },
+    {
+      "id": "DIM-ROOM-AREA",
+      "value": 24192,
+      "units": "inch",
+      "target": "area",
+      "sourceObjectId": "GF-01",
+      "modelRevision": 1
+    },
+    {
+      "id": "DIM-DOOR-WIDTH",
+      "value": 84,
+      "units": "inch",
+      "target": "width",
+      "sourceObjectId": "D-GF-06",
+      "modelRevision": 1
+    },
+    {
+      "id": "DIM-STAIR-FLOOR-TO-FLOOR",
+      "value": 178,
+      "units": "inch",
+      "target": "floorToFloor",
+      "sourceObjectId": "STAIR-01",
+      "modelRevision": 1
+    },
+    {
+      "id": "DIM-VERTICAL-CLEARANCE",
+      "value": 48,
+      "units": "inch",
+      "target": "clearance",
+      "sourceObjectId": "CIRC-GF-02",
+      "expectedValue": 48,
+      "modelRevision": 1
+    },
+    {
+      "id": "DIM-STALE-ROOM-WIDTH",
+      "value": 12,
+      "units": "foot",
+      "target": "width",
+      "sourceObjectId": "GF-03",
+      "modelRevision": 0
+    },
+    {
+      "id": "DIM-CONFLICTING-ROOM-WIDTH",
+      "value": 13,
+      "units": "foot",
+      "target": "width",
+      "sourceObjectId": "GF-03",
+      "baselineValue": 144,
+      "baselineUnits": "inch",
+      "modelRevision": 1
+    }
+  ],
+  "acceptedEdits": [
+    {
+      "id": "EDIT-ROOM-WIDTH-01",
+      "dimensionId": "DIM-ROOM-WIDTH",
+      "sourceObjectId": "GF-01",
+      "value": 12,
+      "units": "foot",
+      "accepted": true
+    }
+  ],
+  "validationRerun": {
+    "performed": true,
+    "status": "pass",
+    "modelRevision": 1,
+    "signature": "canonical-validation-signature-week16-09-fixture",
+    "checks": {
+      "topology": "pass",
+      "clearance": "pass",
+      "rulePack": "pass"
+    },
+    "sourceReports": [
+      "week4-openings-report.json",
+      "week5-stair-coordination-report.json",
+      "week7-rule-pack-report.json"
+    ]
+  },
+  "professionalReview": {
+    "state": "pending",
+    "reviewer": null,
+    "required": true
+  },
+  "assumptions": [
+    "Archiagent values are nominal planning dimensions and are not a survey.",
+    "Live-dimension accuracy does not establish local-code or construction compliance."
+  ]
+}

@@ -94,3 +94,15 @@
   and absent view references.
 - Returned views are invalidated unless they trace to the validated canonical
   model revision; the exchange remains presentation-only.
+
+### W16-09 implementation status — Archiagent
+
+- Added a live-dimension review fixture with normalized units, source-object
+  identity, a valid measurement, a stale revision, and a conflicting
+  measurement.
+- Added `validate_archiagent_input`, which compares displayed dimensions with
+  canonical room, opening, stair, route, and clearance values without mutating
+  geometry.
+- Accepted dimension edits require topology, clearance, and rule-pack rerun
+  evidence for the canonical revision. Accuracy claims remain review aids and
+  never replace jurisdictional or professional checks.

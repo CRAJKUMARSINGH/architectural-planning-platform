@@ -649,6 +649,41 @@ geometry or imply permit, code, or construction approval.
 implemented, tested, evidence-backed, and marked done. Stale or untraceable
 views remain review-required and cannot override the canonical model revision.
 
+**W16-09 completion:** Archiagent live-dimension review is implemented,
+fixture-backed, and covered by regression tests. Displayed values are normalized
+to canonical units and tied to rooms, openings, stairs, routes, or clearance
+objects; stale revisions and conflicting measurements remain explicit review
+findings. Accepted dimension edits require topology, clearance, and rule-pack
+rerun evidence. The generated evidence is
+`bar-association-hall/standard/week16-archiagent-live-dimension-report.json`.
+
+## W16-10 task status — product landing page and Netlify production files
+
+W16-10 wires the architectural planning story and the existing drawing
+workspace into the main web stream:
+
+- The default React route is now a responsive Advocate Chambers landing page
+  with a canonical-plan preview, model-truth/visual-clarity/delivery-confidence
+  sections, the review-first workflow, and validation evidence signals.
+- **Open workspace** enters the existing live 2D drawing editor, including
+  product modes, level selection, validation, artifacts, and property
+  inspection. The landing page and editor are one application, not separate
+  mockups.
+- Added production metadata and the Netlify SPA configuration in
+  `netlify.toml`, including the React build command, Node 20, publish directory,
+  and history fallback.
+
+Run the W16-10 web checks with:
+
+```bash
+npm --prefix apps/web run typecheck
+npm --prefix apps/web run build
+```
+
+**Task completion:** W16-10 landing-page implementation and Netlify production
+files are applied and testable locally. Deployment remains subject to the
+connected Netlify site and its production environment.
+
 ## Week 17–18 task status — applied and marked done
 
 The Week 17 and Week 18 enrichment is implemented in the canonical pipeline and

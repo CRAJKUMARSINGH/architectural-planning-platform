@@ -171,7 +171,7 @@
     "input": "Design a 2 level advocate chambers on a site 60m x 30m. North is north and frontage is east. Floor-to-floor is 3.6m. Include 1 reception, 2 offices, a library area target of 60m2, and an assembly hall for 120 people. Use public access, library near lobby, style contemporary, outputs PDF and DXF.",
     "missingTopologyFacts": [],
     "performance": {
-      "compileDurationMs": 5.312,
+      "compileDurationMs": 5.394,
       "telemetry": "local-only"
     },
     "readyForGeneration": true,
@@ -179,7 +179,7 @@
   },
   "determinism": {
     "algorithm": "sha256",
-    "signature": "d45be9383d50469d9818599e66c8a3f3514ff5d6ba8794e5a6192cd1b989bd6c"
+    "signature": "bf9a891c90f0ad884fd01c682ddb00f9d395fa29f675113998b19c03c1edf801"
   },
   "findings": [],
   "input": {

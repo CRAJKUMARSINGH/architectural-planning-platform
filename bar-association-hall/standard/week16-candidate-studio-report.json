@@ -248,6 +248,8 @@
           "review target"
         ],
         "id": "archiagent-live-dimensions",
+        "implementationFixture": "tests/fixtures/week16/archiagent-live-dimension-review.json",
+        "implementationStatus": "applied",
         "inputRole": "scaled floor-plan and live-dimension review",
         "programWeeks": [
           2,

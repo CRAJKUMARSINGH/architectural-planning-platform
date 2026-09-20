@@ -43,6 +43,8 @@ LLM_BRIEF_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "llm-brief-ref
 LLM_BRIEF_REPORT_PATH = REPORT_ROOT / "week16-llm-brief-refinement-report.json"
 FOURLINES_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "4lines-plan-section-exchange.json"
 FOURLINES_REPORT_PATH = REPORT_ROOT / "week16-4lines-plan-section-exchange-report.json"
+ARCHIAGENT_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "archiagent-live-dimension-review.json"
+ARCHIAGENT_REPORT_PATH = REPORT_ROOT / "week16-archiagent-live-dimension-report.json"
 MANIFEST_PATH = REPORT_ROOT / "week1516-enrichment-manifest.json"
 CHANGELOG_PATH = REPORT_ROOT / "week1516-changelog.md"
 
@@ -58,6 +60,7 @@ ROOMSTYLER_INPUT_VERSION = "week16-05.roomstyler-homestyler.v1"
 MAGICPLAN_INPUT_VERSION = "week16-06.magicplan.v1"
 LLM_BRIEF_INPUT_VERSION = "week16-07.llm-brief-refinement.v1"
 FOURLINES_INPUT_VERSION = "week16-08.4lines-plan-section.v1"
+ARCHIAGENT_INPUT_VERSION = "week16-09.archiagent-live-dimensions.v1"
 
 
 AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
@@ -166,6 +169,8 @@ AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
         "requiredEvidence": ["units", "dimension source", "model revision", "rerun validation result"],
         "promotionGate": "review aid only; accuracy claims do not replace jurisdictional or professional checks",
         "programWeeks": [2, 4, 5, 8, 16],
+        "implementationStatus": "applied",
+        "implementationFixture": "tests/fixtures/week16/archiagent-live-dimension-review.json",
     },
 )
 
@@ -2573,6 +2578,513 @@ def validate_4lines_input(
     }
 
 
+def _archiagent_unit_scale(units: str) -> float | None:
+    return {
+        "inch": 1.0,
+        "in": 1.0,
+        "foot": 12.0,
+        "ft": 12.0,
+        "mm": 1 / 25.4,
+        "cm": 1 / 2.54,
+        "m": 39.3700787402,
+    }.get(str(units).strip().lower())
+
+
+def _archiagent_dimension_objects(model: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Index measurable canonical objects without treating imported dimensions as geometry."""
+
+    objects: dict[str, dict[str, Any]] = {}
+    collections = (
+        ("spaces", "space"),
+        ("openings", "opening"),
+        ("walls", "wall"),
+        ("stairs", "stair"),
+        ("routes", "route"),
+        ("serviceZones", "service-zone"),
+        ("circulationZones", "clearance"),
+        ("levels", "level"),
+        ("verticalConnectors", "vertical-connector"),
+    )
+    for collection, kind in collections:
+        for item in model.get(collection, []) or []:
+            if isinstance(item, dict) and item.get("id"):
+                objects[str(item["id"])] = {"kind": kind, "object": item}
+    return objects
+
+
+def _archiagent_expected_dimension(
+    entry: dict[str, Any],
+    *,
+    target: str,
+    source: dict[str, Any],
+) -> tuple[float | None, str]:
+    """Return the canonical value for a typed dimension target.
+
+    The adapter supports inferred dimensions for the common rectangular model
+    objects and an explicit expectedValue for clearance or other review
+    dimensions that are not stored as a single scalar on the model object.
+    """
+
+    if isinstance(entry.get("expectedValue"), (int, float)):
+        return float(entry["expectedValue"]), "fixture/reference value"
+    if isinstance(entry.get("canonicalValue"), (int, float)):
+        return float(entry["canonicalValue"]), "canonical value"
+
+    item = source["object"]
+    geometry = item.get("geometry") if isinstance(item.get("geometry"), dict) else {}
+    rect = _rect(geometry) or _rect(item.get("rect"))
+    if target in {"width", "span"}:
+        if isinstance(item.get("width"), (int, float)):
+            return float(item["width"]), "object.width"
+        if isinstance(geometry.get("width"), (int, float)):
+            return float(geometry["width"]), "geometry.width"
+        if rect:
+            return abs(rect[2] - rect[0]), "geometry.rect.x-span"
+    elif target in {"depth", "length"}:
+        if isinstance(item.get("depth"), (int, float)):
+            return float(item["depth"]), "object.depth"
+        if isinstance(geometry.get("depth"), (int, float)):
+            return float(geometry["depth"]), "geometry.depth"
+        if rect:
+            return abs(rect[3] - rect[1]), "geometry.rect.y-span"
+    elif target == "area":
+        if isinstance(item.get("area"), (int, float)):
+            return float(item["area"]), "object.area"
+        if rect:
+            return abs(rect[2] - rect[0]) * abs(rect[3] - rect[1]), "geometry.rect.area"
+    elif target in {"floor-to-floor", "floorToFloor"}:
+        if isinstance(item.get("floorToFloor"), (int, float)):
+            return float(item["floorToFloor"]), "object.floorToFloor"
+        if isinstance(geometry.get("floorToFloor"), (int, float)):
+            return float(geometry["floorToFloor"]), "geometry.floorToFloor"
+    elif target in {"elevation", "level-elevation"}:
+        if isinstance(item.get("elevation"), (int, float)):
+            return float(item["elevation"]), "object.elevation"
+    elif target in {"riser", "tread", "landing-depth", "landingDepth"}:
+        property_name = {
+            "riser": "riser",
+            "tread": "tread",
+            "landing-depth": "landingDepth",
+            "landingDepth": "landingDepth",
+        }[target]
+        if isinstance(item.get(property_name), (int, float)):
+            return float(item[property_name]), f"object.{property_name}"
+        if isinstance(geometry.get(property_name), (int, float)):
+            return float(geometry[property_name]), f"geometry.{property_name}"
+    elif target in {"clearance", "route-width"}:
+        if isinstance(item.get("requiredWidth"), (int, float)):
+            return float(item["requiredWidth"]), "object.requiredWidth"
+        if isinstance(geometry.get("width"), (int, float)):
+            return float(geometry["width"]), "geometry.width"
+        if rect:
+            return abs(rect[2] - rect[0]), "geometry.rect.x-span"
+    return None, ""
+
+
+def validate_archiagent_input(
+    model: dict[str, Any],
+    payload: dict[str, Any],
+    *,
+    source_reference: str,
+    model_revision: Any,
+) -> dict[str, Any]:
+    """Validate Archiagent live dimensions as review evidence only.
+
+    The adapter normalizes values to the canonical model units, resolves every
+    displayed dimension to a canonical object, identifies stale/conflicting
+    measurements, and requires a topology/clearance/rule-pack rerun after an
+    explicitly accepted dimension edit. It never mutates ``model``.
+    """
+
+    normalized = ingest_ai_tool_input(
+        "archiagent-live-dimensions",
+        source_input=payload,
+        source_reference=source_reference,
+        model_revision=model_revision,
+    )
+    findings: list[dict[str, Any]] = []
+    canonical_units = str(model.get("units") or "inch").strip().lower()
+    canonical_scale = _archiagent_unit_scale(canonical_units)
+    if canonical_scale is None:
+        canonical_units = "inch"
+        canonical_scale = 1.0
+        findings.append(
+            _finding(
+                "ARCHIAGENT_CANONICAL_UNITS_UNSUPPORTED",
+                f"Canonical model units {model.get('units')!r} are not supported by the Archiagent adapter.",
+                severity="BLOCKER",
+            )
+        )
+
+    imported_revision = payload.get("modelRevision")
+    revision_match = imported_revision == model_revision
+    if not revision_match:
+        findings.append(
+            _finding(
+                "ARCHIAGENT_MODEL_REVISION_STALE",
+                f"Archiagent dimension revision {imported_revision!r} does not match canonical revision {model_revision!r}.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    dimensions = payload.get("dimensions")
+    if not isinstance(dimensions, list) or not dimensions:
+        dimensions = []
+        findings.append(
+            _finding(
+                "ARCHIAGENT_DIMENSIONS_REQUIRED",
+                "Archiagent input must contain at least one displayed dimension.",
+                severity="BLOCKER",
+            )
+        )
+
+    canonical_objects = _archiagent_dimension_objects(model)
+    dimension_summaries: list[dict[str, Any]] = []
+    dimension_ids: set[str] = set()
+    changed_objects: set[str] = set()
+    conflict_count = 0
+    for dimension in dimensions:
+        if not isinstance(dimension, dict):
+            findings.append(
+                _finding(
+                    "ARCHIAGENT_DIMENSION_INVALID",
+                    "Every Archiagent dimension must be an object.",
+                    severity="BLOCKER",
+                )
+            )
+            continue
+        dimension_id = str(dimension.get("id") or "").strip()
+        source_object_id = str(
+            dimension.get("sourceObjectId")
+            or dimension.get("objectId")
+            or dimension.get("canonicalObjectId")
+            or ""
+        ).strip()
+        units = str(dimension.get("units") or dimension.get("unit") or "").strip().lower()
+        target = str(dimension.get("target") or dimension.get("kind") or "width").strip()
+        value = dimension.get("value")
+        unit_scale = _archiagent_unit_scale(units)
+        dimension_findings: list[dict[str, Any]] = []
+        dimension_revision = dimension.get("modelRevision", imported_revision)
+        if dimension_revision != model_revision:
+            dimension_findings.append(
+                _finding(
+                    "ARCHIAGENT_DIMENSION_STALE",
+                    f"Dimension {dimension_id or '<missing>'} references model revision {dimension_revision!r}, not canonical revision {model_revision!r}.",
+                    severity="REVIEW_REQUIRED",
+                    object_id=source_object_id or None,
+                )
+            )
+        if not dimension_id or dimension_id in dimension_ids:
+            dimension_findings.append(
+                _finding(
+                    "ARCHIAGENT_DIMENSION_ID_REQUIRED",
+                    "Every displayed dimension needs a unique ID.",
+                    severity="BLOCKER",
+                )
+            )
+        dimension_ids.add(dimension_id)
+        if unit_scale is None:
+            dimension_findings.append(
+                _finding(
+                    "ARCHIAGENT_UNITS_REQUIRED",
+                    f"Dimension {dimension_id or '<missing>'} must declare supported units.",
+                    severity="BLOCKER",
+                )
+            )
+        if not source_object_id:
+            dimension_findings.append(
+                _finding(
+                    "ARCHIAGENT_DIMENSION_SOURCE_REQUIRED",
+                    f"Dimension {dimension_id or '<missing>'} must identify its canonical source object.",
+                    severity="BLOCKER",
+                )
+            )
+        elif source_object_id not in canonical_objects:
+            dimension_findings.append(
+                _finding(
+                    "ARCHIAGENT_DIMENSION_SOURCE_UNKNOWN",
+                    f"Dimension {dimension_id or '<missing>'} references unknown object {source_object_id}.",
+                    severity="BLOCKER",
+                    object_id=source_object_id,
+                )
+            )
+        if not isinstance(value, (int, float)) or isinstance(value, bool) or float(value) <= 0:
+            dimension_findings.append(
+                _finding(
+                    "ARCHIAGENT_DIMENSION_VALUE_REQUIRED",
+                    f"Dimension {dimension_id or '<missing>'} must have a positive numeric value.",
+                    severity="BLOCKER",
+                    object_id=source_object_id or None,
+                )
+            )
+
+        normalized_value = (
+            float(value) * unit_scale / canonical_scale
+            if unit_scale is not None and isinstance(value, (int, float)) and not isinstance(value, bool)
+            else None
+        )
+        source = canonical_objects.get(source_object_id)
+        expected_value = None
+        expected_source = ""
+        if source and normalized_value is not None:
+            expected_value, expected_source = _archiagent_expected_dimension(
+                dimension,
+                target=target,
+                source=source,
+            )
+            if expected_value is None:
+                dimension_findings.append(
+                    _finding(
+                        "ARCHIAGENT_DIMENSION_TARGET_UNRESOLVED",
+                        f"Dimension {dimension_id or '<missing>'} cannot resolve target {target!r} on {source_object_id}.",
+                        severity="REVIEW_REQUIRED",
+                        object_id=source_object_id,
+                    )
+                )
+
+        tolerance_value = dimension.get("tolerance", 0.01)
+        tolerance_units = str(dimension.get("toleranceUnits") or units or canonical_units).strip().lower()
+        tolerance_scale = _archiagent_unit_scale(tolerance_units)
+        tolerance = (
+            float(tolerance_value) * tolerance_scale / canonical_scale
+            if isinstance(tolerance_value, (int, float))
+            and not isinstance(tolerance_value, bool)
+            and tolerance_value >= 0
+            and tolerance_scale is not None
+            else 0.01
+        )
+        difference = (
+            round(normalized_value - expected_value, 6)
+            if normalized_value is not None and expected_value is not None
+            else None
+        )
+        conflict = difference is not None and abs(difference) > tolerance
+        if conflict:
+            conflict_count += 1
+            changed_objects.add(source_object_id)
+            dimension_findings.append(
+                _finding(
+                    "ARCHIAGENT_DIMENSION_CONFLICT",
+                    f"Dimension {dimension_id} differs from {expected_source} for {source_object_id} by {difference} {canonical_units}.",
+                    severity="REVIEW_REQUIRED",
+                    object_id=source_object_id,
+                )
+            )
+
+        baseline_value = dimension.get("baselineValue")
+        baseline_units = str(dimension.get("baselineUnits") or units).strip().lower()
+        baseline_scale = _archiagent_unit_scale(baseline_units)
+        baseline_normalized = (
+            float(baseline_value) * baseline_scale / canonical_scale
+            if isinstance(baseline_value, (int, float))
+            and not isinstance(baseline_value, bool)
+            and baseline_scale is not None
+            else None
+        )
+        changed = (
+            baseline_normalized is not None
+            and normalized_value is not None
+            and abs(normalized_value - baseline_normalized) > tolerance
+        )
+        if changed:
+            changed_objects.add(source_object_id)
+
+        findings.extend(dimension_findings)
+        dimension_summaries.append(
+            {
+                "id": dimension_id,
+                "sourceObjectId": source_object_id or None,
+                "sourceKind": source["kind"] if source else None,
+                "sourceModelRevision": dimension_revision,
+                "target": target,
+                "value": value,
+                "units": units or None,
+                "normalizedValue": round(normalized_value, 6) if normalized_value is not None else None,
+                "canonicalUnits": canonical_units,
+                "canonicalValue": round(expected_value, 6) if expected_value is not None else None,
+                "canonicalSource": expected_source or None,
+                "difference": difference,
+                "tolerance": round(tolerance, 6),
+                "changed": changed,
+                "conflict": conflict,
+                "status": "conflict" if conflict else "changed" if changed else "matched" if not dimension_findings else "review-required",
+            }
+        )
+
+    accepted_edits = payload.get("acceptedEdits")
+    if not isinstance(accepted_edits, list):
+        accepted_edits = []
+    accepted_edit_summaries: list[dict[str, Any]] = []
+    for edit in accepted_edits:
+        if not isinstance(edit, dict):
+            findings.append(
+                _finding(
+                    "ARCHIAGENT_ACCEPTED_EDIT_INVALID",
+                    "Every accepted Archiagent dimension edit must be an object.",
+                    severity="BLOCKER",
+                )
+            )
+            continue
+        edit_id = str(edit.get("id") or "").strip()
+        dimension_id = str(edit.get("dimensionId") or "").strip()
+        object_id = str(edit.get("sourceObjectId") or edit.get("objectId") or "").strip()
+        accepted = edit.get("accepted") is True
+        if not edit_id or not dimension_id or not object_id or not accepted:
+            findings.append(
+                _finding(
+                    "ARCHIAGENT_EDIT_ACCEPTANCE_REQUIRED",
+                    f"Dimension edit {edit_id or dimension_id or '<missing>'} needs an ID, source object, dimension ID, and explicit acceptance.",
+                    severity="REVIEW_REQUIRED",
+                    object_id=object_id or None,
+                )
+            )
+        if dimension_id not in dimension_ids:
+            findings.append(
+                _finding(
+                    "ARCHIAGENT_EDIT_DIMENSION_UNKNOWN",
+                    f"Accepted edit {edit_id or '<missing>'} references unknown dimension {dimension_id or '<missing>'}.",
+                    severity="BLOCKER",
+                    object_id=object_id or None,
+                )
+            )
+        if object_id not in canonical_objects:
+            findings.append(
+                _finding(
+                    "ARCHIAGENT_EDIT_SOURCE_UNKNOWN",
+                    f"Accepted edit {edit_id or '<missing>'} references unknown object {object_id or '<missing>'}.",
+                    severity="BLOCKER",
+                    object_id=object_id or None,
+                )
+            )
+        accepted_edit_summaries.append(
+            {
+                "id": edit_id or None,
+                "dimensionId": dimension_id or None,
+                "sourceObjectId": object_id or None,
+                "accepted": accepted,
+                "value": edit.get("value"),
+                "units": edit.get("units") or edit.get("unit"),
+                "authoritativeGeometryChanged": False,
+            }
+        )
+        if accepted and object_id:
+            changed_objects.add(object_id)
+
+    rerun = payload.get("validationRerun")
+    if not isinstance(rerun, dict):
+        rerun = {}
+    checks = rerun.get("checks")
+    if not isinstance(checks, dict):
+        checks = {}
+    required_checks = ("topology", "clearance", "rulePack")
+    accepted_edit_present = any(item["accepted"] for item in accepted_edit_summaries)
+    rerun_performed = rerun.get("performed") is True
+    rerun_status = str(rerun.get("status") or "").strip().lower()
+    missing_checks = [name for name in required_checks if name not in checks]
+    invalid_checks = [
+        name
+        for name in required_checks
+        if name in checks and str(checks[name]).strip().lower() not in {"pass", "review-required"}
+    ]
+    rerun_revision = rerun.get("modelRevision", model_revision)
+    if accepted_edit_present and (
+        not rerun_performed
+        or rerun_status not in {"pass", "review-required"}
+        or missing_checks
+        or invalid_checks
+        or rerun_revision != model_revision
+        or not str(rerun.get("signature") or "").strip()
+    ):
+        findings.append(
+            _finding(
+                "ARCHIAGENT_VALIDATION_RERUN_REQUIRED",
+                "Accepted dimension edits require topology, clearance, and rule-pack validation rerun evidence for the canonical revision.",
+                severity="BLOCKER",
+            )
+        )
+    elif rerun_performed and (missing_checks or invalid_checks):
+        findings.append(
+            _finding(
+                "ARCHIAGENT_VALIDATION_RERUN_INCOMPLETE",
+                "Archiagent rerun evidence must include topology, clearance, and rule-pack results without a failed check.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    professional_review = payload.get("professionalReview")
+    if not isinstance(professional_review, dict):
+        professional_review = {}
+    professional_state = str(
+        professional_review.get("state")
+        or professional_review.get("status")
+        or "pending"
+    ).strip().lower()
+    if professional_state not in {"complete", "accepted"}:
+        findings.append(
+            _finding(
+                "ARCHIAGENT_PROFESSIONAL_REVIEW_REQUIRED",
+                "Live-dimension evidence remains review-required until the professional-review state is complete.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    rerun_evidence = {
+        "performed": rerun_performed,
+        "status": rerun_status or "not-run",
+        "modelRevision": rerun_revision,
+        "checks": copy.deepcopy(checks),
+        "signature": rerun.get("signature"),
+        "missingChecks": missing_checks,
+        "invalidChecks": invalid_checks,
+    }
+    rerun_evidence["signature"] = rerun_evidence["signature"] or _signature(
+        {
+            "modelRevision": model_revision,
+            "dimensions": dimension_summaries,
+            "acceptedEdits": accepted_edit_summaries,
+            "checks": checks,
+        }
+    )
+    has_blocker = any(item["severity"] in {"BLOCKER", "ERROR"} for item in findings)
+    status = "blocked" if has_blocker else "review-required" if findings else "pass"
+    return {
+        "version": ARCHIAGENT_INPUT_VERSION,
+        "tool": "Archiagent",
+        "sourceReference": source_reference,
+        "modelRevision": model_revision,
+        "canonicalModelRevision": model_revision,
+        "importedModelRevision": imported_revision,
+        "revisionMatch": revision_match,
+        "canonicalUnits": canonical_units,
+        "input": normalized,
+        "dimensions": dimension_summaries,
+        "changedObjects": sorted(item for item in changed_objects if item),
+        "conflictCount": conflict_count,
+        "acceptedEdits": accepted_edit_summaries,
+        "validationRerun": rerun_evidence,
+        "professionalReview": copy.deepcopy(professional_review),
+        "findings": findings,
+        "status": status,
+        "candidateEligible": status == "pass",
+        "presentationOnly": True,
+        "authoritativeGeometryChanged": False,
+        "accuracyClaimAccepted": False,
+        "determinism": {
+            "algorithm": "sha256",
+            "signature": _signature(
+                {
+                    "sourceReference": source_reference,
+                    "modelRevision": model_revision,
+                    "dimensions": dimensions,
+                    "acceptedEdits": accepted_edits,
+                    "validationRerun": rerun,
+                }
+            ),
+        },
+    }
+
+
 def _rect(value: Any) -> list[float] | None:
     if isinstance(value, dict):
         value = value.get("rect")
@@ -3013,6 +3525,15 @@ def enrichment_report(model: dict[str, Any]) -> dict[str, Any]:
             source_reference=str(fourlines_payload.get("sourceReference", "4lines-fixture")),
             model_revision=model.get("project", {}).get("revision"),
         )
+    archiagent = None
+    if ARCHIAGENT_FIXTURE_PATH.is_file():
+        archiagent_payload = json.loads(ARCHIAGENT_FIXTURE_PATH.read_text(encoding="utf-8"))
+        archiagent = validate_archiagent_input(
+            model,
+            archiagent_payload,
+            source_reference=str(archiagent_payload.get("sourceReference", "archiagent-fixture")),
+            model_revision=model.get("project", {}).get("revision"),
+        )
     return {
         "status": "blocked"
         if furnishings["status"] == "blocked"
@@ -3023,6 +3544,7 @@ def enrichment_report(model: dict[str, Any]) -> dict[str, Any]:
         or (magicplan and magicplan["status"] == "blocked")
         or (llm_brief and llm_brief["status"] == "blocked")
         or (fourlines and fourlines["status"] == "blocked")
+        or (archiagent and archiagent["status"] == "blocked")
         else "pass",
         "aiToolInputs": ai_tool_input_manifest(),
         "week15": furnishings,
@@ -3034,6 +3556,7 @@ def enrichment_report(model: dict[str, Any]) -> dict[str, Any]:
         "magicplan": magicplan,
         "llmBrief": llm_brief,
         "fourlines": fourlines,
+        "archiagent": archiagent,
         "designPackage": package,
     }
 
@@ -3070,6 +3593,7 @@ def write_reports() -> dict[str, Any]:
     model["magicplanRecognitionQueue"] = {"version": MAGICPLAN_INPUT_VERSION, "report": str(MAGICPLAN_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["magicplan"]["candidateEligible"], "status": report["magicplan"]["status"], "promotedObjectCount": len(report["magicplan"]["promotedObjects"])}
     model["llmBriefRefinement"] = {"version": LLM_BRIEF_INPUT_VERSION, "report": str(LLM_BRIEF_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["llmBrief"]["candidateEligible"], "status": report["llmBrief"]["status"], "acceptedRevisionId": (report["llmBrief"].get("acceptedRevision") or {}).get("id")}
     model["fourlinesPlanSectionExchange"] = {"version": FOURLINES_INPUT_VERSION, "report": str(FOURLINES_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["fourlines"]["candidateEligible"], "status": report["fourlines"]["status"], "invalidation": report["fourlines"]["invalidation"]}
+    model["archiagentLiveDimensions"] = {"version": ARCHIAGENT_INPUT_VERSION, "report": str(ARCHIAGENT_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["archiagent"]["candidateEligible"], "status": report["archiagent"]["status"], "changedObjectCount": len(report["archiagent"]["changedObjects"]), "conflictCount": report["archiagent"]["conflictCount"]}
     model["designPresentation"] = report["designPackage"]
     ASSET_REPORT_PATH.write_text(json.dumps(report["week15"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     AI_INPUT_REPORT_PATH.write_text(json.dumps(report["aiToolInputs"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -3081,7 +3605,8 @@ def write_reports() -> dict[str, Any]:
     MAGICPLAN_REPORT_PATH.write_text(json.dumps(report["magicplan"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     LLM_BRIEF_REPORT_PATH.write_text(json.dumps(report["llmBrief"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     FOURLINES_REPORT_PATH.write_text(json.dumps(report["fourlines"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    MANIFEST_PATH.write_text(json.dumps({"manifestVersion": "week1516.enrichment-manifest.v1", "status": report["status"], "reports": {"week15": str(ASSET_REPORT_PATH.relative_to(ROOT)), "week16": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "planner5d": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "archistarSnaptrude": str(ARCHISTAR_REPORT_PATH.relative_to(ROOT)), "floorplanner": str(FLOORPLANNER_REPORT_PATH.relative_to(ROOT)), "roomstyler": str(ROOMSTYLER_REPORT_PATH.relative_to(ROOT)), "magicplan": str(MAGICPLAN_REPORT_PATH.relative_to(ROOT)), "llmBrief": str(LLM_BRIEF_REPORT_PATH.relative_to(ROOT)), "fourlines": str(FOURLINES_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT))}, "changelog": str(CHANGELOG_PATH.relative_to(ROOT)), "catalogVersion": WEEK15_VERSION, "candidateVersion": WEEK16_VERSION, "planner5dVersion": PLANNER5D_INPUT_VERSION, "archistarSnaptrudeVersion": ARCHISTAR_INPUT_VERSION, "floorplannerVersion": FLOORPLANNER_INPUT_VERSION, "roomstylerVersion": ROOMSTYLER_INPUT_VERSION, "magicplanVersion": MAGICPLAN_INPUT_VERSION, "llmBriefVersion": LLM_BRIEF_INPUT_VERSION, "fourlinesVersion": FOURLINES_INPUT_VERSION, "aiToolInputCatalogVersion": AI_INPUT_VERSION, "bestCandidateId": report["week16"]["bestCandidateId"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    ARCHIAGENT_REPORT_PATH.write_text(json.dumps(report["archiagent"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    MANIFEST_PATH.write_text(json.dumps({"manifestVersion": "week1516.enrichment-manifest.v1", "status": report["status"], "reports": {"week15": str(ASSET_REPORT_PATH.relative_to(ROOT)), "week16": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "planner5d": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "archistarSnaptrude": str(ARCHISTAR_REPORT_PATH.relative_to(ROOT)), "floorplanner": str(FLOORPLANNER_REPORT_PATH.relative_to(ROOT)), "roomstyler": str(ROOMSTYLER_REPORT_PATH.relative_to(ROOT)), "magicplan": str(MAGICPLAN_REPORT_PATH.relative_to(ROOT)), "llmBrief": str(LLM_BRIEF_REPORT_PATH.relative_to(ROOT)), "fourlines": str(FOURLINES_REPORT_PATH.relative_to(ROOT)), "archiagent": str(ARCHIAGENT_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT))}, "changelog": str(CHANGELOG_PATH.relative_to(ROOT)), "catalogVersion": WEEK15_VERSION, "candidateVersion": WEEK16_VERSION, "planner5dVersion": PLANNER5D_INPUT_VERSION, "archistarSnaptrudeVersion": ARCHISTAR_INPUT_VERSION, "floorplannerVersion": FLOORPLANNER_INPUT_VERSION, "roomstylerVersion": ROOMSTYLER_INPUT_VERSION, "magicplanVersion": MAGICPLAN_INPUT_VERSION, "llmBriefVersion": LLM_BRIEF_INPUT_VERSION, "fourlinesVersion": FOURLINES_INPUT_VERSION, "archiagentVersion": ARCHIAGENT_INPUT_VERSION, "aiToolInputCatalogVersion": AI_INPUT_VERSION, "bestCandidateId": report["week16"]["bestCandidateId"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     CHANGELOG_PATH.write_text(
         """# Week 15–16 enrichment changelog
 
@@ -3179,6 +3704,18 @@ def write_reports() -> dict[str, Any]:
   and absent view references.
 - Returned views are invalidated unless they trace to the validated canonical
   model revision; the exchange remains presentation-only.
+
+### W16-09 implementation status — Archiagent
+
+- Added a live-dimension review fixture with normalized units, source-object
+  identity, a valid measurement, a stale revision, and a conflicting
+  measurement.
+- Added `validate_archiagent_input`, which compares displayed dimensions with
+  canonical room, opening, stair, route, and clearance values without mutating
+  geometry.
+- Accepted dimension edits require topology, clearance, and rule-pack rerun
+  evidence for the canonical revision. Accuracy claims remain review aids and
+  never replace jurisdictional or professional checks.
 """,
         encoding="utf-8",
     )

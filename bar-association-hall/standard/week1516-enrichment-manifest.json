@@ -1,5 +1,6 @@
 {
   "aiToolInputCatalogVersion": "week16.ai-tool-inputs.v1",
+  "archiagentVersion": "week16-09.archiagent-live-dimensions.v1",
   "archistarSnaptrudeVersion": "week16-03.archistar-snaptrude.v1",
   "bestCandidateId": "C-15-02",
   "candidateVersion": "week16.candidate-studio.v1",
@@ -13,6 +14,7 @@
   "planner5dVersion": "week16-02.planner5d.v1",
   "reports": {
     "aiToolInputs": "bar-association-hall/standard/week16-ai-tool-inputs.json",
+    "archiagent": "bar-association-hall/standard/week16-archiagent-live-dimension-report.json",
     "archistarSnaptrude": "bar-association-hall/standard/week16-archistar-snaptrude-site-report.json",
     "floorplanner": "bar-association-hall/standard/week16-floorplanner-synchronized-view-report.json",
     "fourlines": "bar-association-hall/standard/week16-4lines-plan-section-exchange-report.json",

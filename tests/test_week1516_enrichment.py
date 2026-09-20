@@ -18,6 +18,7 @@ from week1516 import (  # noqa: E402
     MAGICPLAN_INPUT_VERSION,
     LLM_BRIEF_INPUT_VERSION,
     FOURLINES_INPUT_VERSION,
+    ARCHIAGENT_INPUT_VERSION,
     ai_tool_input_manifest,
     candidate_studio,
     design_package,
@@ -33,6 +34,7 @@ from week1516 import (  # noqa: E402
     validate_magicplan_input,
     validate_llm_brief_input,
     validate_4lines_input,
+    validate_archiagent_input,
     validate_placement,
 )
 
@@ -603,6 +605,88 @@ class Week1516EnrichmentTests(unittest.TestCase):
         self.assertIn("FOURLINES_DUPLICATE_OBJECT_ID", rules)
         self.assertIn("FOURLINES_DISCONNECTED_OBJECT", rules)
         self.assertIn("FOURLINES_OBJECT_MISSING", rules)
+
+    def test_w1609_archiagent_fixture_normalizes_dimensions_and_retains_review_evidence(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "archiagent-live-dimension-review.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        model = json.loads(
+            (ROOT / "bar-association-hall" / "standard" / "model" / "project.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        before = copy.deepcopy(model)
+
+        result = validate_archiagent_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=model["project"]["revision"],
+        )
+
+        rules = {item["rule"] for item in result["findings"]}
+        self.assertEqual(result["version"], ARCHIAGENT_INPUT_VERSION)
+        self.assertEqual(result["status"], "review-required")
+        self.assertEqual(result["canonicalUnits"], "inch")
+        self.assertEqual(result["conflictCount"], 1)
+        self.assertEqual(result["changedObjects"], ["GF-01", "GF-03"])
+        self.assertIn("ARCHIAGENT_DIMENSION_STALE", rules)
+        self.assertIn("ARCHIAGENT_DIMENSION_CONFLICT", rules)
+        self.assertIn("ARCHIAGENT_PROFESSIONAL_REVIEW_REQUIRED", rules)
+        self.assertTrue(result["validationRerun"]["performed"])
+        self.assertEqual(result["validationRerun"]["status"], "pass")
+        self.assertEqual(
+            next(item for item in result["dimensions"] if item["id"] == "DIM-ROOM-WIDTH")["normalizedValue"],
+            144.0,
+        )
+        self.assertFalse(result["authoritativeGeometryChanged"])
+        self.assertEqual(model, before)
+
+    def test_w1609_archiagent_valid_dimensions_can_pass_after_review_completion(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "archiagent-live-dimension-review.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        payload["dimensions"] = payload["dimensions"][:5]
+        payload["acceptedEdits"] = []
+        payload["professionalReview"] = {"state": "complete", "reviewer": "fixture-reviewer"}
+
+        model = json.loads(
+            (ROOT / "bar-association-hall" / "standard" / "model" / "project.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        result = validate_archiagent_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=model["project"]["revision"],
+        )
+
+        self.assertEqual(result["status"], "pass")
+        self.assertTrue(result["candidateEligible"])
+        self.assertEqual(result["findings"], [])
+        self.assertEqual(result["conflictCount"], 0)
+        self.assertEqual(result["changedObjects"], [])
+
+    def test_w1609_archiagent_accepted_edit_requires_complete_validation_rerun(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "archiagent-live-dimension-review.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        payload["dimensions"] = payload["dimensions"][:1]
+        payload.pop("validationRerun")
+        payload["professionalReview"] = {"state": "complete"}
+
+        model = json.loads(
+            (ROOT / "bar-association-hall" / "standard" / "model" / "project.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        result = validate_archiagent_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=model["project"]["revision"],
+        )
+
+        self.assertEqual(result["status"], "blocked")
+        self.assertIn("ARCHIAGENT_VALIDATION_RERUN_REQUIRED", {item["rule"] for item in result["findings"]})
 
     def test_week16_exposes_tool_inputs_with_review_boundaries(self):
         manifest = ai_tool_input_manifest()

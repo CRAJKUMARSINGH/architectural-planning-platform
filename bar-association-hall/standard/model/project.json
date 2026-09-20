@@ -6621,5 +6621,13 @@
       "invalidated": false,
       "reasons": []
     }
+  },
+  "archiagentLiveDimensions": {
+    "version": "week16-09.archiagent-live-dimensions.v1",
+    "report": "bar-association-hall/standard/week16-archiagent-live-dimension-report.json",
+    "candidateEligible": false,
+    "status": "review-required",
+    "changedObjectCount": 2,
+    "conflictCount": 1
   }
 }
