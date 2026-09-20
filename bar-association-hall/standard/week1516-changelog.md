@@ -60,3 +60,14 @@
 - Missing frontage or service access remains an explicit warning; imported
   massing remains review evidence and cannot become permit, code, or construction
   approval.
+
+### W16-04 implementation status — Floorplanner
+
+- Added a synchronized 2D/3D view fixture with level visibility, room and
+  opening IDs, stair references, export provenance, model revision, and
+  validation evidence.
+- Added `validate_floorplanner_input`, which reuses the Week 14 canonical view
+  contract and rejects unknown IDs, incomplete level coverage, stale revisions,
+  and missing validation signatures from silent acceptance.
+- Accepted view edits require a post-edit model revision and validation rerun
+  signature; view data remains presentation-only and cannot mutate geometry.

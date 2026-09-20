@@ -6584,5 +6584,12 @@
     "report": "bar-association-hall/standard/week16-archistar-snaptrude-site-report.json",
     "candidateEligible": false,
     "status": "review-required"
+  },
+  "floorplannerSynchronizedView": {
+    "version": "week16-04.floorplanner.v1",
+    "report": "bar-association-hall/standard/week16-floorplanner-synchronized-view-report.json",
+    "candidateEligible": true,
+    "status": "pass",
+    "synchronizationStatus": "synchronized"
   }
 }

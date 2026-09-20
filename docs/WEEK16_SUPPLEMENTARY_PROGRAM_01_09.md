@@ -86,6 +86,12 @@ regression coverage in `tests/test_week1516_enrichment.py`.
 
 **Evidence and gate:** object-ID map, view/export reference, level visibility, revision match, and validation signature. The sprint passes only when 2D and 3D views agree with the same validated revision.
 
+**Implementation status:** Applied in `scripts/week1516.py` through
+`validate_floorplanner_input`, with fixture tests at
+`tests/fixtures/week16/floorplanner-synchronized-view.json`, generated evidence
+at `bar-association-hall/standard/week16-floorplanner-synchronized-view-report.json`,
+and regression coverage in `tests/test_week1516_enrichment.py`.
+
 ## W16-05 — Roomstyler / Homestyler: clearance-aware presentation
 
 **Potential study:** test furniture-heavy visual exploration, materials, finishes, and colour options without allowing styling to hide a technical blocker.

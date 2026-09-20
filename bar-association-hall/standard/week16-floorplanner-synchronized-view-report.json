@@ -1,0 +1,466 @@
+{
+  "authoritativeGeometryChanged": false,
+  "candidateEligible": true,
+  "canonicalModelRevision": 1,
+  "canonicalViewContract": {
+    "sharedRevisionAcrossViews": true,
+    "synchronizationKey": "project-revision-1",
+    "validationRerunsAfterAcceptedEdit": true,
+    "version": "week14.synchronized-views.v1"
+  },
+  "findings": [],
+  "importedModelRevision": 1,
+  "input": {
+    "authoritative": false,
+    "inputRole": "fast 2D/3D planning reference",
+    "modelRevision": 1,
+    "promotionGate": "view-only until synchronized with the canonical revision",
+    "promotionStatus": "review-required",
+    "reviewState": "pending",
+    "sourceInput": {
+      "levelVisibility": [
+        "GF",
+        "FF"
+      ],
+      "modelRevision": 1,
+      "objectIdMap": [
+        {
+          "canonicalObjectId": "GF-01",
+          "sourceObjectId": "fp-GF-01"
+        },
+        {
+          "canonicalObjectId": "GF-02",
+          "sourceObjectId": "fp-GF-02"
+        },
+        {
+          "canonicalObjectId": "GF-03",
+          "sourceObjectId": "fp-GF-03"
+        },
+        {
+          "canonicalObjectId": "GF-04",
+          "sourceObjectId": "fp-GF-04"
+        },
+        {
+          "canonicalObjectId": "GF-05",
+          "sourceObjectId": "fp-GF-05"
+        },
+        {
+          "canonicalObjectId": "GF-06",
+          "sourceObjectId": "fp-GF-06"
+        },
+        {
+          "canonicalObjectId": "GF-07",
+          "sourceObjectId": "fp-GF-07"
+        },
+        {
+          "canonicalObjectId": "FF-01",
+          "sourceObjectId": "fp-FF-01"
+        },
+        {
+          "canonicalObjectId": "FF-02",
+          "sourceObjectId": "fp-FF-02"
+        },
+        {
+          "canonicalObjectId": "FF-03",
+          "sourceObjectId": "fp-FF-03"
+        },
+        {
+          "canonicalObjectId": "FF-04",
+          "sourceObjectId": "fp-FF-04"
+        },
+        {
+          "canonicalObjectId": "FF-05",
+          "sourceObjectId": "fp-FF-05"
+        },
+        {
+          "canonicalObjectId": "FF-06",
+          "sourceObjectId": "fp-FF-06"
+        },
+        {
+          "canonicalObjectId": "FF-07",
+          "sourceObjectId": "fp-FF-07"
+        },
+        {
+          "canonicalObjectId": "FF-08",
+          "sourceObjectId": "fp-FF-08"
+        },
+        {
+          "canonicalObjectId": "FF-09",
+          "sourceObjectId": "fp-FF-09"
+        },
+        {
+          "canonicalObjectId": "FF-10",
+          "sourceObjectId": "fp-FF-10"
+        },
+        {
+          "canonicalObjectId": "STAIR-01",
+          "sourceObjectId": "fp-stair-01"
+        }
+      ],
+      "sourceReference": "floorplanner-fixture-week16-04",
+      "tool": "Floorplanner",
+      "validationSignature": "canonical-validation-signature-week16-04-fixture",
+      "validationStatus": "pass",
+      "viewExportReference": "floorplanner-export-project-revision-1",
+      "views": [
+        {
+          "dimensionRefs": [
+            "DIM-GF-BOUNDARY",
+            "DIM-GF-CIRCULATION"
+          ],
+          "id": "floorplanner-plan-GF",
+          "kind": "2d-plan",
+          "levelId": "GF",
+          "objectIds": [
+            "GF-01",
+            "GF-02",
+            "GF-03",
+            "GF-04",
+            "GF-05",
+            "GF-06",
+            "GF-07"
+          ],
+          "openingIds": [
+            "D-GF-01",
+            "D-GF-02",
+            "D-GF-03",
+            "D-GF-04",
+            "D-GF-05",
+            "D-GF-06",
+            "D-GF-07",
+            "D-GF-08",
+            "D-GF-09",
+            "D-GF-10"
+          ],
+          "stairIds": [
+            "STAIR-01"
+          ]
+        },
+        {
+          "dimensionRefs": [
+            "DIM-GF-BOUNDARY"
+          ],
+          "id": "floorplanner-model-GF",
+          "kind": "3d",
+          "levelId": "GF",
+          "objectIds": [
+            "GF-01",
+            "GF-02",
+            "GF-03",
+            "GF-04",
+            "GF-05",
+            "GF-06",
+            "GF-07"
+          ],
+          "openingIds": [
+            "D-GF-01",
+            "D-GF-02",
+            "D-GF-03",
+            "D-GF-04",
+            "D-GF-05",
+            "D-GF-06",
+            "D-GF-07",
+            "D-GF-08",
+            "D-GF-09",
+            "D-GF-10"
+          ],
+          "stairIds": [
+            "STAIR-01"
+          ]
+        },
+        {
+          "dimensionRefs": [
+            "DIM-FF-BOUNDARY",
+            "DIM-FF-CIRCULATION"
+          ],
+          "id": "floorplanner-plan-FF",
+          "kind": "2d-plan",
+          "levelId": "FF",
+          "objectIds": [
+            "FF-01",
+            "FF-02",
+            "FF-03",
+            "FF-04",
+            "FF-05",
+            "FF-06",
+            "FF-07",
+            "FF-08",
+            "FF-09",
+            "FF-10"
+          ],
+          "openingIds": [
+            "D-FF-01",
+            "D-FF-02",
+            "D-FF-03",
+            "D-FF-04",
+            "D-FF-05",
+            "D-FF-06",
+            "D-FF-07",
+            "D-FF-08",
+            "D-FF-09",
+            "D-FF-10"
+          ],
+          "stairIds": []
+        },
+        {
+          "dimensionRefs": [
+            "DIM-FF-BOUNDARY"
+          ],
+          "id": "floorplanner-model-FF",
+          "kind": "3d",
+          "levelId": "FF",
+          "objectIds": [
+            "FF-01",
+            "FF-02",
+            "FF-03",
+            "FF-04",
+            "FF-05",
+            "FF-06",
+            "FF-07",
+            "FF-08",
+            "FF-09",
+            "FF-10"
+          ],
+          "openingIds": [
+            "D-FF-01",
+            "D-FF-02",
+            "D-FF-03",
+            "D-FF-04",
+            "D-FF-05",
+            "D-FF-06",
+            "D-FF-07",
+            "D-FF-08",
+            "D-FF-09",
+            "D-FF-10"
+          ],
+          "stairIds": []
+        }
+      ]
+    },
+    "sourceReference": "floorplanner-fixture-week16-04",
+    "tool": "Floorplanner",
+    "toolId": "floorplanner-synchronized-view",
+    "validationStatus": "pending"
+  },
+  "levelVisibility": [
+    "GF",
+    "FF"
+  ],
+  "modelRevision": 1,
+  "objectIdMap": [
+    {
+      "canonicalObjectId": "GF-01",
+      "sourceObjectId": "fp-GF-01"
+    },
+    {
+      "canonicalObjectId": "GF-02",
+      "sourceObjectId": "fp-GF-02"
+    },
+    {
+      "canonicalObjectId": "GF-03",
+      "sourceObjectId": "fp-GF-03"
+    },
+    {
+      "canonicalObjectId": "GF-04",
+      "sourceObjectId": "fp-GF-04"
+    },
+    {
+      "canonicalObjectId": "GF-05",
+      "sourceObjectId": "fp-GF-05"
+    },
+    {
+      "canonicalObjectId": "GF-06",
+      "sourceObjectId": "fp-GF-06"
+    },
+    {
+      "canonicalObjectId": "GF-07",
+      "sourceObjectId": "fp-GF-07"
+    },
+    {
+      "canonicalObjectId": "FF-01",
+      "sourceObjectId": "fp-FF-01"
+    },
+    {
+      "canonicalObjectId": "FF-02",
+      "sourceObjectId": "fp-FF-02"
+    },
+    {
+      "canonicalObjectId": "FF-03",
+      "sourceObjectId": "fp-FF-03"
+    },
+    {
+      "canonicalObjectId": "FF-04",
+      "sourceObjectId": "fp-FF-04"
+    },
+    {
+      "canonicalObjectId": "FF-05",
+      "sourceObjectId": "fp-FF-05"
+    },
+    {
+      "canonicalObjectId": "FF-06",
+      "sourceObjectId": "fp-FF-06"
+    },
+    {
+      "canonicalObjectId": "FF-07",
+      "sourceObjectId": "fp-FF-07"
+    },
+    {
+      "canonicalObjectId": "FF-08",
+      "sourceObjectId": "fp-FF-08"
+    },
+    {
+      "canonicalObjectId": "FF-09",
+      "sourceObjectId": "fp-FF-09"
+    },
+    {
+      "canonicalObjectId": "FF-10",
+      "sourceObjectId": "fp-FF-10"
+    },
+    {
+      "canonicalObjectId": "STAIR-01",
+      "sourceObjectId": "fp-stair-01"
+    }
+  ],
+  "presentationOnly": true,
+  "revisionMatch": true,
+  "sourceReference": "floorplanner-fixture-week16-04",
+  "status": "pass",
+  "synchronizationStatus": "synchronized",
+  "tool": "Floorplanner",
+  "validationEvidence": {
+    "rerunAfterAcceptedEdit": {
+      "modelRevision": 1,
+      "performed": false,
+      "requiredAfterAcceptedEdit": true,
+      "validationSignature": "canonical-validation-signature-week16-04-fixture"
+    },
+    "signature": "canonical-validation-signature-week16-04-fixture",
+    "status": "pass"
+  },
+  "version": "week16-04.floorplanner.v1",
+  "viewExportReference": "floorplanner-export-project-revision-1",
+  "views": [
+    {
+      "id": "floorplanner-plan-GF",
+      "kind": "2d-plan",
+      "levelId": "GF",
+      "objectIds": [
+        "GF-01",
+        "GF-02",
+        "GF-03",
+        "GF-04",
+        "GF-05",
+        "GF-06",
+        "GF-07"
+      ],
+      "openingIds": [
+        "D-GF-01",
+        "D-GF-02",
+        "D-GF-03",
+        "D-GF-04",
+        "D-GF-05",
+        "D-GF-06",
+        "D-GF-07",
+        "D-GF-08",
+        "D-GF-09",
+        "D-GF-10"
+      ],
+      "stairIds": [
+        "STAIR-01"
+      ],
+      "status": "reviewed"
+    },
+    {
+      "id": "floorplanner-model-GF",
+      "kind": "3d",
+      "levelId": "GF",
+      "objectIds": [
+        "GF-01",
+        "GF-02",
+        "GF-03",
+        "GF-04",
+        "GF-05",
+        "GF-06",
+        "GF-07"
+      ],
+      "openingIds": [
+        "D-GF-01",
+        "D-GF-02",
+        "D-GF-03",
+        "D-GF-04",
+        "D-GF-05",
+        "D-GF-06",
+        "D-GF-07",
+        "D-GF-08",
+        "D-GF-09",
+        "D-GF-10"
+      ],
+      "stairIds": [
+        "STAIR-01"
+      ],
+      "status": "reviewed"
+    },
+    {
+      "id": "floorplanner-plan-FF",
+      "kind": "2d-plan",
+      "levelId": "FF",
+      "objectIds": [
+        "FF-01",
+        "FF-02",
+        "FF-03",
+        "FF-04",
+        "FF-05",
+        "FF-06",
+        "FF-07",
+        "FF-08",
+        "FF-09",
+        "FF-10"
+      ],
+      "openingIds": [
+        "D-FF-01",
+        "D-FF-02",
+        "D-FF-03",
+        "D-FF-04",
+        "D-FF-05",
+        "D-FF-06",
+        "D-FF-07",
+        "D-FF-08",
+        "D-FF-09",
+        "D-FF-10"
+      ],
+      "stairIds": [],
+      "status": "reviewed"
+    },
+    {
+      "id": "floorplanner-model-FF",
+      "kind": "3d",
+      "levelId": "FF",
+      "objectIds": [
+        "FF-01",
+        "FF-02",
+        "FF-03",
+        "FF-04",
+        "FF-05",
+        "FF-06",
+        "FF-07",
+        "FF-08",
+        "FF-09",
+        "FF-10"
+      ],
+      "openingIds": [
+        "D-FF-01",
+        "D-FF-02",
+        "D-FF-03",
+        "D-FF-04",
+        "D-FF-05",
+        "D-FF-06",
+        "D-FF-07",
+        "D-FF-08",
+        "D-FF-09",
+        "D-FF-10"
+      ],
+      "stairIds": [],
+      "status": "reviewed"
+    }
+  ]
+}

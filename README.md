@@ -553,6 +553,12 @@ The Week 15 and Week 16 enrichment is implemented in the canonical pipeline.
   orientation/program contract and links the canonical Week 7 rule-pack
   findings without mutating authoritative geometry. Missing frontage or
   service-access facts remain explicit warnings rather than hidden passes.
+- **W16-04 — Floorplanner synchronized 2D/3D views:** imported plans and 3D
+  views now retain one model revision, level visibility, object-ID mappings,
+  room boundaries, openings, stairs, export provenance, and validation
+  evidence. Unknown IDs, incomplete level coverage, stale revisions, and
+  missing validation reruns remain review-required rather than silently
+  accepted.
 - Moodboards, palettes, materials, lighting presets, non-destructive design
   layers, render/panorama/presentation-sheet job manifests, and
   technical-plan-to-render revision traceability are included.
@@ -570,6 +576,7 @@ The Week 15 and Week 16 enrichment is implemented in the canonical pipeline.
   - `bar-association-hall/standard/week16-candidate-studio-report.json`
   - `bar-association-hall/standard/week16-planner5d-exchange-report.json`
   - `bar-association-hall/standard/week16-archistar-snaptrude-site-report.json`
+  - `bar-association-hall/standard/week16-floorplanner-synchronized-view-report.json`
   - `bar-association-hall/standard/week1516-enrichment-manifest.json`
   - `bar-association-hall/standard/week1516-changelog.md`
 - Regression tests live in `tests/test_week1516_enrichment.py`, including
@@ -598,6 +605,10 @@ to the presentation candidate.
 implemented, tested, evidence-backed, and marked done. Imported site and
 massing signals remain review evidence only; they cannot override canonical
 geometry or imply permit, code, or construction approval.
+
+**W16-04 completion:** Floorplanner synchronized 2D/3D view intake is
+implemented, tested, evidence-backed, and marked done. Stale or untraceable
+views remain review-required and cannot override the canonical model revision.
 
 ## Week 17–18 task status — applied and marked done
 

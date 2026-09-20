@@ -114,6 +114,8 @@
         "validated room boundaries"
       ],
       "id": "floorplanner-synchronized-view",
+      "implementationFixture": "tests/fixtures/week16/floorplanner-synchronized-view.json",
+      "implementationStatus": "applied",
       "inputRole": "fast 2D/3D planning reference",
       "programWeeks": [
         8,

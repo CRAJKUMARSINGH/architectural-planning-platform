@@ -13,6 +13,7 @@ from week1516 import (  # noqa: E402
     AI_INPUT_VERSION,
     PLANNER5D_INPUT_VERSION,
     ARCHISTAR_INPUT_VERSION,
+    FLOORPLANNER_INPUT_VERSION,
     ai_tool_input_manifest,
     candidate_studio,
     design_package,
@@ -23,6 +24,7 @@ from week1516 import (  # noqa: E402
     validate_maket_input,
     validate_planner5d_input,
     validate_archistar_snaptrude_input,
+    validate_floorplanner_input,
     validate_placement,
 )
 
@@ -292,6 +294,80 @@ class Week1516EnrichmentTests(unittest.TestCase):
         )
 
         self.assertEqual(model, before)
+
+    def test_w1604_floorplanner_fixture_is_synchronized_to_canonical_revision(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "floorplanner-synchronized-view.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        model_path = ROOT / "bar-association-hall" / "standard" / "model" / "project.json"
+        model = json.loads(model_path.read_text(encoding="utf-8"))
+        result = validate_floorplanner_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=model["project"]["revision"],
+        )
+
+        self.assertEqual(result["version"], FLOORPLANNER_INPUT_VERSION)
+        self.assertEqual(result["status"], "pass")
+        self.assertEqual(result["synchronizationStatus"], "synchronized")
+        self.assertTrue(result["revisionMatch"])
+        self.assertTrue(result["candidateEligible"])
+        self.assertEqual(len(result["views"]), 4)
+        self.assertEqual(
+            result["canonicalViewContract"]["version"],
+            "week14.synchronized-views.v1",
+        )
+        self.assertTrue(result["validationEvidence"]["status"] == "pass")
+
+    def test_w1604_stale_floorplanner_revision_is_not_silently_accepted(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "floorplanner-synchronized-view.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        model = json.loads(
+            (ROOT / "bar-association-hall" / "standard" / "model" / "project.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        payload["modelRevision"] = model["project"]["revision"] - 1
+
+        result = validate_floorplanner_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=model["project"]["revision"],
+        )
+
+        self.assertEqual(result["status"], "review-required")
+        self.assertEqual(result["synchronizationStatus"], "stale")
+        self.assertFalse(result["candidateEligible"])
+        self.assertFalse(result["revisionMatch"])
+        self.assertIn(
+            "FLOORPLANNER_MODEL_REVISION_STALE",
+            {item["rule"] for item in result["findings"]},
+        )
+
+    def test_w1604_unknown_ids_and_unrerun_accepted_edit_require_review(self):
+        fixture_path = ROOT / "tests" / "fixtures" / "week16" / "floorplanner-synchronized-view.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        model = json.loads(
+            (ROOT / "bar-association-hall" / "standard" / "model" / "project.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        payload["views"][0]["objectIds"].append("not-canonical")
+        payload["acceptedEdit"] = {"kind": "move-view-object", "objectId": "GF-01"}
+
+        result = validate_floorplanner_input(
+            model,
+            payload,
+            source_reference=payload["sourceReference"],
+            model_revision=model["project"]["revision"],
+        )
+        rules = {item["rule"] for item in result["findings"]}
+
+        self.assertEqual(result["status"], "review-required")
+        self.assertIn("FLOORPLANNER_UNKNOWN_OBJECT_ID", rules)
+        self.assertIn("FLOORPLANNER_VALIDATION_RERUN_REQUIRED", rules)
+        self.assertFalse(result["validationEvidence"]["rerunAfterAcceptedEdit"]["performed"])
 
     def test_week16_exposes_tool_inputs_with_review_boundaries(self):
         manifest = ai_tool_input_manifest()

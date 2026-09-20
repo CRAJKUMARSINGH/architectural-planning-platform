@@ -33,6 +33,8 @@ PLANNER5D_REPORT_PATH = REPORT_ROOT / "week16-planner5d-exchange-report.json"
 PLANNER5D_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "planner5d-furnished-layout.json"
 ARCHISTAR_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "archistar-snaptrude-site-model.json"
 ARCHISTAR_REPORT_PATH = REPORT_ROOT / "week16-archistar-snaptrude-site-report.json"
+FLOORPLANNER_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "week16" / "floorplanner-synchronized-view.json"
+FLOORPLANNER_REPORT_PATH = REPORT_ROOT / "week16-floorplanner-synchronized-view-report.json"
 MANIFEST_PATH = REPORT_ROOT / "week1516-enrichment-manifest.json"
 CHANGELOG_PATH = REPORT_ROOT / "week1516-changelog.md"
 
@@ -43,6 +45,7 @@ AI_INPUT_VERSION = "week16.ai-tool-inputs.v1"
 MAKET_INPUT_VERSION = "week16-01.maket-ai.v1"
 PLANNER5D_INPUT_VERSION = "week16-02.planner5d.v1"
 ARCHISTAR_INPUT_VERSION = "week16-03.archistar-snaptrude.v1"
+FLOORPLANNER_INPUT_VERSION = "week16-04.floorplanner.v1"
 
 
 AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
@@ -91,6 +94,8 @@ AI_TOOL_INPUTS: tuple[dict[str, Any], ...] = (
         "requiredEvidence": ["model revision", "object-ID map", "view/export reference"],
         "promotionGate": "view-only until synchronized with the canonical revision",
         "programWeeks": [8, 9, 14, 16],
+        "implementationStatus": "applied",
+        "implementationFixture": "tests/fixtures/week16/floorplanner-synchronized-view.json",
     },
     {
         "id": "roomstyler-homestyler-furnishing",
@@ -942,6 +947,366 @@ def validate_archistar_snaptrude_input(
     }
 
 
+def _canonical_view_objects(model: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    collections = (
+        "levels",
+        "spaces",
+        "openings",
+        "windows",
+        "stairs",
+        "verticalConnectors",
+        "entries",
+    )
+    objects: dict[str, dict[str, Any]] = {}
+    for collection in collections:
+        for item in model.get(collection, []) or []:
+            if isinstance(item, dict) and item.get("id"):
+                objects[str(item["id"])] = {
+                    "collection": collection,
+                    "levelId": item.get("levelId") or item.get("level"),
+                }
+    return objects
+
+
+def validate_floorplanner_input(
+    model: dict[str, Any],
+    payload: dict[str, Any],
+    *,
+    source_reference: str,
+    model_revision: Any,
+) -> dict[str, Any]:
+    """Validate a Floorplanner 2D/3D view exchange against one model revision."""
+
+    normalized = ingest_ai_tool_input(
+        "floorplanner-synchronized-view",
+        source_input=payload,
+        source_reference=source_reference,
+        model_revision=model_revision,
+    )
+    findings: list[dict[str, Any]] = []
+    canonical_objects = _canonical_view_objects(model)
+    canonical_levels = {
+        str(item.get("id"))
+        for item in model.get("levels", []) or []
+        if isinstance(item, dict) and item.get("id")
+    }
+    imported_revision = payload.get("modelRevision")
+    revision_matches = imported_revision == model_revision
+    if not revision_matches:
+        findings.append(
+            _finding(
+                "FLOORPLANNER_MODEL_REVISION_STALE",
+                f"Floorplanner revision {imported_revision!r} does not match canonical revision {model_revision!r}.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    export_reference = str(
+        payload.get("viewExportReference") or payload.get("exportReference") or ""
+    ).strip()
+    if not export_reference:
+        findings.append(
+            _finding(
+                "FLOORPLANNER_EXPORT_REFERENCE_REQUIRED",
+                "A synchronized view must retain its Floorplanner export/reference ID.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    object_id_map = payload.get("objectIdMap")
+    if not isinstance(object_id_map, list) or not object_id_map:
+        findings.append(
+            _finding(
+                "FLOORPLANNER_OBJECT_ID_MAP_REQUIRED",
+                "The view exchange must provide a source-to-canonical object-ID map.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+        object_id_map = []
+
+    mapped_ids: set[str] = set()
+    for mapping in object_id_map:
+        if not isinstance(mapping, dict):
+            findings.append(
+                _finding(
+                    "FLOORPLANNER_OBJECT_ID_MAP_INVALID",
+                    "Every Floorplanner object-ID mapping must be an object.",
+                    severity="REVIEW_REQUIRED",
+                )
+            )
+            continue
+        source_id = str(mapping.get("sourceObjectId", "")).strip()
+        canonical_id = str(mapping.get("canonicalObjectId", "")).strip()
+        if not source_id or canonical_id not in canonical_objects:
+            findings.append(
+                _finding(
+                    "FLOORPLANNER_OBJECT_ID_UNKNOWN",
+                    f"Floorplanner mapping {source_id or canonical_id or 'unnamed'} does not resolve to a canonical object.",
+                    severity="REVIEW_REQUIRED",
+                )
+            )
+            continue
+        mapped_ids.add(canonical_id)
+
+    imported_views = payload.get("views")
+    if not isinstance(imported_views, list) or not imported_views:
+        findings.append(
+            _finding(
+                "FLOORPLANNER_VIEWS_REQUIRED",
+                "Floorplanner exchange must contain at least one 2D/3D view.",
+            )
+        )
+        imported_views = []
+
+    view_summaries: list[dict[str, Any]] = []
+    view_kinds: set[tuple[str, str]] = set()
+    for view in imported_views:
+        if not isinstance(view, dict):
+            findings.append(
+                _finding(
+                    "FLOORPLANNER_VIEW_INVALID",
+                    "Each Floorplanner view must be an object.",
+                    severity="REVIEW_REQUIRED",
+                )
+            )
+            continue
+        view_id = str(view.get("id", "")).strip() or "unnamed-view"
+        kind = str(view.get("kind", "")).strip().lower()
+        level_id = str(view.get("levelId", "")).strip()
+        object_ids = view.get("objectIds")
+        if kind not in {"2d-plan", "3d"}:
+            findings.append(
+                _finding(
+                    "FLOORPLANNER_VIEW_KIND_UNSUPPORTED",
+                    f"{view_id} must be a 2d-plan or 3d view.",
+                    severity="REVIEW_REQUIRED",
+                    object_id=view_id,
+                )
+            )
+        if level_id not in canonical_levels:
+            findings.append(
+                _finding(
+                    "FLOORPLANNER_LEVEL_UNKNOWN",
+                    f"{view_id} references unknown level {level_id or '<missing>'}.",
+                    severity="REVIEW_REQUIRED",
+                    object_id=view_id,
+                )
+            )
+        if not isinstance(object_ids, list) or not object_ids:
+            findings.append(
+                _finding(
+                    "FLOORPLANNER_VIEW_OBJECTS_REQUIRED",
+                    f"{view_id} must list the canonical objects visible in the view.",
+                    severity="REVIEW_REQUIRED",
+                    object_id=view_id,
+                )
+            )
+            object_ids = []
+        unknown_ids = [
+            str(object_id)
+            for object_id in object_ids
+            if str(object_id) not in canonical_objects
+        ]
+        for object_id in unknown_ids:
+            findings.append(
+                _finding(
+                    "FLOORPLANNER_UNKNOWN_OBJECT_ID",
+                    f"{view_id} references unknown canonical object {object_id}.",
+                    severity="REVIEW_REQUIRED",
+                    object_id=object_id,
+                )
+            )
+        opening_ids = view.get("openingIds", [])
+        if not isinstance(opening_ids, list):
+            opening_ids = []
+            findings.append(
+                _finding(
+                    "FLOORPLANNER_OPENING_IDS_INVALID",
+                    f"{view_id} openingIds must be a list.",
+                    severity="REVIEW_REQUIRED",
+                    object_id=view_id,
+                )
+            )
+        for opening_id in opening_ids:
+            opening = canonical_objects.get(str(opening_id))
+            if not opening or opening["collection"] != "openings":
+                findings.append(
+                    _finding(
+                        "FLOORPLANNER_OPENING_ID_UNKNOWN",
+                        f"{view_id} references unknown canonical opening {opening_id}.",
+                        severity="REVIEW_REQUIRED",
+                        object_id=str(opening_id),
+                    )
+                )
+        stair_ids = view.get("stairIds", [])
+        if not isinstance(stair_ids, list):
+            stair_ids = []
+            findings.append(
+                _finding(
+                    "FLOORPLANNER_STAIR_IDS_INVALID",
+                    f"{view_id} stairIds must be a list.",
+                    severity="REVIEW_REQUIRED",
+                    object_id=view_id,
+                )
+            )
+        for stair_id in stair_ids:
+            stair = canonical_objects.get(str(stair_id))
+            if not stair or stair["collection"] not in {"stairs", "verticalConnectors"}:
+                findings.append(
+                    _finding(
+                        "FLOORPLANNER_STAIR_ID_UNKNOWN",
+                        f"{view_id} references unknown canonical stair or connector {stair_id}.",
+                        severity="REVIEW_REQUIRED",
+                        object_id=str(stair_id),
+                    )
+                )
+        for object_id in object_ids:
+            canonical = canonical_objects.get(str(object_id))
+            if canonical and canonical.get("levelId") and level_id and canonical["levelId"] != level_id:
+                findings.append(
+                    _finding(
+                        "FLOORPLANNER_OBJECT_LEVEL_MISMATCH",
+                        f"{view_id} places {object_id} on {level_id}, but the canonical object belongs to {canonical['levelId']}.",
+                        severity="REVIEW_REQUIRED",
+                        object_id=str(object_id),
+                    )
+                )
+        view_kinds.add((kind, level_id))
+        view_summaries.append(
+            {
+                "id": view_id,
+                "kind": kind,
+                "levelId": level_id,
+                "objectIds": [str(item) for item in object_ids],
+                "openingIds": [str(item) for item in opening_ids],
+                "stairIds": [str(item) for item in stair_ids],
+                "status": "stale" if not revision_matches else "reviewed",
+            }
+        )
+
+    expected_kinds = {
+        (kind, str(level.get("id")))
+        for level in model.get("levels", []) or []
+        if isinstance(level, dict) and level.get("id")
+        for kind in ("2d-plan", "3d")
+    }
+    missing_view_kinds = sorted(expected_kinds - view_kinds)
+    if missing_view_kinds:
+        findings.append(
+            _finding(
+                "FLOORPLANNER_VIEW_COVERAGE_INCOMPLETE",
+                f"Floorplanner exchange is missing synchronized views: {missing_view_kinds}.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    level_visibility = payload.get("levelVisibility")
+    visible_levels = (
+        [str(item) for item in level_visibility]
+        if isinstance(level_visibility, list)
+        else []
+    )
+    if set(visible_levels) - canonical_levels:
+        findings.append(
+            _finding(
+                "FLOORPLANNER_LEVEL_VISIBILITY_UNKNOWN",
+                "Level visibility contains an ID outside the canonical level set.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    validation_status = str(payload.get("validationStatus") or "pending").strip().lower()
+    validation_signature = str(payload.get("validationSignature") or "").strip()
+    if not validation_signature:
+        findings.append(
+            _finding(
+                "FLOORPLANNER_VALIDATION_SIGNATURE_REQUIRED",
+                "The synchronized view must carry the validation signature for its canonical revision.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+    if validation_status != "pass":
+        findings.append(
+            _finding(
+                "FLOORPLANNER_VALIDATION_NOT_PASSED",
+                f"Floorplanner view validation status is {validation_status!r}, not pass.",
+                severity="REVIEW_REQUIRED",
+            )
+        )
+
+    accepted_edit = payload.get("acceptedEdit")
+    rerun = {
+        "requiredAfterAcceptedEdit": True,
+        "performed": False,
+        "modelRevision": model_revision,
+        "validationSignature": validation_signature or None,
+    }
+    if isinstance(accepted_edit, dict):
+        rerun_revision = accepted_edit.get("postEditModelRevision")
+        rerun_signature = str(accepted_edit.get("validationRerunSignature") or "").strip()
+        rerun["performed"] = bool(rerun_revision is not None and rerun_signature)
+        rerun["modelRevision"] = rerun_revision
+        rerun["validationSignature"] = rerun_signature or None
+        if not rerun["performed"]:
+            findings.append(
+                _finding(
+                    "FLOORPLANNER_VALIDATION_RERUN_REQUIRED",
+                    "An accepted view edit must carry a post-edit model revision and validation rerun signature.",
+                    severity="REVIEW_REQUIRED",
+                )
+            )
+
+    # Reuse the Week 14 view contract as the canonical comparison surface.
+    from week1314 import build_synchronized_views  # type: ignore
+
+    canonical_views = build_synchronized_views(model)
+    canonical_view_keys = {
+        (str(view.get("kind")), str(view.get("levelId")))
+        for view in canonical_views.get("views", [])
+    }
+    synchronization_matches = (
+        revision_matches
+        and not missing_view_kinds
+        and canonical_view_keys.issuperset(view_kinds)
+    )
+    has_blocker = any(item["severity"] in {"BLOCKER", "ERROR"} for item in findings)
+    status = "blocked" if has_blocker else "review-required" if findings else "pass"
+    return {
+        "version": FLOORPLANNER_INPUT_VERSION,
+        "tool": "Floorplanner",
+        "sourceReference": source_reference,
+        "viewExportReference": export_reference or None,
+        "modelRevision": model_revision,
+        "importedModelRevision": imported_revision,
+        "canonicalModelRevision": model_revision,
+        "input": normalized,
+        "objectIdMap": copy.deepcopy(object_id_map),
+        "views": view_summaries,
+        "levelVisibility": visible_levels,
+        "revisionMatch": revision_matches,
+        "synchronizationStatus": "synchronized" if synchronization_matches and not findings else "stale" if not revision_matches else "review-required",
+        "canonicalViewContract": {
+            "version": canonical_views.get("reportVersion"),
+            "synchronizationKey": canonical_views.get("synchronizationKey"),
+            "sharedRevisionAcrossViews": canonical_views.get("gate", {}).get("sharedRevisionAcrossViews"),
+            "validationRerunsAfterAcceptedEdit": canonical_views.get("gate", {}).get("validationRerunsAfterAcceptedEdit"),
+        },
+        "validationEvidence": {
+            "status": validation_status,
+            "signature": validation_signature or None,
+            "rerunAfterAcceptedEdit": rerun,
+        },
+        "findings": findings,
+        "status": status,
+        "candidateEligible": status == "pass",
+        "authoritativeGeometryChanged": False,
+        "presentationOnly": True,
+    }
+
+
+validate_floorplanner_view_input = validate_floorplanner_input
+
+
 def _rect(value: Any) -> list[float] | None:
     if isinstance(value, dict):
         value = value.get("rect")
@@ -1337,17 +1702,28 @@ def enrichment_report(model: dict[str, Any]) -> dict[str, Any]:
             source_reference=str(archistar_payload.get("sourceReference", "archistar-snaptrude-fixture")),
             model_revision=model.get("project", {}).get("revision"),
         )
+    floorplanner = None
+    if FLOORPLANNER_FIXTURE_PATH.is_file():
+        floorplanner_payload = json.loads(FLOORPLANNER_FIXTURE_PATH.read_text(encoding="utf-8"))
+        floorplanner = validate_floorplanner_input(
+            model,
+            floorplanner_payload,
+            source_reference=str(floorplanner_payload.get("sourceReference", "floorplanner-fixture")),
+            model_revision=model.get("project", {}).get("revision"),
+        )
     return {
         "status": "blocked"
         if furnishings["status"] == "blocked"
         or candidates["status"] == "blocked"
         or (archistar_snaptrude and archistar_snaptrude["status"] == "blocked")
+        or (floorplanner and floorplanner["status"] == "blocked")
         else "pass",
         "aiToolInputs": ai_tool_input_manifest(),
         "week15": furnishings,
         "week16": candidates,
         "planner5d": planner5d,
         "archistarSnaptrude": archistar_snaptrude,
+        "floorplanner": floorplanner,
         "designPackage": package,
     }
 
@@ -1379,13 +1755,15 @@ def write_reports() -> dict[str, Any]:
     model["candidateStudio"] = {"version": WEEK16_VERSION, "report": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT)), "bestCandidateId": report["week16"]["bestCandidateId"], "status": report["week16"]["status"], "seeds": report["week16"]["seeds"]}
     model["planner5dExchange"] = {"version": PLANNER5D_INPUT_VERSION, "report": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["planner5d"]["candidateEligible"], "status": report["planner5d"]["status"]}
     model["archistarSnaptrudeSiteEvidence"] = {"version": ARCHISTAR_INPUT_VERSION, "report": str(ARCHISTAR_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["archistarSnaptrude"]["candidateEligible"], "status": report["archistarSnaptrude"]["status"]}
+    model["floorplannerSynchronizedView"] = {"version": FLOORPLANNER_INPUT_VERSION, "report": str(FLOORPLANNER_REPORT_PATH.relative_to(ROOT)), "candidateEligible": report["floorplanner"]["candidateEligible"], "status": report["floorplanner"]["status"], "synchronizationStatus": report["floorplanner"]["synchronizationStatus"]}
     model["designPresentation"] = report["designPackage"]
     ASSET_REPORT_PATH.write_text(json.dumps(report["week15"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     AI_INPUT_REPORT_PATH.write_text(json.dumps(report["aiToolInputs"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     CANDIDATE_REPORT_PATH.write_text(json.dumps({"aiToolInputs": report["aiToolInputs"], "candidateStudio": report["week16"], "designPackage": report["designPackage"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     PLANNER5D_REPORT_PATH.write_text(json.dumps(report["planner5d"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     ARCHISTAR_REPORT_PATH.write_text(json.dumps(report["archistarSnaptrude"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    MANIFEST_PATH.write_text(json.dumps({"manifestVersion": "week1516.enrichment-manifest.v1", "status": report["status"], "reports": {"week15": str(ASSET_REPORT_PATH.relative_to(ROOT)), "week16": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "planner5d": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "archistarSnaptrude": str(ARCHISTAR_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT))}, "changelog": str(CHANGELOG_PATH.relative_to(ROOT)), "catalogVersion": WEEK15_VERSION, "candidateVersion": WEEK16_VERSION, "planner5dVersion": PLANNER5D_INPUT_VERSION, "archistarSnaptrudeVersion": ARCHISTAR_INPUT_VERSION, "aiToolInputCatalogVersion": AI_INPUT_VERSION, "bestCandidateId": report["week16"]["bestCandidateId"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    FLOORPLANNER_REPORT_PATH.write_text(json.dumps(report["floorplanner"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    MANIFEST_PATH.write_text(json.dumps({"manifestVersion": "week1516.enrichment-manifest.v1", "status": report["status"], "reports": {"week15": str(ASSET_REPORT_PATH.relative_to(ROOT)), "week16": str(CANDIDATE_REPORT_PATH.relative_to(ROOT)), "planner5d": str(PLANNER5D_REPORT_PATH.relative_to(ROOT)), "archistarSnaptrude": str(ARCHISTAR_REPORT_PATH.relative_to(ROOT)), "floorplanner": str(FLOORPLANNER_REPORT_PATH.relative_to(ROOT)), "aiToolInputs": str(AI_INPUT_REPORT_PATH.relative_to(ROOT))}, "changelog": str(CHANGELOG_PATH.relative_to(ROOT)), "catalogVersion": WEEK15_VERSION, "candidateVersion": WEEK16_VERSION, "planner5dVersion": PLANNER5D_INPUT_VERSION, "archistarSnaptrudeVersion": ARCHISTAR_INPUT_VERSION, "floorplannerVersion": FLOORPLANNER_INPUT_VERSION, "aiToolInputCatalogVersion": AI_INPUT_VERSION, "bestCandidateId": report["week16"]["bestCandidateId"]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     CHANGELOG_PATH.write_text(
         """# Week 15–16 enrichment changelog
 
@@ -1449,6 +1827,17 @@ def write_reports() -> dict[str, Any]:
 - Missing frontage or service access remains an explicit warning; imported
   massing remains review evidence and cannot become permit, code, or construction
   approval.
+
+### W16-04 implementation status — Floorplanner
+
+- Added a synchronized 2D/3D view fixture with level visibility, room and
+  opening IDs, stair references, export provenance, model revision, and
+  validation evidence.
+- Added `validate_floorplanner_input`, which reuses the Week 14 canonical view
+  contract and rejects unknown IDs, incomplete level coverage, stale revisions,
+  and missing validation signatures from silent acceptance.
+- Accepted view edits require a post-edit model revision and validation rerun
+  signature; view data remains presentation-only and cannot mutate geometry.
 """,
         encoding="utf-8",
     )
