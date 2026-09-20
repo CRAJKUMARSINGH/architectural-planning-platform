@@ -1,0 +1,125 @@
+{
+  "recipeIndexVersion": "advocate-chambers.project-recipes.v1",
+  "description": "Small, inspectable project recipes consumed by the common drafting kernel.",
+  "principles": [
+    "Recipes configure intent; they do not replace canonical geometry or validation.",
+    "A missing fact remains unknown and must not be invented by a recipe.",
+    "Presentation suggestions are downstream of validated topology."
+  ],
+  "recipes": {
+    "residential": {
+      "label": "Residential",
+      "briefPrompts": [
+        "Confirm plot, north, road access, occupants, privacy, and future expansion.",
+        "Capture bedrooms, living, kitchen, wet areas, storage, and vertical circulation."
+      ],
+      "requiredFacts": [
+        "site.orientation.north",
+        "site.access.primary",
+        "program.rooms",
+        "program.occupancy"
+      ],
+      "preferredAdjacencies": [
+        "living-near-entry",
+        "kitchen-near-dining",
+        "bedrooms-away-from-public-entry"
+      ],
+      "forbiddenAdjacencies": [
+        "bedroom-directly-to-service-yard"
+      ],
+      "optimizationChecks": [
+        "continuous route to every occupied room",
+        "wet-area and service-shaft coordination",
+        "daylight and ventilation intent recorded per habitable room",
+        "furniture clearances checked after layout generation"
+      ]
+    },
+    "commercial": {
+      "label": "Commercial",
+      "briefPrompts": [
+        "Confirm customer entry, staff entry, service/loading access, operating hours, and occupancy.",
+        "Capture public, staff, storage, sanitary, and emergency route classes."
+      ],
+      "requiredFacts": [
+        "site.orientation.north",
+        "site.access.customer",
+        "site.access.service",
+        "program.rooms",
+        "program.occupancy"
+      ],
+      "preferredAdjacencies": [
+        "reception-near-public-entry",
+        "service-near-loading",
+        "staff-space-near-staff-entry"
+      ],
+      "forbiddenAdjacencies": [
+        "public-route-through-service-room"
+      ],
+      "optimizationChecks": [
+        "public and service circulation remain distinct",
+        "queue and waiting capacity does not block required routes",
+        "delivery path reaches the service zone",
+        "accessible approach is explicit rather than inferred"
+      ]
+    },
+    "institutional": {
+      "label": "Institutional / civic",
+      "briefPrompts": [
+        "Confirm public entry, staff/service entry, assembly capacity, and emergency access.",
+        "Capture reception, assembly, stage/dais, library, discussion, office, and service uses."
+      ],
+      "requiredFacts": [
+        "site.orientation.north",
+        "site.access.public",
+        "site.access.service",
+        "program.rooms",
+        "program.occupancy"
+      ],
+      "preferredAdjacencies": [
+        "reception-near-public-entry",
+        "assembly-near-stage",
+        "library-near-computer-support",
+        "reception-near-vertical-circulation"
+      ],
+      "forbiddenAdjacencies": [
+        "service-directly-into-assembly",
+        "upper-floor-room-without-validated-connector"
+      ],
+      "optimizationChecks": [
+        "assembly seating preserves aisles and exit routes",
+        "public, staff, service, and vertical routes are traceable",
+        "stage/dais and library support are reachable without crossing service zones",
+        "site frontage and service access remain explicit review items when unconfirmed"
+      ]
+    },
+    "industrial": {
+      "label": "Industrial / light industrial",
+      "briefPrompts": [
+        "Confirm vehicle access, loading, turning, hazardous or restricted zones, and worker occupancy.",
+        "Capture equipment footprints, service sides, maintenance clearances, and emergency routes."
+      ],
+      "requiredFacts": [
+        "site.orientation.north",
+        "site.access.vehicle",
+        "program.rooms",
+        "program.occupancy",
+        "program.equipment"
+      ],
+      "preferredAdjacencies": [
+        "loading-near-storage",
+        "equipment-near-service-zone",
+        "staff-space-near-safe-entry"
+      ],
+      "forbiddenAdjacencies": [
+        "public-route-through-equipment-zone",
+        "maintenance-clearance-blocked-by-furniture"
+      ],
+      "optimizationChecks": [
+        "vehicle and pedestrian routes are separately modelled",
+        "equipment service sides and maintenance clearances remain open",
+        "loading and turning assumptions are visible",
+        "fire, egress, and hazardous-use checks stay rule-pack and professional-review dependent"
+      ]
+    }
+  }
+}
