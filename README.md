@@ -23,6 +23,7 @@ professional review.
   `bar-association-hall/standard/`
 - Week 16 AI-tool input contract:
   `bar-association-hall/standard/week16-ai-tool-inputs.json`
+- Nine-week Week 16 tool execution program: `docs/WEEK16_SUPPLEMENTARY_PROGRAM_01_09.md`
 
 Run the fresh Week 01–05 contract with:
 

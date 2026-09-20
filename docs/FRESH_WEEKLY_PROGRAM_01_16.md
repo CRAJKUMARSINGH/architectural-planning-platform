@@ -233,6 +233,10 @@ layout comparison, furnishing, and presentation speed; use the common drafting
 kernel to decide whether a plan is topologically coherent and ready for the
 next review stage.
 
+
+
+The nine-sprint tool execution sequence is documented in `docs/WEEK16_SUPPLEMENTARY_PROGRAM_01_09.md`; each sprint has a study, action plan, implementation target, evidence package, and acceptance gate.
+
 The machine-readable catalog at
 `packages/recipes/visual-tool-patterns.json` records each pattern's safe action,
 forbidden shortcut, and relevant program weeks. The fresh kernel report exposes
