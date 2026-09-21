@@ -105,7 +105,10 @@ class Project(TimestampMixin, Base):
 # ---------------------------------------------------------------------------
 class Revision(Base):
     __tablename__ = "revisions"
-    __table_args__ = (UniqueConstraint("project_id", "revision_number"),)
+    __table_args__ = (
+        UniqueConstraint("project_id", "revision_number"),
+        UniqueConstraint("project_id", "idempotency_key"),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     project_id: Mapped[uuid.UUID] = mapped_column(
@@ -124,6 +127,15 @@ class Revision(Base):
     )
     reason: Mapped[str | None] = mapped_column(Text)
     validation_report_sha256: Mapped[str | None] = mapped_column(String(64))
+    command_id: Mapped[str | None] = mapped_column(String(120))
+    idempotency_key: Mapped[str | None] = mapped_column(String(200))
+    command_fingerprint: Mapped[str | None] = mapped_column(String(64))
+    engine_version: Mapped[str] = mapped_column(
+        String(120), nullable=False, default="phase2.command-engine.v1"
+    )
+    validation_state: Mapped[str] = mapped_column(
+        String(30), nullable=False, default="DRAFT"
+    )
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
     project: Mapped["Project"] = relationship(

@@ -9,7 +9,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from .models.orm import Artifact, AuditEvent, Job, Project, Revision
@@ -69,6 +69,32 @@ class SqlProjectRepository:
             proj.deleted_at = datetime.now(timezone.utc)
             self._s.flush()
 
+    def advance_current_revision(
+        self,
+        project_id: uuid.UUID,
+        org_id: uuid.UUID,
+        expected_current_revision_id: uuid.UUID | None,
+        new_revision_id: uuid.UUID,
+    ) -> bool:
+        """Advance a project pointer only if it still has the expected parent."""
+
+        statement = update(Project).where(
+            Project.id == project_id,
+            Project.organization_id == org_id,
+            Project.deleted_at.is_(None),
+        )
+        if expected_current_revision_id is None:
+            statement = statement.where(Project.current_revision_id.is_(None))
+        else:
+            statement = statement.where(
+                Project.current_revision_id == expected_current_revision_id
+            )
+        result = self._s.execute(
+            statement.values(current_revision_id=new_revision_id)
+        )
+        self._s.flush()
+        return result.rowcount == 1
+
 
 # ---------------------------------------------------------------------------
 # Revision
@@ -87,6 +113,11 @@ class SqlRevisionRepository:
         reason: str,
         rule_pack_version: str | None = None,
         parent_revision_id: uuid.UUID | None = None,
+        command_id: str | None = None,
+        idempotency_key: str | None = None,
+        command_fingerprint: str | None = None,
+        engine_version: str = "phase2.command-engine.v1",
+        validation_state: str = "DRAFT",
     ) -> dict[str, Any]:
         rev = Revision(
             project_id=project_id,
@@ -97,6 +128,11 @@ class SqlRevisionRepository:
             reason=reason,
             rule_pack_version=rule_pack_version,
             parent_revision_id=parent_revision_id,
+            command_id=command_id,
+            idempotency_key=idempotency_key,
+            command_fingerprint=command_fingerprint,
+            engine_version=engine_version,
+            validation_state=validation_state,
         )
         self._s.add(rev)
         self._s.flush()
@@ -104,6 +140,17 @@ class SqlRevisionRepository:
 
     def get(self, revision_id: uuid.UUID) -> dict[str, Any] | None:
         row = self._s.get(Revision, revision_id)
+        return _row(row) if row else None
+
+    def get_by_idempotency(
+        self, project_id: uuid.UUID, idempotency_key: str
+    ) -> dict[str, Any] | None:
+        row = self._s.scalar(
+            select(Revision).where(
+                Revision.project_id == project_id,
+                Revision.idempotency_key == idempotency_key,
+            )
+        )
         return _row(row) if row else None
 
     def list_for_project(self, project_id: uuid.UUID) -> list[dict[str, Any]]:

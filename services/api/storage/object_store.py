@@ -11,9 +11,9 @@ from __future__ import annotations
 
 import hashlib
 import os
-import shutil
 from abc import ABC, abstractmethod
 from pathlib import Path
+from pathlib import PurePosixPath
 
 
 class ObjectStore(ABC):
@@ -42,9 +42,14 @@ class FilesystemStore(ObjectStore):
         self.base.mkdir(parents=True, exist_ok=True)
 
     def _path(self, key: str) -> Path:
-        # Sanitize: replace path separators to prevent traversal
-        safe = key.replace("/", os.sep).replace("..", "__")
-        p = self.base / safe
+        # Keep the documented hierarchical key shape without allowing an
+        # absolute path or parent traversal to escape the object-store root.
+        posix_key = PurePosixPath(key)
+        if posix_key.is_absolute() or ".." in posix_key.parts:
+            raise ValueError("object-store key must remain below its base path")
+        if not key or any(part in {"", "."} for part in posix_key.parts):
+            raise ValueError("object-store key must contain non-empty path components")
+        p = self.base.joinpath(*posix_key.parts)
         p.parent.mkdir(parents=True, exist_ok=True)
         return p
 

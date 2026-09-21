@@ -44,6 +44,16 @@ class ProjectRepository(Protocol):
 
     def soft_delete(self, project_id: UUID, org_id: UUID) -> None: ...
 
+    def advance_current_revision(
+        self,
+        project_id: UUID,
+        org_id: UUID,
+        expected_current_revision_id: UUID | None,
+        new_revision_id: UUID,
+    ) -> bool:
+        """CAS-update the current revision pointer for an org-scoped project."""
+        ...
+
 
 # ---------------------------------------------------------------------------
 # Revision
@@ -59,6 +69,11 @@ class RevisionRepository(Protocol):
         reason: str,
         rule_pack_version: str | None = None,
         parent_revision_id: UUID | None = None,
+        command_id: str | None = None,
+        idempotency_key: str | None = None,
+        command_fingerprint: str | None = None,
+        engine_version: str = "phase2.command-engine.v1",
+        validation_state: str = "DRAFT",
     ) -> dict[str, Any]:
         """
         Create a revision metadata record.
@@ -69,6 +84,9 @@ class RevisionRepository(Protocol):
         ...
 
     def get(self, revision_id: UUID) -> dict[str, Any] | None: ...
+    def get_by_idempotency(
+        self, project_id: UUID, idempotency_key: str
+    ) -> dict[str, Any] | None: ...
     def list_for_project(self, project_id: UUID) -> list[dict[str, Any]]: ...
 
     def set_validation_report_sha256(
