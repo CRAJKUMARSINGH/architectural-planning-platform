@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advocate-chambers.local/schemas/revision.schema.json",
+  "title": "Advocate-Chambers Revision Descriptor v1",
+  "description": "Immutable metadata describing one canonical model revision.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "projectId",
+    "revisionNumber",
+    "modelSha256",
+    "modelStorageKey",
+    "rulePackVersion",
+    "engineVersion",
+    "validationState",
+    "createdAt",
+    "reason"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "advocate-chambers.revision.v1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "projectId": {
+      "type": "string",
+      "pattern": "^proj-[a-z0-9-]+$"
+    },
+    "revisionNumber": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "parentRevisionId": {
+      "type": ["string", "null"]
+    },
+    "commandId": {
+      "type": ["string", "null"]
+    },
+    "authorUserId": {
+      "type": ["string", "null"]
+    },
+    "modelSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "modelStorageKey": {
+      "type": "string",
+      "minLength": 1
+    },
+    "validationReportSha256": {
+      "type": ["string", "null"],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "rulePackVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "engineVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "validationState": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "VALIDATED",
+        "REVIEW_REQUIRED",
+        "BLOCKED",
+        "INCOMPLETE",
+        "NOT_ISSUABLE"
+      ]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    }
+  }
+}

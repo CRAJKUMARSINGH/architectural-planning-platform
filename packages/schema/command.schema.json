@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advocate-chambers.local/schemas/command.schema.json",
+  "title": "Advocate-Chambers Command Envelope v1",
+  "description": "A typed, replayable request to preview or commit one model operation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "commandId",
+    "projectId",
+    "baseRevision",
+    "authorId",
+    "operation",
+    "parameters",
+    "idempotencyKey"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "advocate-chambers.command.v1"
+    },
+    "commandId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "projectId": {
+      "type": "string",
+      "pattern": "^proj-[a-z0-9-]+$"
+    },
+    "baseRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "authorId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "create-project",
+        "add-level",
+        "add-space",
+        "resize-space",
+        "add-wall",
+        "split-wall",
+        "move-opening",
+        "resize-opening",
+        "add-window",
+        "add-stair",
+        "set-site-orientation",
+        "set-program-requirement",
+        "apply-furniture-operation"
+      ]
+    },
+    "parameters": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "idempotencyKey": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 200
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "source": {
+      "type": "string",
+      "enum": ["user", "generator", "import", "system"]
+    },
+    "clientTimestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advocate-chambers.local/schemas/artifact-manifest.schema.json",
+  "title": "Advocate-Chambers Artifact Manifest v1",
+  "description": "Content-addressed output metadata for a job.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "artifactId",
+    "jobId",
+    "projectId",
+    "revisionId",
+    "kind",
+    "storageKey",
+    "sha256",
+    "sizeBytes",
+    "mimeType",
+    "generatorVersion",
+    "createdAt"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "advocate-chambers.artifact-manifest.v1"
+    },
+    "artifactId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "jobId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "projectId": {
+      "type": "string",
+      "pattern": "^proj-[a-z0-9-]+$"
+    },
+    "revisionId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "dxf",
+        "pdf",
+        "svg",
+        "png",
+        "jpeg",
+        "webp",
+        "glb",
+        "json-report",
+        "manifest"
+      ]
+    },
+    "storageKey": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sizeBytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "mimeType": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generatorVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "validationState": {
+      "type": ["string", "null"],
+      "enum": [
+        "PASS",
+        "VALIDATED",
+        "REVIEW_REQUIRED",
+        "BLOCKED",
+        "INCOMPLETE",
+        "NOT_ISSUABLE",
+        null
+      ]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

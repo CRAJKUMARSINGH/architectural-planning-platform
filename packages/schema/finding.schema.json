@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advocate-chambers.local/schemas/finding.schema.json",
+  "title": "Advocate-Chambers Validation Finding v1",
+  "description": "An explainable validation result attached to model objects.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "severity",
+    "status",
+    "rule",
+    "message",
+    "objectIds",
+    "evidence",
+    "professionalReviewRequired"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "advocate-chambers.finding.v1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["BLOCKER", "ERROR", "WARNING", "INFO"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["OPEN", "ACKNOWLEDGED", "RESOLVED", "SUPPRESSED"]
+    },
+    "rule": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "objectIds": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "levelId": {
+      "type": ["string", "null"]
+    },
+    "evidence": {
+      "type": "object"
+    },
+    "suggestedCorrection": {
+      "type": ["string", "null"],
+      "maxLength": 4000
+    },
+    "rulePack": {
+      "type": "string",
+      "minLength": 1
+    },
+    "modelRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "engineVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "professionalReviewRequired": {
+      "type": "boolean"
+    }
+  }
+}
