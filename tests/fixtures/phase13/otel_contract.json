@@ -1,0 +1,47 @@
+{
+  "version": "phase13.otel-contract.v1",
+  "description": "OpenTelemetry export configuration contract for Advocate-Chambers",
+  "measuredStages": [
+    "brief_compilation",
+    "quick_validation",
+    "full_validation",
+    "revision_creation",
+    "render_2d",
+    "scene_load_3d",
+    "server_render",
+    "dxf_export",
+    "pdf_export",
+    "artifact_upload"
+  ],
+  "configKeys": [
+    "endpoint",
+    "serviceName",
+    "insecure",
+    "sdkAvailable",
+    "exporterAvailable",
+    "exportEnabled"
+  ],
+  "spanContextFields": [
+    "stage",
+    "traceId",
+    "requestId",
+    "revisionId",
+    "orgId",
+    "elapsedSeconds",
+    "error",
+    "attributes"
+  ],
+  "logFormatterFields": [
+    "timestamp",
+    "severity",
+    "message",
+    "logger",
+    "service"
+  ],
+  "securityRules": [
+    "OTLP endpoint is configured from environment, never hard-coded",
+    "Sensitive keys (authorization, cookie, password, token) are stripped from log payloads",
+    "Span context propagates only bounded safe IDs",
+    "Export degrades gracefully when SDK or collector is unavailable"
+  ]
+}
