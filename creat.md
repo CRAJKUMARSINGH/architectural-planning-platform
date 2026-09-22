@@ -80,8 +80,3 @@ routine interval is 60 minutes. Milestone checkpoints are committed manually at
 - Phase 12 quality gate: property-based geometry regressions with Hypothesis and Playwright DOM/SVG visual regression tests implemented; all 12 categories covered, status `PASS`.
 - Phase 13 observability & metric probes: green.
 - **Combined Phase 1–13 focused green checkpoint:** 163 tests passed with zero failures across the integrated codebase.
-
-## Phase 8 & 10 Implementation Pipeline — In Progress
-
-- **Phase 8 (100%):** Technical vs presentation scene graph compiler complete, deterministic camera presets (`top-down-plan`, `axonometric-east-front`, `perspective-courtyard`, `isometric-overview`), style tokens, furniture/plant catalog with clearance checks, render manifest validation, Blender headless integration, vector overlay labels and dimensions, and `/api/v1/presentation` API routes.
-- **Phase 10 (50%):** Delivery package bundler generating complete content-addressed delivery manifests, SHA-256 verification, and technical drawing sets.
