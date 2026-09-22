@@ -857,6 +857,23 @@ quality baseline.
 | **E09** | Staging & Release | ✅ **Complete** | `docker-compose.staging.yml`, `release.yml` workflow with SBOM, `release_check.py`, Makefile docker targets, release checklist with professional disclaimer |
 | **E10** | Stabilization | ✅ **Complete** | Runbooks (queue-stuck, artifact-missing, DB migration), ADRs frozen, concurrent job safety, load scenario fixture, enterprise candidate readiness checks |
 
+### Phase 4 task status — authentication and tenancy hardening
+
+The next implementation-plan phase is applied on `main`:
+
+- OIDC issuer, audience, expiry, clock-skew, and rotating JWKS validation are
+  supported when `OIDC_ISSUER` is configured.
+- Production/staging configuration rejects `AUTH_DISABLED` and the default
+  development JWT secret.
+- Project-scoped authorization now treats the active database membership as the
+  authority for organization access and effective role.
+- Disabled or soft-deleted users are denied before project-scoped work.
+- Migration `0003_user_disabled_at` and the Phase 4 policy fixture/regression
+  suite are included.
+
+This phase does not certify identity-provider configuration or professional
+architectural review; those remain deployment/operator responsibilities.
+
 ### Fixture & Regression Test Coverage (added 2026-09-20)
 
 Comprehensive fixtures and expanded regression tests were added for all enterprise

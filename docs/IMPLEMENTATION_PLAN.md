@@ -277,6 +277,13 @@ All Alembic migrations require reversible downgrade paths.
 
 **Complexity: High**
 
+**Current delivery status:** Phase 4 hardening is implemented in the current
+checkpoint. OIDC/JWKS validation, production configuration guards, database
+membership authority, disabled-user enforcement, route dependency wiring, and
+regression fixtures are complete. The remaining work in this phase is
+deployment-specific identity-provider configuration and live integration
+verification; it is not represented as a local code default.
+
 Keep organization as the isolation boundary with roles:
 
 ```text

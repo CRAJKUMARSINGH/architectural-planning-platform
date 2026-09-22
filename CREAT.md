@@ -15,9 +15,10 @@ completed work to the GitHub `main` branch.
   added for project-scoped viewer/editor/owner dependencies. The Phase 4 policy
   fixture and 8-test regression module are green; the existing E03 auth tests
   are also green (15 tests combined).
-- **75% — persistence and route wiring:** `users.disabled_at`, migration
-  `0003_user_disabled_at`, schema reference, and all v1 project/command route
-  dependencies were updated.
+- **75% — persistence, route wiring, and plan documentation:** `users.disabled_at`,
+  migration `0003_user_disabled_at`, schema reference, all v1 project/command
+  route dependencies, ADR-003, the README status, and the implementation plan
+  status were updated.
 - **100% — pending final verification:** run the targeted Phase 4, E03, E06,
   Phase 5, lint, and repository regression commands; update this file with the
   exact results before the final commit.
