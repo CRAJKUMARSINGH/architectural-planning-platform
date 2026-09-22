@@ -1,0 +1,49 @@
+{
+  "version": "phase10.delivery-contract.v1",
+  "requiredArtifacts": [
+    "dxf",
+    "pdf",
+    "svg",
+    "json"
+  ],
+  "exportFormats": [
+    {
+      "type": "dxf",
+      "mimeType": "application/dxf",
+      "description": "AutoCAD Drawing Exchange Format"
+    },
+    {
+      "type": "pdf",
+      "mimeType": "application/pdf",
+      "description": "Portable Document Format with title blocks"
+    },
+    {
+      "type": "svg",
+      "mimeType": "image/svg+xml",
+      "description": "Scalable Vector Graphics"
+    },
+    {
+      "type": "json",
+      "mimeType": "application/json",
+      "description": "Canonical model JSON export"
+    }
+  ],
+  "requiredManifestFields": [
+    "schemaVersion",
+    "packageId",
+    "projectId",
+    "revisionId",
+    "artifacts",
+    "qualityGateStatus",
+    "assumptions",
+    "reviewChecklist",
+    "disclaimer",
+    "packageSignature"
+  ],
+  "rules": {
+    "blockerExcludesIssuable": true,
+    "hashVerificationRequired": true,
+    "professionalReviewRequired": true,
+    "disclaimerRequired": true
+  }
+}

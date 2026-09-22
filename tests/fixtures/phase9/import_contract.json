@@ -1,0 +1,23 @@
+{
+  "version": "phase9.import-contract.v1",
+  "supportedFormats": [
+    "native-json",
+    "dxf",
+    "vector-pdf",
+    "raster-image"
+  ],
+  "requiredProvenanceFields": [
+    "sourcePath",
+    "sourceId",
+    "sourceFormat",
+    "sourceHash",
+    "confidence",
+    "provenance",
+    "reviewRequired"
+  ],
+  "policy": {
+    "lowConfidenceRequiresReview": true,
+    "rasterImportAlwaysRequiresReview": true,
+    "provenanceIsImmutable": true
+  }
+}
