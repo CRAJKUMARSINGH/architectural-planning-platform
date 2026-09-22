@@ -45,6 +45,24 @@ Run the Phase 13 regression suite with:
 
 ---
 
+## Archi-Copilot Integration Plan (Proposed)
+
+**Status:** Planning phase — awaiting approval
+
+Comprehensive integration plan to add AI-native features from Archi-Copilot:
+- **AI Brief Analysis:** Enhanced Week 11-12 brief compiler with Gemini API integration
+- **Concept Canvas:** Interactive 2D massing/bubble diagrams with multi-floor support
+- **AI Version Scoring:** AI-powered design evaluation against briefs
+- **Proactive Suggestions:** Categorized AI suggestions for design improvements
+
+**Architecture Approach:** AI-enhanced editing with proper validation and provenance tracking while maintaining Python geometry-authority principle.
+
+**Timeline:** 22-32 weeks (5-8 months) across 5 implementation phases (Phases 14-18)
+
+See [`docs/ARCHI_COPILOT_INTEGRATION_PLAN.md`](docs/ARCHI_COPILOT_INTEGRATION_PLAN.md) for complete details.
+
+---
+
 ## Phase 5 — Versioned API (`/api/v1/`)
 
 ```
