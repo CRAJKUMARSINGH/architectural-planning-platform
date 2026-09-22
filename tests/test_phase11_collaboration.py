@@ -107,6 +107,17 @@ class Phase11CollaborationTests(unittest.TestCase):
         self.assertEqual(comment.anchor_type, "render-viewpoint")
         self.assertEqual(approval.state, "Review")
 
+    def test_review_routes_are_reachable_in_versioned_openapi(self) -> None:
+        try:
+            from services.api.main import app
+        except ModuleNotFoundError as exc:
+            self.skipTest(f"API dependencies unavailable: {exc}")
+        paths = app.openapi()["paths"]
+        self.assertIn("/api/v1/projects/{project_id}/review-links", paths)
+        self.assertIn("/api/v1/projects/{project_id}/comments", paths)
+        self.assertIn("/api/v1/projects/{project_id}/approvals", paths)
+        self.assertIn("/api/v1/review-links/{token}", paths)
+
 
 if __name__ == "__main__":
     unittest.main()

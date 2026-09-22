@@ -25,6 +25,10 @@ from services.api.routes.v1_collaboration import (
     public_router as collaboration_public_router,
     router as collaboration_router,
 )
+from services.api.routes.v1_commands import router as commands_router
+from services.api.routes.v1_health import metrics as metrics_probe
+from services.api.routes.v1_health import ready as readiness_probe
+from services.api.routes.v1_projects import router as projects_router
 
 ROOT = Path(__file__).resolve().parents[2]
 BA_HALL = ROOT / "bar-association-hall"
@@ -165,11 +169,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Phase 11 durable review API.  The legacy prototype endpoints below remain
-# available for the editor transition, while new collaboration records use
-# the authenticated /api/v1 surface.
+# Versioned API routers.  The legacy prototype endpoints below remain
+# available for the editor transition, while new work uses the authenticated
+# /api/v1 surface.
+app.include_router(projects_router, prefix="/api")
+app.include_router(commands_router, prefix="/api")
 app.include_router(collaboration_router, prefix="/api")
 app.include_router(collaboration_public_router, prefix="/api")
+app.add_api_route("/ready", readiness_probe, methods=["GET"], tags=["meta"])
+app.add_api_route("/metrics", metrics_probe, methods=["GET"], tags=["meta"])
 
 
 # ---------------------------------------------------------------------------

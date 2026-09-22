@@ -563,6 +563,15 @@ No export with an unresolved `BLOCKER` may be presented as issue-ready.
 
 **Complexity: High**
 
+**Current delivery status:** The durable collaboration slice is implemented.
+Review links store only a one-way token hash and pin a project revision;
+comments and approval decisions are append-only, organization-scoped records;
+authenticated routes record reviewer identity and audit events; and public link
+resolution does not disclose the bearer token. The existing Week 18 pure
+contracts remain the geometry-aware review layer. Loading canonical object IDs
+from object storage for API-side anchor existence checks is still a follow-up
+once the production object-store adapter is selected.
+
 Implement:
 
 - immutable review links;
@@ -592,6 +601,12 @@ Example comment anchor:
 ### Phase 12 — Testing and quality gates
 
 **Complexity: Very High**
+
+**Current delivery status:** The Phase 12 baseline inventory and regression
+contract are implemented. Ten categories are covered by committed tests and
+the adversarial suite remains a merge blocker. The report is intentionally
+`REVIEW_REQUIRED` while property-based geometry tests and Playwright DOM/SVG
+visual regression are still due; missing evidence is never promoted to `PASS`.
 
 Test categories:
 
@@ -628,6 +643,12 @@ dimensions.
 
 **Complexity: High**
 
+**Current delivery status:** Correlation context now propagates bounded
+request, trace, job, revision, and organization identifiers through structured
+logs and response headers. Prometheus stage histograms cover the ten proposed
+pipeline measurements. OpenTelemetry export, deployment-level dashboards, and
+load-tested target evidence remain deployment work rather than local defaults.
+
 Measure:
 
 ```text
@@ -660,6 +681,13 @@ Use:
 - Grafana;
 - request, job, revision, and organization correlation IDs;
 - error tracking with sensitive-data filtering.
+
+### Phase 14–15 — Not defined in this plan
+
+The current implementation plan ends at Phase 13. No Phase 14 or Phase 15
+scope, acceptance criteria, fixtures, or due work is defined here. They should
+not be invented or marked complete until the product owner adds the next
+delivery objectives.
 
 ## 5. Release sequence
 

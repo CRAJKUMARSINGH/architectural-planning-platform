@@ -960,4 +960,36 @@ python scripts/enterprise/release_check.py
 > require independent professional review by licensed architects, engineers,
 > and statutory authorities before use in regulated contexts.
 
+## Phase 11–13 implementation checkpoint — applied with explicit follow-ups
+
+The next due phases in `docs/IMPLEMENTATION_PLAN.md` are now advanced without
+duplicating the already-completed Week 11–18 enrichment tracks.
+
+- **Phase 11 — collaboration and review:** durable, tenant-scoped review links,
+  revision-pinned comments, append-only approval events, reviewer identity,
+  audit records, one-way token storage, public-link resolution, and a reversible
+  `0004_collaboration_review` migration are implemented.
+- **Phase 12 — testing and quality gates:** the signed
+  `phase12-quality-gate-report.json` inventory covers ten regression categories
+  and keeps the gate at `REVIEW_REQUIRED` for the two missing harnesses:
+  property-based geometry and Playwright DOM/SVG visual regression.
+- **Phase 13 — performance and observability:** bounded correlation IDs are
+  propagated through structured logs and response headers, and named
+  Prometheus pipeline-stage timing is available without making metrics a
+  runtime dependency.
+
+Focused commands:
+
+```bash
+python -m unittest tests.test_phase11_collaboration
+python scripts/phase12.py validate
+python -m unittest tests.test_phase12_quality_gate tests.test_phase13_observability
+```
+
+Phases 14–15 are not defined in the current plan and are therefore listed as
+due scope definition, not implemented work. The public API collaboration
+models require the FastAPI/SQLAlchemy deployment dependencies; this lightweight
+workspace verifies their pure policy and contract behavior when those optional
+dependencies are absent.
+
 ---

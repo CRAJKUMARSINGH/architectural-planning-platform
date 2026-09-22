@@ -37,3 +37,31 @@ command above is the green gate for this change.
 No 7-minute scheduled push routine is configured because the workspace minimum
 routine interval is 60 minutes. Milestone checkpoints are committed manually at
 25%, 50%, 75%, 100%, and after green verification.
+
+## Phase 11–13 checkpoint — 2026-09-22
+
+- **Phase 11 — 50%:** added the collaboration policy contract, security
+  fixture, append-only review-link/comment/approval ORM records, and reversible
+  migration `0004_collaboration_review`.
+- **Phase 11 — 100%:** added tenant-scoped repositories and `/api/v1` review
+  link, comment, approval, and public-link resolution routes. Review tokens are
+  hashed at rest and audit events are recorded.
+- **Phase 12 — 50%:** added the signed quality-gate inventory and regression
+  fixture. Ten categories are covered; property-based geometry and Playwright
+  DOM/SVG visual regression remain `REVIEW_REQUIRED`.
+- **Phase 13 — 50%:** added bounded correlation context for request, trace,
+  job, revision, and organization IDs, structured-log propagation, safe
+  response headers, and named Prometheus pipeline-stage timing.
+- **Phase 13 — final scope status:** local implementation is complete for the
+  correlation/measurement slice; OpenTelemetry export, deployment dashboards,
+  and load evidence remain deployment-specific follow-up.
+- **Plan boundary:** `docs/IMPLEMENTATION_PLAN.md` defines no Phases 14–15, so
+  those phases remain unscoped rather than being invented.
+
+## Verification run
+
+- Phase 11 policy and Week 18 regressions: green.
+- Phase 12 report validation: `REVIEW_REQUIRED` with no structural errors.
+- Phase 13 observability regressions: green.
+- The final all-test checkpoint will be recorded in the next milestone commit
+  after the full local suite completes.

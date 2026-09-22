@@ -43,6 +43,10 @@ class Phase12QualityGateTests(unittest.TestCase):
         self.assertEqual(fixture["version"], "phase12.quality-gate-contract.v1")
         self.assertTrue(any(item["status"] == "pending" for item in fixture["categories"]))
 
+    def test_phase11_and_phase13_regressions_are_in_the_baseline(self) -> None:
+        self.assertTrue((ROOT / "tests/test_phase11_collaboration.py").is_file())
+        self.assertTrue((ROOT / "tests/test_phase13_observability.py").is_file())
+
 
 if __name__ == "__main__":
     unittest.main()
