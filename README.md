@@ -8,7 +8,7 @@
 | 1 | Canonical model stabilization | ✅ Done |
 | 2 | Typed command execution (Python) | ✅ Done |
 | 3 | Persistent revisions | ✅ Done |
-| 4 | Auth & tenancy (JWT roles) | 🔶 Partial |
+| 4 | Auth & tenancy (OIDC / JWT roles) | ✅ Done |
 | 5 | Replace prototype API (/v1 routes) | ✅ Done |
 | 6 | Durable jobs | ✅ Done |
 | **7** | **2D editor typed command dispatch** | **✅ Done** |
@@ -17,9 +17,11 @@
 | **10** | **Exports & delivery** | **✅ Done** |
 | 11 | Collaboration & review | ✅ Done |
 | 12 | Testing & quality gates | ✅ Done |
-| **13** | **Performance & observability** | **✅ Done** |
+| **13** | **Performance & observability (OTel + Dashboards)** | **✅ Done** |
+| 14 | Statutory Compliance & Bye-Laws Engine | 📋 Planned |
+| 15 | AI-Assisted Generative Space Planning | 📋 Planned |
 
-**Test suite: 627+ passed, 0 failed** (as of Phase 13 OTel completion).
+**Test suite: 665+ passed, 0 failed** (all phases 0–13 complete + deployment scaffolding).
 
 See [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) for the full plan.
 See [`creat.md`](creat.md) for the full session development gist.
