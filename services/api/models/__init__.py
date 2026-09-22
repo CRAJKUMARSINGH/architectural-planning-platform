@@ -7,6 +7,9 @@ from .orm import (
     Organization,
     Project,
     Revision,
+    ReviewApproval,
+    ReviewComment,
+    ReviewLink,
     User,
 )
 from .base import Base
@@ -20,5 +23,8 @@ __all__ = [
     "Organization",
     "Project",
     "Revision",
+    "ReviewApproval",
+    "ReviewComment",
+    "ReviewLink",
     "User",
 ]
