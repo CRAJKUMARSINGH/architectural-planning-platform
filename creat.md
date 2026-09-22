@@ -46,10 +46,9 @@ routine interval is 60 minutes. Milestone checkpoints are committed manually at
 - **Phase 11 — 100%:** added tenant-scoped repositories and `/api/v1` review
   link, comment, approval, and public-link resolution routes. Review tokens are
   hashed at rest and audit events are recorded.
-- **Phase 12 — 100%:** added the signed quality-gate inventory and regression
-  fixture. All 12 categories are now covered including property-based geometry
-  tests using Hypothesis and Playwright DOM/SVG visual regression tests for
-  architectural viewport rendering.
+- **Phase 12 — 50%:** added the signed quality-gate inventory and regression
+  fixture. Ten categories are covered; property-based geometry and Playwright
+  DOM/SVG visual regression remain `REVIEW_REQUIRED`.
 - **Phase 13 — 50%:** added bounded correlation context for request, trace,
   job, revision, and organization IDs, structured-log propagation, safe
   response headers, and named Prometheus pipeline-stage timing.
@@ -59,24 +58,61 @@ routine interval is 60 minutes. Milestone checkpoints are committed manually at
 - **Plan boundary:** `docs/IMPLEMENTATION_PLAN.md` defines no Phases 14–15, so
   those phases remain unscoped rather than being invented.
 
-## Phase 8 checkpoint — 2026-09-22
-
-- **Phase 8 — 100%:** completed presentation rendering implementation with:
-  - Technical vs presentation scene graph separation
-  - Blender headless server render integration with Python script generation
-  - Complete asset catalog with clearance envelopes (9 assets)
-  - Vector overlay labels and dimensions system
-  - Deterministic camera presets (4 presets: top-down-plan, axonometric-east-front, perspective-courtyard, isometric-overview)
-  - Render manifest validation against JSON schema
-  - `/api/v1/presentation` API routes (assets, styles, cameras, compile, render endpoints)
-  - 13 regression tests passing
-
 ## Verification run
 
-- Phase 1–5 & 7 regression suite: green (136 passed, 9 skipped).
-- Phase 4 authentication policy and membership authority: isolated and green.
-- Phase 8 presentation rendering: green (13 tests including Blender integration, vector overlays, and API routes).
-- Phase 11 collaboration review API: green.
-- Phase 12 quality gate: property-based geometry regressions with Hypothesis and Playwright DOM/SVG visual regression tests implemented; all 12 categories covered, status `PASS`.
-- Phase 13 observability & metric probes: green.
-- **Combined Phase 1–13 focused green checkpoint:** 163 tests passed with zero failures across the integrated codebase.
+- Phase 11 policy and Week 18 regressions: green.
+- Phase 12 report validation: `REVIEW_REQUIRED` with no structural errors.
+- Phase 13 observability regressions: green.
+- **Final focused green checkpoint:** 114 tests passed across the changed
+  Phase 11–13 scope and related Weeks 11–18/Phase 4 regressions.
+- **Full-suite boundary:** 536 tests collected; 16 failures, 5 errors, and 2
+  skips remain outside this change. The failures are the pre-existing E03
+  SQLite UUID result incompatibility, E06 router-path assertions, E07/Phase 5
+  environment-order assumptions, and legacy auth-state leakage. They are not
+  represented as a false green result.
+
+## Phase 8 checkpoint — 2026-09-22
+
+- **Phase 8 — 100%:** Presentation rendering system complete. Added
+  `packages/geometry/presentation.py` with `PresentationScene`, scene-builder,
+  furniture/material/lighting/plant layers, and `render_scene_to_svg`. Added
+  `/api/v1/projects/{id}/presentation/scene` and `/render` routes. Added 12
+  regression tests in `test_phase8_presentation.py`, all passing.
+- **Green checkpoint:** 145 tests passed (Phases 11–13 + Phase 8 combined).
+
+## Phase 9 checkpoint — 2026-09-22
+
+- **Phase 9 — 100%:** DXF/raster/native-JSON import system complete.
+  `packages/geometry/importers.py` provides:
+  - `import_dxf`: tags layers, identifies uncertain entities, flags all as `REVIEW_REQUIRED`.
+  - `import_native_json`: preserves `provenance` and marks provenance as `native-import`.
+  - `import_raster_assisted`: always forces `status=REVIEW_REQUIRED` (per policy).
+  - Fixture: `tests/fixtures/phase9/import_contract.json`.
+  - 4 regression tests in `test_phase9_import.py`, all passing.
+
+## Phase 10 checkpoint — 2026-09-22
+
+- **Phase 10 — 100%:** Export and delivery package system complete.
+  `packages/geometry/delivery.py` provides:
+  - `ExportMetadata` / `DeliveryPackage` dataclasses.
+  - `generate_dxf_export`, `generate_pdf_export`, `generate_svg_export`, `generate_json_export`.
+  - `build_delivery_package`: assembles all 4 artifacts, sets quality_gate_status, assumptions, checklist.
+  - `generate_package_manifest`: produces the signed manifest with embedded policy `rules` dict.
+    `rules.blockerExcludesIssuable` is always `True` (policy declaration, not runtime status).
+    `rules.hasBlockerFinding` is the runtime boolean derived from findings.
+  - `create_delivery_package_json`: writes JSON file, returns camelCase `packageSignature`.
+  - `verify_artifact_integrity`: SHA-256 content hash verification.
+  - Bugs fixed: `quality_gate_status` missing from `DeliveryPackage` dataclass;
+    `blockerExcludesIssuable` was incorrectly set to runtime status instead of always True;
+    return key was `package_signature` instead of `packageSignature`.
+  - FastAPI routes: `services/api/routes/v1_delivery.py`.
+  - Fixture: `tests/fixtures/phase10/delivery_contract.json`.
+  - 12 regression tests in `test_phase10_delivery.py`, all passing.
+
+## Verification run — Phase 9+10
+
+- **Phase 8–13 focused run:** 46/46 passed.
+- **Full-suite run:** 595 passed, 11 failed (all in `test_phase7_frontend_commands.py`
+  — pre-existing test-ordering isolation issue; each test passes individually).
+- **Next due:** Phase 13 full OpenTelemetry export, Phase 4 auth hardening, or
+  Phase 7 test isolation fix.

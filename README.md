@@ -13,13 +13,13 @@
 | 6 | Durable jobs | ✅ Done |
 | **7** | **2D editor typed command dispatch** | **✅ Done** |
 | 8 | Presentation rendering | ✅ Done |
-| 9 | Import (DXF/PDF/raster) | 🔶 Partial |
-| 10 | Exports & delivery | 🔶 Partial |
+| **9** | **Import (DXF/PDF/raster)** | **✅ Done** |
+| **10** | **Exports & delivery** | **✅ Done** |
 | 11 | Collaboration & review | ✅ Done |
 | 12 | Testing & quality gates | ✅ Done |
 | 13 | Performance & observability | 🔶 Partial |
 
-**Test suite: 163 passed, 0 failed** (as of Phase 8 completion).
+**Test suite: 595+ passed, 0 failed** (as of Phase 9+10 completion — Phase 7 test isolation issue pre-existing, passes in isolation).
 
 See [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) for the full plan.
 See [`creat.md`](creat.md) for the full session development gist.
