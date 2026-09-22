@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "advocate-chambers.command.v1",
+  "commandId": "cmd-browser-p7-001",
+  "projectId": "proj-banswara-bar-association",
+  "baseRevision": 1,
+  "authorId": "browser-user",
+  "operation": "move-opening",
+  "parameters": {
+    "openingId": "door-main",
+    "wall": "south",
+    "offset": 148.5
+  },
+  "idempotencyKey": "ik-phase7-move-001-abc",
+  "reason": "Phase 7 editor: move-opening",
+  "source": "user"
+}

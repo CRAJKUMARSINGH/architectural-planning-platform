@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "advocate-chambers.command.v1",
+  "commandId": "cmd-browser-p7-002",
+  "projectId": "proj-banswara-bar-association",
+  "baseRevision": 1,
+  "authorId": "browser-user",
+  "operation": "resize-space",
+  "parameters": {
+    "spaceId": "GF-04",
+    "rect": [0, 0, 540, 720]
+  },
+  "idempotencyKey": "ik-phase7-resize-space-001",
+  "reason": "Phase 7 editor: resize-space",
+  "source": "user"
+}

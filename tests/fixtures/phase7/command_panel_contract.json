@@ -1,0 +1,38 @@
+{
+  "description": "Phase 7 CommandPanel contract fixture",
+  "version": "phase7.command-panel.v1",
+  "supportedOperations": [
+    "move-opening",
+    "resize-opening",
+    "resize-space",
+    "set-site-orientation",
+    "add-space"
+  ],
+  "requiredEnvelopeFields": [
+    "schemaVersion",
+    "commandId",
+    "projectId",
+    "baseRevision",
+    "authorId",
+    "operation",
+    "parameters",
+    "idempotencyKey"
+  ],
+  "schemaVersion": "advocate-chambers.command.v1",
+  "previewRoute": "/api/v1/projects/{projectId}/commands/preview",
+  "commitRoute": "/api/v1/projects/{projectId}/commands/commit",
+  "requiredCommitHeaders": ["Idempotency-Key", "If-Match"],
+  "requiredPreviewHeaders": ["If-Match"],
+  "responseFields": {
+    "accepted": "boolean",
+    "replayed": "boolean",
+    "findings": "array",
+    "affectedObjectIds": "array",
+    "previewOnly": "boolean"
+  },
+  "previewOnly": {
+    "previewRoute": true,
+    "commitRoute": false
+  },
+  "invalidationOnCommit": ["analysis/{projectId}", "revisions/{projectId}"]
+}
