@@ -90,29 +90,30 @@
     {
       "id": "property-based-geometry",
       "missingTestPaths": [],
-      "status": "pending",
-      "testPaths": []
+      "status": "covered",
+      "testPaths": [
+        "tests/test_phase12_property_based_geometry.py"
+      ]
     },
     {
       "id": "playwright-dom-svg-visual-regression",
       "missingTestPaths": [],
-      "status": "pending",
-      "testPaths": []
+      "status": "covered",
+      "testPaths": [
+        "tests/playwright/viewport-visual.spec.ts"
+      ]
     }
   ],
-  "coveredCategoryCount": 10,
-  "mergeBlocker": true,
+  "coveredCategoryCount": 12,
+  "mergeBlocker": false,
   "missingTestPaths": [],
-  "pendingCategories": [
-    "playwright-dom-svg-visual-regression",
-    "property-based-geometry"
-  ],
+  "pendingCategories": [],
   "policy": {
     "adversarialSuiteRemainsMergeBlocker": true,
     "missingEvidenceIsNotPass": true,
     "pendingCategoriesRequireExplicitFollowUp": true
   },
-  "reportSignature": "2144df2e7c39c6da2bda613fccda8090a69653e32918319c42657f9d04d6483e",
-  "status": "REVIEW_REQUIRED",
+  "reportSignature": "b1e7529cea743512130459ce8acdcf2876ed6539139203d3bfa04f3fb7c59b37",
+  "status": "PASS",
   "version": "phase12.quality-gate.v1"
 }

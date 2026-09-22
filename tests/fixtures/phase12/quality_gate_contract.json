@@ -53,13 +53,13 @@
     },
     {
       "id": "property-based-geometry",
-      "status": "pending",
-      "testPaths": []
+      "status": "covered",
+      "testPaths": ["tests/test_phase12_property_based_geometry.py"]
     },
     {
       "id": "playwright-dom-svg-visual-regression",
-      "status": "pending",
-      "testPaths": []
+      "status": "covered",
+      "testPaths": ["tests/playwright/viewport-visual.spec.ts"]
     }
   ]
 }

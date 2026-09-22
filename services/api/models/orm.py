@@ -23,6 +23,8 @@ from sqlalchemy.dialects.postgresql import JSONB as PG_JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 JSONB = JSON().with_variant(PG_JSONB(), "postgresql")
+# Alias used by Phase 11 collaboration columns — SQLite-safe JSON
+JSON_TYPE = JSONB
 UUID = Uuid
 
 

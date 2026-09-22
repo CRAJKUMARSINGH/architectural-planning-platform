@@ -46,7 +46,7 @@ def build_report() -> dict[str, Any]:
     report: dict[str, Any] = {
         "version": "phase12.quality-gate.v1",
         "status": "REVIEW_REQUIRED" if pending else "PASS",
-        "mergeBlocker": True,
+        "mergeBlocker": bool(pending),
         "categories": categories,
         "coveredCategoryCount": sum(item["status"] == "covered" for item in categories),
         "pendingCategories": pending,

@@ -45,3 +45,13 @@ def clone_json(value: Any) -> Any:
     """Clone only through the same JSON boundary used by revisions."""
 
     return json.loads(canonical_json(value))
+
+
+def serialize_model(model: Any) -> str:
+    """Serialize a canonical model dict to a deterministic JSON string."""
+    return canonical_json(model)
+
+
+def deserialize_model(raw: str) -> Any:
+    """Deserialize a canonical model from a JSON string."""
+    return json.loads(raw)

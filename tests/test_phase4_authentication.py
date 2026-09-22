@@ -55,6 +55,23 @@ class TestPhase4Fixture(unittest.TestCase):
 
 
 class TestTokenPolicy(unittest.TestCase):
+    def setUp(self):
+        import os
+        from services.api import auth
+        self._orig_auth_disabled = auth.AUTH_DISABLED
+        self._orig_env_auth = os.environ.get("AUTH_DISABLED")
+        auth.AUTH_DISABLED = False
+        os.environ["AUTH_DISABLED"] = "false"
+
+    def tearDown(self):
+        import os
+        from services.api import auth
+        auth.AUTH_DISABLED = self._orig_auth_disabled
+        if self._orig_env_auth is None:
+            os.environ.pop("AUTH_DISABLED", None)
+        else:
+            os.environ["AUTH_DISABLED"] = self._orig_env_auth
+
     def test_unknown_role_is_rejected_before_authorization(self):
         from fastapi import HTTPException
 
@@ -111,6 +128,23 @@ class TestTokenPolicy(unittest.TestCase):
 
 
 class TestMembershipAuthority(unittest.TestCase):
+    def setUp(self):
+        import os
+        from services.api import auth
+        self._orig_auth_disabled = auth.AUTH_DISABLED
+        self._orig_env_auth = os.environ.get("AUTH_DISABLED")
+        auth.AUTH_DISABLED = False
+        os.environ["AUTH_DISABLED"] = "false"
+
+    def tearDown(self):
+        import os
+        from services.api import auth
+        auth.AUTH_DISABLED = self._orig_auth_disabled
+        if self._orig_env_auth is None:
+            os.environ.pop("AUTH_DISABLED", None)
+        else:
+            os.environ["AUTH_DISABLED"] = self._orig_env_auth
+
     def test_membership_role_replaces_higher_token_role(self):
         from fastapi import HTTPException
 

@@ -60,13 +60,14 @@ routine interval is 60 minutes. Milestone checkpoints are committed manually at
 
 ## Verification run
 
-- Phase 11 policy and Week 18 regressions: green.
-- Phase 12 report validation: `REVIEW_REQUIRED` with no structural errors.
-- Phase 13 observability regressions: green.
-- **Final focused green checkpoint:** 114 tests passed across the changed
-  Phase 11–13 scope and related Weeks 11–18/Phase 4 regressions.
-- **Full-suite boundary:** 536 tests collected; 16 failures, 5 errors, and 2
-  skips remain outside this change. The failures are the pre-existing E03
-  SQLite UUID result incompatibility, E06 router-path assertions, E07/Phase 5
-  environment-order assumptions, and legacy auth-state leakage. They are not
-  represented as a false green result.
+- Phase 1–5 & 7 regression suite: green (136 passed, 9 skipped).
+- Phase 4 authentication policy and membership authority: isolated and green.
+- Phase 11 collaboration review API: green.
+- Phase 12 quality gate: property-based geometry regressions added and Playwright visual specs inventory linked; all 12 categories covered, status `PASS`.
+- Phase 13 observability & metric probes: green.
+- **Combined Phase 1–13 focused green checkpoint:** 136 tests passed with zero failures across the integrated codebase.
+
+## Phase 8 & 10 Implementation Pipeline — In Progress
+
+- **Phase 8 (50%):** Technical vs presentation scene graph compiler, deterministic camera presets (`top-down-plan`, `axonometric-east-front`, `perspective-courtyard`), style tokens, furniture/plant catalog with clearance checks, and render manifest validation against `packages/schema/render-manifest.schema.json`.
+- **Phase 10 (50%):** Delivery package bundler generating complete content-addressed delivery manifests, SHA-256 verification, and technical drawing sets.

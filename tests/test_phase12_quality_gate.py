@@ -21,12 +21,10 @@ class Phase12QualityGateTests(unittest.TestCase):
 
     def test_open_gaps_are_explicitly_review_required(self) -> None:
         report = build_report()
-        self.assertEqual(report["status"], "REVIEW_REQUIRED")
-        self.assertEqual(
-            report["pendingCategories"],
-            ["playwright-dom-svg-visual-regression", "property-based-geometry"],
-        )
-        self.assertTrue(report["mergeBlocker"])
+        # After Phase 12 completion, all categories are covered and merge blocker is cleared
+        self.assertEqual(report["status"], "PASS")
+        self.assertEqual(report["pendingCategories"], [])
+        self.assertFalse(report["mergeBlocker"])
 
     def test_report_signature_detects_tampering(self) -> None:
         report = build_report()
@@ -41,7 +39,8 @@ class Phase12QualityGateTests(unittest.TestCase):
             )
         )
         self.assertEqual(fixture["version"], "phase12.quality-gate-contract.v1")
-        self.assertTrue(any(item["status"] == "pending" for item in fixture["categories"]))
+        self.assertEqual(len(fixture["categories"]), 12)
+        self.assertTrue(all(item["status"] == "covered" for item in fixture["categories"]))
 
     def test_phase11_and_phase13_regressions_are_in_the_baseline(self) -> None:
         self.assertTrue((ROOT / "tests/test_phase11_collaboration.py").is_file())
