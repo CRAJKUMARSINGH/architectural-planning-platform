@@ -9,6 +9,7 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import (
+    JSON,
     BigInteger,
     CheckConstraint,
     ForeignKey,
@@ -16,9 +17,16 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    Uuid,
 )
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.dialects.postgresql import JSONB as PG_JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+JSONB = JSON().with_variant(PG_JSONB(), "postgresql")
+UUID = Uuid
+
+
+
 
 from .base import Base, TimestampMixin
 

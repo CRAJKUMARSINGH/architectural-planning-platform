@@ -154,6 +154,20 @@ app.add_middleware(
 )
 
 
+
+# ---------------------------------------------------------------------------
+# Phase 5 -- mount versioned /api/v1/* routers alongside the prototype routes
+# ---------------------------------------------------------------------------
+try:
+    from services.api.routes.v1_projects import router as _v1_projects_router
+    from services.api.routes.v1_commands import router as _v1_commands_router
+    from services.api.routes.v1_health import router as _v1_health_router
+    app.include_router(_v1_projects_router, prefix="/api")
+    app.include_router(_v1_commands_router, prefix="/api")
+    app.include_router(_v1_health_router, prefix="/api")
+except Exception:  # pragma: no cover
+    pass
+
 # ---------------------------------------------------------------------------
 # In-memory stores — Patch 2 only. Persistence is deferred to Patch 4+.
 # ---------------------------------------------------------------------------

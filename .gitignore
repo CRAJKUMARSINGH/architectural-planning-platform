@@ -13,3 +13,8 @@ Thumbs.db
 bar-association-hall/generated/
 .venv/
 .venv_revb/
+# Generated test/runtime artefacts — not tracked
+artifacts/
+output/
+*.db
+advocate_chambers_local.db

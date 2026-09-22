@@ -1,49 +1,39 @@
 {
-  "project": "Bar Association Hall, Banswara",
-  "generatedUtc": "2026-09-19T03:12:53.872298+00:00",
-  "generator": "generate_lumion_drawings.py",
-  "sourceSha256": "21ca5454bf080641a8618d4cb7ed708bea0bddb629f529afd11467476beb2267",
+  "project": "Bar Association Hall",
+  "generatedUtc": "2026-09-19T00:00:00+00:00",
+  "sourceSha256": "645ef1e0175fe66c794338af13860474240a1a9997d0628b0093cd0d7ade93ec",
+  "generator": "generate_standard_drawings.py",
   "status": "preliminary-review",
-  "professionalStatus": "PRELIMINARY / NOT FOR CONSTRUCTION",
   "adoptedSetbackEnvelopeAreaSqFt": 4427.5,
-  "mainEntranceLocation": "East Long Wall \u2014 12'-0\" \u00d7 8'-0\" Covered Porch",
-  "fenestration": "4-Sided (North, South, East, West)",
-  "drawingSets": {
-    "Set 1 \u2014 Architectural (No Furniture)": [
-      "A-101",
-      "A-102"
-    ],
-    "Set 2 \u2014 Presentation (With Furniture)": [
-      "A-201",
-      "A-202"
-    ],
-    "Set 3 \u2014 Structural (With Columns)": [
-      "S-101",
-      "S-102"
-    ]
-  },
+  "mainEntranceLocation": "East Long Wall",
+  "fenestration": "4-Sided Approved (North, South, East, West)",
   "outputs": [
-    "A-101-GF-GROUND-FLOOR-PLAN-BARE.pdf",
-    "A-101-GF-bare.dxf",
-    "A-201-GF-GROUND-FLOOR-PLAN-FURNITURE.pdf",
-    "A-201-GF-furniture.dxf",
-    "S-101-GF-GROUND-FLOOR-PLAN-COLUMNS.pdf",
-    "S-101-GF-columns.dxf",
-    "A-102-FF-FIRST-FLOOR-PLAN-BARE.pdf",
-    "A-102-FF-bare.dxf",
-    "A-202-FF-FIRST-FLOOR-PLAN-FURNITURE.pdf",
-    "A-202-FF-furniture.dxf",
-    "S-102-FF-FIRST-FLOOR-PLAN-COLUMNS.pdf",
-    "S-102-FF-columns.dxf",
-    "Bar-Association-Lumion-Master-Review-Set.pdf"
+    "PDF\\A-101-GF-Architectural-Plan.pdf",
+    "CAD\\A-101-GF-Architectural-Plan.dxf",
+    "PDF\\A-101-GF-Presentation-Furniture-Plan.pdf",
+    "CAD\\A-101-GF-Presentation-Furniture-Plan.dxf",
+    "PDF\\S-101-GF-Column-Structural-Grid-Plan.pdf",
+    "CAD\\S-101-GF-Column-Structural-Grid-Plan.dxf",
+    "PDF\\A-102-FF-Architectural-Plan.pdf",
+    "CAD\\A-102-FF-Architectural-Plan.dxf",
+    "PDF\\A-102-FF-Presentation-Furniture-Plan.pdf",
+    "CAD\\A-102-FF-Presentation-Furniture-Plan.dxf",
+    "PDF\\S-102-FF-Column-Structural-Grid-Plan.pdf",
+    "CAD\\S-102-FF-Column-Structural-Grid-Plan.dxf",
+    "PDF\\A-101-Ground-Floor-Plan.pdf",
+    "PDF\\A-102-First-Floor-Plan.pdf",
+    "PDF\\Bar-Association-Standard-Review-Set.pdf",
+    "CAD\\Lumion-3D-Import-Layer-Guide.txt"
   ],
-  "sheetSize": "A2 Landscape",
-  "scale": "1/8\" = 1'-0\" (approx)",
+  "validationErrors": [],
+  "sheetSize": "A2 landscape",
+  "declaredPlotScale": "1/8\" = 1'-0\" approximate",
+  "professionalStatus": "PRELIMINARY / NOT FOR CONSTRUCTION",
+  "issuePolicy": "PRELIMINARY / NOT FOR CONSTRUCTION",
   "notes": [
-    "3 coordinated drawing sets produced from the preliminary source model.",
-    "Main entrance on East long wall with 12'-0\" \u00d7 8'-0\" covered accessible porch.",
-    "Windows on all four facades approved per design directive.",
-    "Old confusing drawing files removed before generation.",
-    "Source: standard/source/preliminary_plans.json + site_plan.json"
+    "Includes 3 distinct coordinated sets: Bare Architectural, Presentation with Furniture, and Structural with Columns & Grid.",
+    "Main entrance relocated to the East long wall with 12'-0\" x 8'-0\" covered porch.",
+    "Full fenestration approved across all four facades (North, South, East, West).",
+    "Adopted setback envelope area: 4,427.50 sq ft per floor."
   ]
 }

@@ -23,11 +23,21 @@ except ImportError:
 @unittest.skipUnless(SA_AVAILABLE, "sqlalchemy not installed")
 class TestOrmModels(unittest.TestCase):
     def setUp(self):
-        import os
-        os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
-        from services.api.db.session import create_all_tables, SessionLocal
-        create_all_tables()
-        self.Session = SessionLocal
+        from sqlalchemy import create_engine
+        from sqlalchemy.orm import sessionmaker
+        from services.api.models.base import Base
+        import services.api.models.orm  # noqa: F401 — register all ORM models
+        self._engine = create_engine(
+            "sqlite:///:memory:",
+            connect_args={"check_same_thread": False},
+        )
+        Base.metadata.create_all(bind=self._engine)
+        self.Session = sessionmaker(bind=self._engine, autoflush=False, autocommit=False)
+
+    def tearDown(self):
+        from services.api.models.base import Base
+        Base.metadata.drop_all(bind=self._engine)
+        self._engine.dispose()
 
     def _session(self):
         return self.Session()
@@ -152,11 +162,21 @@ class TestRevisionPointers(unittest.TestCase):
     """Revisions store only SHA-256 pointers — geometry never inline (ADR-001)."""
 
     def setUp(self):
-        import os
-        os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
-        from services.api.db.session import create_all_tables, SessionLocal
-        create_all_tables()
-        self.Session = SessionLocal
+        from sqlalchemy import create_engine
+        from sqlalchemy.orm import sessionmaker
+        from services.api.models.base import Base
+        import services.api.models.orm  # noqa: F401 — register all ORM models
+        self._engine = create_engine(
+            "sqlite:///:memory:",
+            connect_args={"check_same_thread": False},
+        )
+        Base.metadata.create_all(bind=self._engine)
+        self.Session = sessionmaker(bind=self._engine, autoflush=False, autocommit=False)
+
+    def tearDown(self):
+        from services.api.models.base import Base
+        Base.metadata.drop_all(bind=self._engine)
+        self._engine.dispose()
 
     def test_revision_stores_sha256_pointer_not_geometry(self):
         from services.api.models.orm import Organization, Project

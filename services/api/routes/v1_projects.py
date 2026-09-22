@@ -4,7 +4,7 @@ from __future__ import annotations
 import uuid
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -39,6 +39,25 @@ class JobStatusResponse(BaseModel):
     status: str
     progress: int
     error: str | None = None
+
+
+class RevisionResponse(BaseModel):
+    """Typed revision summary — returned by GET /v1/projects/{id}/revisions."""
+    id: uuid.UUID
+    project_id: uuid.UUID
+    revision_number: int
+    model_sha256: str | None = None
+    model_storage_key: str | None = None
+    engine_version: str | None = None
+    validation_state: str | None = None
+    command_id: str | None = None
+    idempotency_key: str | None = None
+    reason: str | None = None
+    author_user_id: uuid.UUID | None = None
+    parent_revision_id: uuid.UUID | None = None
+    created_at: str | None = None
+
+    model_config = {"from_attributes": True}
 
 
 # ---------------------------------------------------------------------------
@@ -166,14 +185,40 @@ def get_job(
     return job
 
 
-@router.get("/{project_id}/revisions", response_model=list[dict])
+@router.get("/{project_id}/revisions", response_model=list[RevisionResponse])
 def list_revisions(
     project_id: uuid.UUID,
     user: AuthUser,
+    response: Response,
     session: Session = Depends(get_session),
 ):
     proj_repo = SqlProjectRepository(session)
-    if not proj_repo.get(project_id, user.org_id):
+    project = proj_repo.get(project_id, user.org_id)
+    if not project:
         raise HTTPException(status_code=404, detail="Project not found")
     rev_repo = SqlRevisionRepository(session)
-    return rev_repo.list_for_project(project_id)
+    revisions = rev_repo.list_for_project(project_id)
+    # Expose current revision number as ETag for If-Match on commands
+    current_id = project.get("current_revision_id")
+    if current_id:
+        current = rev_repo.get(current_id)
+        if current:
+            response.headers["ETag"] = f'"Rev:{current["revision_number"]}"'
+    return [
+        RevisionResponse(
+            id=r["id"],
+            project_id=r["project_id"],
+            revision_number=r["revision_number"],
+            model_sha256=r.get("model_sha256"),
+            model_storage_key=r.get("model_storage_key"),
+            engine_version=r.get("engine_version"),
+            validation_state=r.get("validation_state"),
+            command_id=r.get("command_id"),
+            idempotency_key=r.get("idempotency_key"),
+            reason=r.get("reason"),
+            author_user_id=r.get("author_user_id"),
+            parent_revision_id=r.get("parent_revision_id"),
+            created_at=str(r["created_at"]) if r.get("created_at") else None,
+        )
+        for r in revisions
+    ]

@@ -24,7 +24,14 @@ AUTH_DISABLED: bool = os.environ.get("AUTH_DISABLED", "false").lower() == "true"
 JWT_SECRET: str = os.environ.get("JWT_SECRET", "dev-secret-change-in-production")
 JWT_ALGORITHM: str = "HS256"
 
+
+def is_auth_disabled() -> bool:
+    """Check if auth is disabled via environment variable or module flag."""
+    return AUTH_DISABLED or os.environ.get("AUTH_DISABLED", "false").lower() == "true"
+
+
 # Dev seeded user / org (only used when AUTH_DISABLED=true)
+
 DEV_USER_ID = uuid.UUID("00000000-0000-0000-0000-000000000002")
 DEV_ORG_ID = uuid.UUID("00000000-0000-0000-0000-000000000001")
 
@@ -79,7 +86,7 @@ def get_current_user(
     """
     request_id = x_request_id or str(uuid.uuid4())
 
-    if AUTH_DISABLED:
+    if is_auth_disabled():
         return CurrentUser(
             user_id=DEV_USER_ID,
             email="dev@local.example",

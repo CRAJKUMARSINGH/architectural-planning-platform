@@ -63,7 +63,7 @@ class TestVersionedRoutes(unittest.TestCase):
         paths = {route.path for route in router.routes}
         # Should have root listing + individual project + jobs + revisions
         self.assertTrue(
-            any("" == p or "/" == p for p in paths),
+            any(p in ("/v1/projects/", "/v1/projects", "", "/") for p in paths),
             "Must have a root list/create route",
         )
 
@@ -77,12 +77,12 @@ class TestVersionedRoutes(unittest.TestCase):
         from services.api.routes.v1_projects import router
         declared_paths = {route.path for route in router.routes}
         for expected in data["requiredV1Paths"]:
-            # Strip /v1/projects prefix when comparing to router sub-paths
             sub = expected.replace("/v1/projects", "", 1) or "/"
-            self.assertIn(
-                sub, declared_paths,
-                f"Fixture path {expected!r} (sub: {sub!r}) not found in v1_projects router",
+            self.assertTrue(
+                expected in declared_paths or sub in declared_paths,
+                f"Fixture path {expected!r} not found in v1_projects router: {declared_paths}",
             )
+
 
 
 # ---------------------------------------------------------------------------

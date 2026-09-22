@@ -23,9 +23,11 @@ class Week2SchemaTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.model = load_canonical_model()
-        cls.site = json.loads((SOURCE_ROOT / "site_plan.json").read_text())
+        cls.site = json.loads(
+            (SOURCE_ROOT / "site_plan.json").read_text(encoding="utf-8")
+        )
         cls.plans = json.loads(
-            (SOURCE_ROOT / "preliminary_plans.json").read_text()
+            (SOURCE_ROOT / "preliminary_plans.json").read_text(encoding="utf-8")
         )
 
     def test_canonical_fixture_exists_and_validates(self):
