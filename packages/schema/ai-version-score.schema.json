@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://advocate-chambers.dev/schemas/ai-version-score.v1.json",
+  "title": "AI Version Score",
+  "description": "AI-powered scoring of design version against brief",
+  "type": "object",
+  "version": "ai-version-score.v1",
+  "required": ["version", "overallScore", "programFit", "daylight", "budgetFit", "commentary", "zoneScores", "provenance", "modelVersion"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "ai-version-score.v1"
+    },
+    "overallScore": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Overall design score (0-100)"
+    },
+    "programFit": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Program fit score (0-100)"
+    },
+    "daylight": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Daylight and natural light score (0-100)"
+    },
+    "budgetFit": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Budget fit score (0-100)"
+    },
+    "commentary": {
+      "type": "string",
+      "description": "Overall assessment commentary"
+    },
+    "zoneScores": {
+      "type": "array",
+      "description": "Per-zone scoring details",
+      "items": {
+        "type": "object",
+        "required": ["zoneName", "score"],
+        "properties": {
+          "zoneName": {
+            "type": "string",
+            "description": "Zone/space name"
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Zone score (0-100)"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Zone-specific notes"
+          }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "description": "AI operation provenance tracking",
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "AI model used"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO timestamp of scoring"
+        },
+        "versionId": {
+          "type": "string",
+          "description": "Version ID that was scored"
+        },
+        "briefAnalysisId": {
+          "type": "string",
+          "description": "Brief analysis timestamp used for scoring"
+        }
+      }
+    },
+    "modelVersion": {
+      "type": "string",
+      "description": "AI model version used"
+    }
+  }
+}

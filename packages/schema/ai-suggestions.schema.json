@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://advocate-chambers.dev/schemas/ai-suggestions.v1.json",
+  "title": "AI Suggestions",
+  "description": "Proactive AI-generated design suggestions",
+  "type": "object",
+  "version": "ai-suggestions.v1",
+  "required": ["version", "suggestions", "categories", "provenance", "modelVersion"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "ai-suggestions.v1"
+    },
+    "suggestions": {
+      "type": "array",
+      "description": "Generated suggestions",
+      "items": {
+        "type": "object",
+        "required": ["category", "text", "priority"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["program", "site", "daylight", "budget", "circulation", "general"],
+            "description": "Suggestion category"
+          },
+          "text": {
+            "type": "string",
+            "description": "Suggestion text"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "Suggestion priority"
+          },
+          "accepted": {
+            "type": "boolean",
+            "description": "Whether suggestion was accepted",
+            "default": false
+          }
+        }
+      }
+    },
+    "categories": {
+      "type": "array",
+      "description": "Categories that were generated",
+      "items": {
+        "type": "string"
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "description": "AI operation provenance tracking",
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "AI model used"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO timestamp of generation"
+        },
+        "projectId": {
+          "type": "string",
+          "description": "Project ID for which suggestions were generated"
+        },
+        "categoriesRequested": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Categories requested in generation"
+        }
+      }
+    },
+    "modelVersion": {
+      "type": "string",
+      "description": "AI model version used"
+    }
+  }
+}

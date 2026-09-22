@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "phase": "14-regulatory-compliance-and-statutory-submission",
+  "contractVersion": "phase14.scope-stub.v1",
+  "status": "PENDING_PRODUCT_OWNER_SPECIFICATION",
+  "title": "Phase 14 — Automated Statutory Compliance & Building Bye-Laws Rules Engine",
+  "scopeDescription": "Target scope reserved for national building codes (e.g. NBC, local municipal bye-laws, FAR/FSI, setback validation, parking norms) and automated authority submission package generation.",
+  "deliverables": [
+    "Bye-laws rule engine extension",
+    "Setback and FAR verification algorithms",
+    "Authority submission drawing export standard",
+    "Digital signature and statutory compliance manifests"
+  ],
+  "exitCriteria": [
+    "Product owner defines regulatory rule schema and jurisdiction profiles",
+    "Automated compliance evaluation contracts approved",
+    "Regression fixtures committed"
+  ]
+}

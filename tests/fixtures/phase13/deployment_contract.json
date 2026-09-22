@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "contractVersion": "phase13.observability-deployment.v1",
+  "phase": "13-performance-and-observability",
+  "title": "Phase 13 Observability & Performance Deployment Specification",
+  "description": "Deployment configuration contract for OpenTelemetry Collector, Prometheus scraping, Grafana dashboards, and load-testing performance verification.",
+  "pipelineStages": [
+    "brief_compilation",
+    "quick_validation",
+    "full_validation",
+    "revision_creation",
+    "render_2d",
+    "scene_3d_load",
+    "server_render",
+    "export_dxf",
+    "export_pdf",
+    "artifact_upload"
+  ],
+  "performanceTargets": {
+    "quickValidationMaxSeconds": 2.0,
+    "commandPreviewP95MaxSeconds": 3.0,
+    "interactiveFpsTarget": 60,
+    "asynchronousOperations": [
+      "full_validation",
+      "server_render",
+      "export_dxf",
+      "export_pdf"
+    ]
+  },
+  "collectorConfig": {
+    "receivers": ["otlp"],
+    "protocols": ["grpc", "http"],
+    "ports": {
+      "otlpGrpc": 4317,
+      "otlpHttp": 4318,
+      "collectorMetrics": 8888,
+      "prometheusExporter": 8889
+    },
+    "processors": ["memory_limiter", "batch"],
+    "exporters": ["prometheus", "debug"]
+  },
+  "grafana": {
+    "dashboardUid": "advocate-chambers-obs-v1",
+    "requiredPanels": [
+      "HTTP Request Rate (RPS)",
+      "HTTP Request Latency (P95 / P99)",
+      "Error Rate (4xx / 5xx)",
+      "Pipeline Stage Latencies (P95)",
+      "Stage Throughput (Ops/sec)",
+      "Active Jobs by State"
+    ]
+  },
+  "deploymentArtifacts": [
+    "deploy/observability/docker-compose.observability.yml",
+    "deploy/observability/otel-collector-config.yaml",
+    "deploy/observability/prometheus.yml",
+    "deploy/observability/grafana/provisioning/datasources/prometheus.yml",
+    "deploy/observability/grafana/provisioning/dashboards/dashboards.yml",
+    "deploy/observability/grafana/dashboards/advocate-chambers.json",
+    "scripts/load_test.py"
+  ]
+}

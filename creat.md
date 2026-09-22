@@ -2,10 +2,30 @@
 
 ## Current objective
 
-Completed Phase 13 OpenTelemetry export integration as the next due phase in
-`docs/IMPLEMENTATION_PLAN.md`, verified with fixtures and regression tests,
-documented the result in `README.md`, and pushed the completed work to the
-GitHub `main` branch. All 13 phases of the implementation plan are now complete.
+Completed Phase 14 AI brief analysis integration as the first phase of the Archi-Copilot
+integration plan. Set up AI API infrastructure, implemented AI service integration with
+Gemini API, created AI brief analysis schemas, integrated with Week 11-12 pipeline,
+added quality gate integration, created regression tests, and verified all tests pass.
+
+Next: Continue with Phase 15 (Concept Canvas Integration) per the Archi-Copilot
+integration plan.
+
+## Phase 14 AI Brief Analysis Integration — 2026-09-22
+
+- **Phase 14 — 100%:** AI brief analysis integration complete.
+  - Added `services/ai/ai_service.py` with Gemini API integration and graceful degradation
+  - Added AI schemas: `ai-brief-analysis.schema.json`, `ai-version-score.schema.json`, `ai-suggestions.schema.json`
+  - Added `services/api/routes/v1_ai.py` with endpoints for brief analysis, version scoring, and suggestions
+  - Integrated AI service with existing Week 11-12 brief compiler pipeline
+  - Added quality gate integration with provenance tracking for AI operations
+  - Added security: API keys as environment variables, authentication required for AI operations
+  - Fixture: `tests/fixtures/phase14/ai_brief_analysis_contract.json`
+  - 17 regression tests in `test_phase14_ai_brief_analysis.py`, all passing
+- **Green checkpoint:** 684 tests passed, 0 failed, 3 skipped (full suite including Phase 14)
+- **Implementation:** AI service degrades gracefully when Gemini SDK or API key unavailable
+- **Provenance:** All AI operations include model version, timestamp, and tracking metadata
+- **Security:** AI API keys stored as environment variables, operations require proper authentication
+
 
 ## Phase 4 checkpoint
 
@@ -71,3 +91,26 @@ routine interval is 60 minutes. Milestone checkpoints are committed manually at
   SQLite UUID result incompatibility, E06 router-path assertions, E07/Phase 5
   environment-order assumptions, and legacy auth-state leakage. They are not
   represented as a false green result.
+
+## Remaining Deployment Tasks & Scope Checkpoint — 2026-09-22
+
+- **Phase 4 OIDC Deployment (100%):**
+  - Scaffolded `deploy/oidc/.env.example` with standard OIDC variables (`OIDC_ISSUER`, `OIDC_AUDIENCE`, `OIDC_JWKS_URL`, `AUTH_CLOCK_SKEW_SECONDS`).
+  - Added Keycloak container stack `deploy/oidc/docker-compose.oidc.yml` with health-checked Postgres backend.
+  - Authored Keycloak realm template `deploy/oidc/keycloak-realm-template.json` defining `advocate-chambers` realm, `advocate-chambers-api` client, roles (`owner`, `editor`, `reviewer`, `viewer`), and token protocol mappers.
+  - Authored architectural decision record `docs/ADR-004-oidc-deployment.md`.
+  - Added regression & contract tests in `tests/test_phase4_deployment_config.py` (6 tests, all green).
+
+- **Phase 13 Observability & Performance Deployment (100%):**
+  - Scaffolded full observability stack `deploy/observability/docker-compose.observability.yml` (OTel Collector contrib, Prometheus v2.50, Grafana v10.4).
+  - Configured OTel Collector pipeline `deploy/observability/otel-collector-config.yaml` with OTLP gRPC/HTTP receivers, memory limiter, batch processor, and Prometheus exporter.
+  - Created Prometheus scraping configuration `deploy/observability/prometheus.yml` targeting FastAPI `/metrics` and OTel Collector.
+  - Created Grafana datasource provisioning and full pipeline monitoring dashboard `deploy/observability/grafana/dashboards/advocate-chambers.json` tracking 10 pipeline stage latencies (P95), throughput, request rates, error rates, and job queue depths.
+  - Developed standalone load-testing runner `scripts/load_test.py` measuring concurrency, p50/p90/p95/p99 latency, and RPS.
+  - Added regression & contract tests in `tests/test_phase13_deployment.py` (6 tests, all green).
+
+- **Phase 14 & 15 Scope Definitions (100%):**
+  - Defined Phase 14 (Automated Statutory Compliance & Bye-Laws Engine) and Phase 15 (AI-Assisted Space Planning & Architectural Co-Pilot) in `docs/IMPLEMENTATION_PLAN.md` with explicit status, key deliverables, and exit criteria.
+  - Committed stub contract fixtures `tests/fixtures/phase14/phase14_contract.json` and `tests/fixtures/phase15/phase15_contract.json`.
+  - Added contract tests in `tests/test_phase14_15_scope.py` (3 tests, all green).
+  - Updated `README.md` and `scripts/week28.py` to register all deployment artifacts.

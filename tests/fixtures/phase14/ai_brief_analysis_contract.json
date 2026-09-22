@@ -1,0 +1,42 @@
+{
+  "version": "phase14.ai-brief-analysis-contract.v1",
+  "description": "Contract for AI brief analysis integration in Phase 14",
+  "aiServiceRequirements": {
+    "geminiSdkRequired": true,
+    "apiKeyRequired": true,
+    "gracefulDegradation": true,
+    "defaultModel": "gemini-2.5-flash"
+  },
+  "schemaFiles": [
+    "ai-brief-analysis.schema.json",
+    "ai-version-score.schema.json",
+    "ai-suggestions.schema.json"
+  ],
+  "apiEndpoints": [
+    "/api/v1/ai/analyze-brief",
+    "/api/v1/ai/score-version",
+    "/api/v1/ai/generate-suggestions",
+    "/api/v1/ai/health"
+  ],
+  "integrationPoints": [
+    "Week 11-12 brief compiler enhancement",
+    "Phase 12 quality gate integration",
+    "Week 16 external tool pipeline integration"
+  ],
+  "provenanceRequirements": [
+    "model identifier",
+    "timestamp",
+    "input data length",
+    "context keys used"
+  ],
+  "qualityGateRequirements": [
+    "AI content must pass existing quality gates",
+    "AI operations must be logged for audit",
+    "AI suggestions must be clearly marked as non-authoritative"
+  ],
+  "securityRequirements": [
+    "API keys stored as encrypted environment secrets",
+    "AI operations require proper authentication",
+    "AI modifications go through complete validation pipeline"
+  ]
+}
