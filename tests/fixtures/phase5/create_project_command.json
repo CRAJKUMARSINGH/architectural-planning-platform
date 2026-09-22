@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "advocate-chambers.command.v1",
+  "commandId": "cmd-phase5-create-001",
+  "projectId": "proj-phase5-test",
+  "baseRevision": 1,
+  "authorId": "user-test-01",
+  "operation": "create-project",
+  "parameters": {
+    "name": "Phase 5 Test Project",
+    "levelId": "GF",
+    "buildingType": "chambers"
+  },
+  "idempotencyKey": "idem-phase5-create-001",
+  "reason": "Phase 5 regression fixture"
+}

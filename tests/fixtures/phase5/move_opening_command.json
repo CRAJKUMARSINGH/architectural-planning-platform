@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "advocate-chambers.command.v1",
+  "commandId": "cmd-phase5-move-001",
+  "projectId": "proj-phase5-test",
+  "baseRevision": 1,
+  "authorId": "user-test-01",
+  "operation": "move-opening",
+  "parameters": {
+    "openingId": "door-main",
+    "wall": "south",
+    "offset": 148.5
+  },
+  "idempotencyKey": "idem-phase5-move-001",
+  "reason": "Move main door for Phase 5 test"
+}

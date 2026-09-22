@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "advocate-chambers.command.v1",
+  "commandId": "cmd-phase5-bad-001",
+  "projectId": "proj-phase5-test",
+  "baseRevision": 1,
+  "authorId": "user-test-01",
+  "operation": "UNSUPPORTED_OP",
+  "parameters": {},
+  "idempotencyKey": "idem-phase5-bad-001"
+}

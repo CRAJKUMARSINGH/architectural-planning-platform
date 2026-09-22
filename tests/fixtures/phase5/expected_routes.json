@@ -1,0 +1,21 @@
+{
+  "description": "Phase 5 required versioned command routes",
+  "commandRoutes": [
+    "/{project_id}/commands/preview",
+    "/{project_id}/commands/commit"
+  ],
+  "requiredHeaders": {
+    "commit": ["Idempotency-Key"],
+    "optionalOnBoth": ["If-Match"]
+  },
+  "errorCodes": {
+    "missingIdempotencyKey": 422,
+    "ifMatchMismatch": 412,
+    "revisionConflict": 409,
+    "missingEditor": 403,
+    "unauthenticated": 401
+  },
+  "responseHeaders": {
+    "bothRoutes": ["ETag"]
+  }
+}
