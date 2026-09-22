@@ -992,4 +992,10 @@ models require the FastAPI/SQLAlchemy deployment dependencies; this lightweight
 workspace verifies their pure policy and contract behavior when those optional
 dependencies are absent.
 
+Final focused checkpoint: **114 tests passed** across the changed Phase 11–13
+scope and related enrichment/authentication regressions. The full repository
+suite was also attempted; its remaining non-green results are pre-existing
+E03 SQLite UUID, E06 router-path, E07/Phase 5 environment-order, and legacy
+auth-state issues, documented in `CREAT.md` rather than masked.
+
 ---

@@ -63,5 +63,10 @@ routine interval is 60 minutes. Milestone checkpoints are committed manually at
 - Phase 11 policy and Week 18 regressions: green.
 - Phase 12 report validation: `REVIEW_REQUIRED` with no structural errors.
 - Phase 13 observability regressions: green.
-- The final all-test checkpoint will be recorded in the next milestone commit
-  after the full local suite completes.
+- **Final focused green checkpoint:** 114 tests passed across the changed
+  Phase 11–13 scope and related Weeks 11–18/Phase 4 regressions.
+- **Full-suite boundary:** 536 tests collected; 16 failures, 5 errors, and 2
+  skips remain outside this change. The failures are the pre-existing E03
+  SQLite UUID result incompatibility, E06 router-path assertions, E07/Phase 5
+  environment-order assumptions, and legacy auth-state leakage. They are not
+  represented as a false green result.
