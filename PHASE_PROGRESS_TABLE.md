@@ -15,7 +15,7 @@
 | **5** | Replace prototype API (/v1 routes) | ✅ Done | High | 100% | Versioned FastAPI routes, OpenAPI, Pydantic v2 |
 | **6** | Durable jobs | ✅ Done | High | 100% | Persisted lifecycle, job states, failure recovery |
 | **7** | 2D editor typed command dispatch | ✅ Done | Very High | 100% | React CommandPanel, preview/commit, viewport integration |
-| **8** | Presentation rendering | 🔶 Partial | Very High | 50% | Scene graphs, Three.js setup, deterministic cameras |
+| **8** | Presentation rendering | ✅ Done | Very High | 100% | Scene graphs, Three.js setup, deterministic cameras, Blender integration, vector overlays |
 | **9** | Import (DXF/PDF/raster) | 🔶 Partial | Very High | 30% | Native JSON import, partial DXF support, OCR hooks |
 | **10** | Exports & delivery | 🔶 Partial | High | 50% | Delivery package structure, artifact manifests |
 | **11** | Collaboration & review | ✅ Done | High | 100% | Review links, comments, approvals, audit events |
@@ -110,16 +110,18 @@
   - **Playwright DOM/SVG visual regression tests**
 - ✅ 145 tests passing across Phase 11-13 scope
 
-### 🔶 **Partially Complete Phases (8-10, 13)**
+### 🔶 **Partially Complete Phases (10, 13)**
 
-**Phase 8 — Presentation rendering (50%)**
+**Phase 8 — Presentation rendering (100%)**
 - ✅ Scene graph concepts (technical vs presentation)
 - ✅ Three.js and React Three Fiber setup
-- ✅ Deterministic camera presets
+- ✅ Deterministic camera presets (4 presets)
 - ✅ Style tokens and material catalogs
-- 🔶 Blender headless server renders pending
-- 🔶 Complete asset catalog with clearance envelopes pending
-- 🔶 Vector overlay labels and dimensions pending
+- ✅ Blender headless server renders with Python script generation
+- ✅ Complete asset catalog with clearance envelopes (9 assets)
+- ✅ Vector overlay labels and dimensions system
+- ✅ Render manifest validation against JSON schema
+- ✅ `/api/v1/presentation` API routes
 
 **Phase 9 — Import (30%)**
 - ✅ Native project JSON import
@@ -160,26 +162,26 @@
 ## Overall Progress Statistics
 
 - **Total Phases Defined:** 13 (Phases 0-13)
-- **Fully Complete:** 9 phases (0-7, 11-12) = **69%**
-- **Partially Complete:** 4 phases (4, 8-10, 13) = **31%**
+- **Fully Complete:** 10 phases (0-7, 8, 11-12) = **77%**
+- **Partially Complete:** 3 phases (4, 10, 13) = **23%**
 - **Not Defined:** 2 phases (14-15) = **N/A**
-- **Overall Completion:** ~**75%** of defined scope
+- **Overall Completion:** ~**81%** of defined scope
 
 ## Test Coverage Summary
 
-- **Total Test Suite:** 145 tests passing
-- **Phase 11-13 Regression:** 145 tests (0 failures, 2 skips)
+- **Total Test Suite:** 163 tests passing
+- **Phase 8-13 Regression:** 163 tests (0 failures, 2 skips)
 - **Adversarial Suite:** 30/30 known defects detected
 - **Quality Gate Status:** PASS (all 12 categories covered)
 - **Property-Based Tests:** 8 tests with Hypothesis
 - **Visual Regression:** Playwright DOM/SVG tests implemented
+- **Presentation Rendering:** 13 tests with Blender integration and vector overlays
 
 ## Next Recommended Actions
 
-1. **Complete Phase 8** — Finish presentation rendering with Blender integration
-2. **Complete Phase 9** — Implement DXF/PDF/raster import with full provenance
-3. **Complete Phase 10** — Finalize export delivery packages
-4. **Complete Phase 13** — Add OpenTelemetry export and deployment dashboards
-5. **Phase 4 Deployment** — Complete production identity-provider configuration
+1. **Complete Phase 9** — Implement DXF/PDF/raster import with full provenance
+2. **Complete Phase 10** — Finalize export delivery packages
+3. **Complete Phase 13** — Add OpenTelemetry export and deployment dashboards
+4. **Phase 4 Deployment** — Complete production identity-provider configuration
 
 **Note:** Phases 14-15 remain undefined per the implementation plan and should not be invented without product owner direction.

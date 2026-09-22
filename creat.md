@@ -59,16 +59,29 @@ routine interval is 60 minutes. Milestone checkpoints are committed manually at
 - **Plan boundary:** `docs/IMPLEMENTATION_PLAN.md` defines no Phases 14–15, so
   those phases remain unscoped rather than being invented.
 
+## Phase 8 checkpoint — 2026-09-22
+
+- **Phase 8 — 100%:** completed presentation rendering implementation with:
+  - Technical vs presentation scene graph separation
+  - Blender headless server render integration with Python script generation
+  - Complete asset catalog with clearance envelopes (9 assets)
+  - Vector overlay labels and dimensions system
+  - Deterministic camera presets (4 presets: top-down-plan, axonometric-east-front, perspective-courtyard, isometric-overview)
+  - Render manifest validation against JSON schema
+  - `/api/v1/presentation` API routes (assets, styles, cameras, compile, render endpoints)
+  - 13 regression tests passing
+
 ## Verification run
 
 - Phase 1–5 & 7 regression suite: green (136 passed, 9 skipped).
 - Phase 4 authentication policy and membership authority: isolated and green.
+- Phase 8 presentation rendering: green (13 tests including Blender integration, vector overlays, and API routes).
 - Phase 11 collaboration review API: green.
 - Phase 12 quality gate: property-based geometry regressions with Hypothesis and Playwright DOM/SVG visual regression tests implemented; all 12 categories covered, status `PASS`.
 - Phase 13 observability & metric probes: green.
-- **Combined Phase 1–13 focused green checkpoint:** 145 tests passed with zero failures across the integrated codebase.
+- **Combined Phase 1–13 focused green checkpoint:** 163 tests passed with zero failures across the integrated codebase.
 
 ## Phase 8 & 10 Implementation Pipeline — In Progress
 
-- **Phase 8 (50%):** Technical vs presentation scene graph compiler, deterministic camera presets (`top-down-plan`, `axonometric-east-front`, `perspective-courtyard`), style tokens, furniture/plant catalog with clearance checks, and render manifest validation against `packages/schema/render-manifest.schema.json`.
+- **Phase 8 (100%):** Technical vs presentation scene graph compiler complete, deterministic camera presets (`top-down-plan`, `axonometric-east-front`, `perspective-courtyard`, `isometric-overview`), style tokens, furniture/plant catalog with clearance checks, render manifest validation, Blender headless integration, vector overlay labels and dimensions, and `/api/v1/presentation` API routes.
 - **Phase 10 (50%):** Delivery package bundler generating complete content-addressed delivery manifests, SHA-256 verification, and technical drawing sets.

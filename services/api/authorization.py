@@ -28,7 +28,7 @@ def require_membership_role(minimum_role: str) -> Any:
     ) -> CurrentUser:
         # Local development intentionally uses the seeded dev identity without
         # requiring a database row; staging/production cannot use this branch.
-        if auth.AUTH_DISABLED:
+        if auth.is_auth_disabled():
             if not user.has_role(minimum_role):
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,

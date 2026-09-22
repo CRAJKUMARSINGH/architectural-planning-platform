@@ -26,8 +26,10 @@ from services.api.routes.v1_collaboration import (
     router as collaboration_router,
 )
 from services.api.routes.v1_commands import router as commands_router
+from services.api.routes.v1_delivery import router as delivery_router
 from services.api.routes.v1_health import metrics as metrics_probe
 from services.api.routes.v1_health import ready as readiness_probe
+from services.api.routes.v1_presentation import router as presentation_router
 from services.api.routes.v1_projects import router as projects_router
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -176,6 +178,8 @@ app.include_router(projects_router, prefix="/api")
 app.include_router(commands_router, prefix="/api")
 app.include_router(collaboration_router, prefix="/api")
 app.include_router(collaboration_public_router, prefix="/api")
+app.include_router(presentation_router, prefix="/api")
+app.include_router(delivery_router, prefix="/api")
 app.add_api_route("/ready", readiness_probe, methods=["GET"], tags=["meta"])
 app.add_api_route("/metrics", metrics_probe, methods=["GET"], tags=["meta"])
 

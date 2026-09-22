@@ -15,31 +15,28 @@ try:
     HYPOTHESIS_AVAILABLE = True
 except ImportError:
     HYPOTHESIS_AVAILABLE = False
-    # Create a minimal mock for environments without Hypothesis
-    def given(*args, **kwargs):
-        def decorator(func):
-            return func
+
+    def given(*_a, **_kw):
+        def decorator(func): return func
         return decorator
 
+    class _MockS:
+        def __call__(self, *_a, **_kw): return self
+        def __getattr__(self, _n): return _MockS()
+
     class _MockSettings:
-        def __init__(self, *args, **kwargs):
-            pass
-        def __call__(self, func):
-            return func
+        def __init__(self, *_a, **_kw): pass
+        def __call__(self, func): return func
 
     settings = _MockSettings
-
-    class _MockStrategies:
-        def __getattr__(self, name: str):
-            return lambda *args, **kwargs: None
-
-    st = _MockStrategies()
+    st = _MockS()
 
     class Phase:
         generate = "generate"
-    
+
     class HealthCheck:
         too_slow = "too_slow"
+
 
 from packages.geometry.commands import finding, OPERATIONS
 from packages.geometry.serializers import serialize_model, deserialize_model
