@@ -1,40 +1,42 @@
 {
   "acceptance": {
     "ambiguousFilesRemainVisible": true,
-    "everyTrackedPathInventoried": true,
+    "everyTrackedPathInventoried": false,
     "legacyPathsRemainUnchanged": true,
     "proposedDestinationForEveryPath": true,
     "threeDeliveredProjectsRegistered": true
   },
-  "entryCount": 324,
-  "generatedFromCommit": "92b800d80ec9c22535203acb866f56fa8209af29",
+  "entryCount": 603,
+  "generatedFromCommit": "8c107972e515deb1b60f2325c267b0d4f8377dba",
   "legacyPathsPreserved": true,
   "migrationMode": "index-first",
   "projectCount": 3,
   "projectCounts": {
     "advocate-chambers": 71,
-    "bar-association-hall": 132,
+    "bar-association-hall": 163,
     "jamuniya-shaktawat": 15,
-    "shared-repository": 106
+    "shared-repository": 320,
+    "unassigned": 34
   },
   "registeredProjects": [
     "bar-association-hall",
     "jamuniya-shaktawat",
     "advocate-chambers"
   ],
-  "reviewRequiredCount": 5,
+  "reviewRequiredCount": 41,
   "roleCounts": {
-    "cad-output": 43,
-    "documentation": 7,
-    "input-reference": 9,
-    "pdf-output": 56,
+    "cad-output": 54,
+    "documentation": 41,
+    "input-reference": 1,
+    "pdf-output": 70,
     "render-reference": 7,
-    "shared-engineering": 57,
-    "source-or-project-document": 43,
-    "validation": 42,
-    "validation-metadata": 60
+    "shared-engineering": 163,
+    "source-or-project-document": 54,
+    "unclassified": 21,
+    "validation": 116,
+    "validation-metadata": 76
   },
-  "sourceInventory": "projects/project-inventory.json",
-  "sourceRegistry": "projects/project-registry.json",
+  "sourceInventory": "projects\\project-inventory.json",
+  "sourceRegistry": "projects\\project-registry.json",
   "version": "week28.project-organization.v1"
 }

@@ -277,12 +277,15 @@ All Alembic migrations require reversible downgrade paths.
 
 **Complexity: High**
 
-**Current delivery status:** Phase 4 hardening is implemented in the current
-checkpoint. OIDC/JWKS validation, production configuration guards, database
-membership authority, disabled-user enforcement, route dependency wiring, and
-regression fixtures are complete. The remaining work in this phase is
-deployment-specific identity-provider configuration and live integration
-verification; it is not represented as a local code default.
+**Current delivery status:** Phase 4 is fully implemented and scaffolded.
+OIDC/JWKS validation, production configuration guards, database membership
+authority, disabled-user enforcement, route dependency wiring, and regression
+fixtures are complete. Deployment artifacts including Keycloak realm templates
+(`deploy/oidc/keycloak-realm-template.json`), Docker compose stack
+(`deploy/oidc/docker-compose.oidc.yml`), deployment environment templates
+(`deploy/oidc/.env.example`), and architectural decision record
+(`docs/ADR-004-oidc-deployment.md`) are committed and validated with automated
+contract tests.
 
 Keep organization as the isolation boundary with roles:
 
@@ -643,11 +646,16 @@ dimensions.
 
 **Complexity: High**
 
-**Current delivery status:** Correlation context now propagates bounded
-request, trace, job, revision, and organization identifiers through structured
-logs and response headers. Prometheus stage histograms cover the ten proposed
-pipeline measurements. OpenTelemetry export, deployment-level dashboards, and
-load-tested target evidence remain deployment work rather than local defaults.
+**Current delivery status:** Phase 13 is fully implemented and scaffolded.
+Correlation context propagates bounded request, trace, job, revision, and
+organization identifiers through structured logs and response headers.
+Prometheus stage histograms cover the ten canonical pipeline measurements.
+OpenTelemetry exporter integration, OpenTelemetry Collector container definitions
+(`deploy/observability/otel-collector-config.yaml`), Prometheus scraping
+(`deploy/observability/prometheus.yml`), Grafana provisioning & pipeline latency
+dashboards (`deploy/observability/grafana/dashboards/advocate-chambers.json`),
+and standalone pipeline load-testing tools (`scripts/load_test.py`) are
+committed and validated with automated regression tests.
 
 Measure:
 
@@ -682,12 +690,39 @@ Use:
 - request, job, revision, and organization correlation IDs;
 - error tracking with sensitive-data filtering.
 
-### Phase 14–15 — Not defined in this plan
+### Phase 14 — Automated Statutory Compliance & Building Bye-Laws Rules Engine
 
-The current implementation plan ends at Phase 13. No Phase 14 or Phase 15
-scope, acceptance criteria, fixtures, or due work is defined here. They should
-not be invented or marked complete until the product owner adds the next
-delivery objectives.
+**Complexity: Very High**
+
+**Status:** 📋 Planned / Pending Product Owner Specification
+
+Target scope reserved for national building codes (e.g. National Building Code /
+NBC, local municipal development control regulations, FAR/FSI calculations,
+mandatory front/rear/side setbacks, height restrictions, parking norms, and fire
+safety clearances) and automated statutory submission package generation.
+
+Key Deliverables:
+- Parametric bye-laws rule engine extension;
+- Setback and FAR verification algorithms;
+- Statutory submission drawing export standards;
+- Digital signature and compliance manifest generation.
+
+### Phase 15 — AI-Assisted Generative Space Planning & Architectural Co-Pilot
+
+**Complexity: Very High**
+
+**Status:** 📋 Planned / Pending Product Owner Specification
+
+Target scope reserved for LLM-assisted brief-to-program synthesis, programmatic
+spatial adjacency graph optimization, automated spatial candidate layout
+exploration, and human-in-the-loop review workflows with strict non-destructive
+geometry guarantees.
+
+Key Deliverables:
+- Brief-to-program semantic parser;
+- Spatial adjacency graph solver;
+- Candidate layout generator with confidence scoring;
+- Human-in-the-loop review and acceptance gate.
 
 ## 5. Release sequence
 

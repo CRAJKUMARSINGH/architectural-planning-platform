@@ -62,6 +62,7 @@ SHARED_ROOTS = (
     "apps/",
     "benchmarks/",
     "code-junction/",
+    "deploy/",
     "docs/",
     "packages/",
     "scripts/",

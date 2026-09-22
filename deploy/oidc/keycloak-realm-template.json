@@ -1,0 +1,121 @@
+{
+  "realm": "advocate-chambers",
+  "enabled": true,
+  "displayName": "Advocate-Chambers Identity Realm",
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "owner",
+        "description": "Full tenant administration, geometry editing, approval, and membership management"
+      },
+      {
+        "name": "editor",
+        "description": "Geometry drafting, revision commit, validation execution, and rendering"
+      },
+      {
+        "name": "reviewer",
+        "description": "Review link access, comment creation, and approval decision submission"
+      },
+      {
+        "name": "viewer",
+        "description": "Read-only access to projects, revisions, analysis, and delivery artifacts"
+      }
+    ]
+  },
+  "groups": [
+    {
+      "name": "Chambers-Owners",
+      "realmRoles": ["owner"]
+    },
+    {
+      "name": "Chambers-Architects",
+      "realmRoles": ["editor"]
+    },
+    {
+      "name": "Chambers-Reviewers",
+      "realmRoles": ["reviewer"]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "advocate-chambers-api",
+      "name": "Advocate-Chambers Core API",
+      "description": "Backend API resource server accepting Bearer JWTs with OIDC validation",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "advocate-chambers-api-service-secret",
+      "bearerOnly": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "protocolMappers": [
+        {
+          "name": "audience-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "advocate-chambers-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "org-id-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "org_id",
+            "claim.name": "org_id",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "realm-roles-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "claim.name": "role",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "multivalued": "false"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "advocate-chambers-spa",
+      "name": "Advocate-Chambers React Frontend",
+      "description": "Single-page application client using Authorization Code Flow + PKCE",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": [
+        "http://localhost:5173/*",
+        "https://app.advocatechambers.example/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173",
+        "https://app.advocatechambers.example"
+      ]
+    }
+  ]
+}

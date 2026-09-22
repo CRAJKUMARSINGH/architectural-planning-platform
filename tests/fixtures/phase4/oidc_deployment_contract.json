@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "contractVersion": "phase4.oidc-deployment.v1",
+  "phase": "04-auth-and-tenancy",
+  "title": "Phase 4 OIDC Identity Provider Deployment Specification",
+  "description": "Deployment configuration contract for OpenID Connect IdP integration, token validation, JWKS endpoint requirements, and multi-tenant isolation.",
+  "requiredEnvVariables": [
+    "ENV",
+    "AUTH_DISABLED",
+    "OIDC_ISSUER",
+    "OIDC_AUDIENCE",
+    "OIDC_JWKS_URL",
+    "AUTH_CLOCK_SKEW_SECONDS"
+  ],
+  "productionRules": {
+    "authDisabledForbidden": true,
+    "developmentSecretForbidden": true,
+    "jwksUrlRequired": true,
+    "audienceRequired": true,
+    "maxClockSkewSeconds": 300
+  },
+  "roles": [
+    "owner",
+    "editor",
+    "reviewer",
+    "viewer"
+  ],
+  "supportedSigningAlgorithms": [
+    "RS256",
+    "RS384",
+    "RS512",
+    "ES256",
+    "ES384",
+    "ES512"
+  ],
+  "keycloak": {
+    "realmName": "advocate-chambers",
+    "clientId": "advocate-chambers-api",
+    "spaClientId": "advocate-chambers-spa",
+    "requiredMappers": [
+      "audience-mapper",
+      "org-id-mapper",
+      "realm-roles-mapper"
+    ]
+  },
+  "deploymentArtifacts": [
+    "deploy/oidc/.env.example",
+    "deploy/oidc/docker-compose.oidc.yml",
+    "deploy/oidc/keycloak-realm-template.json",
+    "docs/ADR-004-oidc-deployment.md"
+  ]
+}
