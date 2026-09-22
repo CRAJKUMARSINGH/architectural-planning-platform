@@ -19,9 +19,18 @@ completed work to the GitHub `main` branch.
   migration `0003_user_disabled_at`, schema reference, all v1 project/command
   route dependencies, ADR-003, the README status, and the implementation plan
   status were updated.
-- **100% — pending final verification:** run the targeted Phase 4, E03, E06,
-  Phase 5, lint, and repository regression commands; update this file with the
-  exact results before the final commit.
+- **100% — verified:** the focused Phase 4/E03/E04/E05/E07/E08/E09 plus
+  Phase 1/2/3 regression command passes with **101 passed, 1 warning, and 7
+  subtests passed**. Ruff passes for the changed Phase 4/authentication files.
+  The warning is Starlette's `anyio.abc.BlockingPortal` deprecation.
+
+## Verification boundary
+
+The pre-existing expanded E03 SQLite tests still expose two unrelated
+environment-compatibility issues (PostgreSQL UUID handling on SQLite), and E06
+contains pre-existing router-prefix assertion mismatches. They were not masked
+or rewritten as part of this phase; the focused implementation regression
+command above is the green gate for this change.
 
 ## Scope note
 

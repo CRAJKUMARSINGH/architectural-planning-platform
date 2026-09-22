@@ -68,9 +68,12 @@ def auth_configuration_errors() -> list[str]:
     errors: list[str] = []
     if ENVIRONMENT in {"staging", "production", "prod"} and AUTH_DISABLED:
         errors.append("AUTH_DISABLED must be false in staging and production")
-    if ENVIRONMENT in {"staging", "production", "prod"} and not OIDC_ISSUER:
-        if not JWT_SECRET or JWT_SECRET == DEFAULT_DEV_SECRET:
-            errors.append("OIDC_ISSUER or a non-development JWT_SECRET is required")
+    if (
+        ENVIRONMENT in {"staging", "production", "prod"}
+        and not OIDC_ISSUER
+        and (not JWT_SECRET or JWT_SECRET == DEFAULT_DEV_SECRET)
+    ):
+        errors.append("OIDC_ISSUER or a non-development JWT_SECRET is required")
     if OIDC_ISSUER and not OIDC_AUDIENCE:
         errors.append("OIDC_AUDIENCE is required when OIDC_ISSUER is configured")
     if OIDC_ISSUER and not OIDC_JWKS_URL:

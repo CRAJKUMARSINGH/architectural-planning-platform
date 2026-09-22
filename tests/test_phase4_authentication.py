@@ -8,7 +8,6 @@ double so the role decision remains deterministic.
 from __future__ import annotations
 
 import json
-import os
 import sys
 import unittest
 import uuid
@@ -58,31 +57,37 @@ class TestPhase4Fixture(unittest.TestCase):
 class TestTokenPolicy(unittest.TestCase):
     def test_unknown_role_is_rejected_before_authorization(self):
         from fastapi import HTTPException
+
         from services.api import auth
 
-        with patch.object(auth, "_decode_jwt", return_value={
-            "sub": str(uuid.uuid4()),
-            "org_id": str(uuid.uuid4()),
-            "role": "administrator",
-            "exp": 9999999999,
-        }):
-            with self.assertRaises(HTTPException) as context:
-                auth.get_current_user("Bearer token", "request-1")
+        with (
+            patch.object(auth, "_decode_jwt", return_value={
+                "sub": str(uuid.uuid4()),
+                "org_id": str(uuid.uuid4()),
+                "role": "administrator",
+                "exp": 9999999999,
+            }),
+            self.assertRaises(HTTPException) as context,
+        ):
+            auth.get_current_user("Bearer token", "request-1")
         self.assertEqual(context.exception.status_code, 401)
 
     def test_disabled_claim_is_forbidden(self):
         from fastapi import HTTPException
+
         from services.api import auth
 
-        with patch.object(auth, "_decode_jwt", return_value={
-            "sub": str(uuid.uuid4()),
-            "org_id": str(uuid.uuid4()),
-            "role": "viewer",
-            "disabled": True,
-            "exp": 9999999999,
-        }):
-            with self.assertRaises(HTTPException) as context:
-                auth.get_current_user("Bearer token", "request-2")
+        with (
+            patch.object(auth, "_decode_jwt", return_value={
+                "sub": str(uuid.uuid4()),
+                "org_id": str(uuid.uuid4()),
+                "role": "viewer",
+                "disabled": True,
+                "exp": 9999999999,
+            }),
+            self.assertRaises(HTTPException) as context,
+        ):
+            auth.get_current_user("Bearer token", "request-2")
         self.assertEqual(context.exception.status_code, 403)
 
     def test_production_rejects_development_secret_configuration(self):
@@ -97,15 +102,18 @@ class TestTokenPolicy(unittest.TestCase):
     def test_startup_guard_raises_for_invalid_configuration(self):
         from services.api import auth
 
-        with patch.object(auth, "ENVIRONMENT", "production"), \
-                patch.object(auth, "AUTH_DISABLED", True):
-            with self.assertRaises(RuntimeError):
-                auth.assert_auth_configuration()
+        with (
+            patch.object(auth, "ENVIRONMENT", "production"),
+            patch.object(auth, "AUTH_DISABLED", True),
+            self.assertRaises(RuntimeError),
+        ):
+            auth.assert_auth_configuration()
 
 
 class TestMembershipAuthority(unittest.TestCase):
     def test_membership_role_replaces_higher_token_role(self):
         from fastapi import HTTPException
+
         from services.api.authorization import require_membership_role
 
         dependency = require_membership_role("editor").dependency
@@ -117,6 +125,7 @@ class TestMembershipAuthority(unittest.TestCase):
 
     def test_disabled_membership_is_denied(self):
         from fastapi import HTTPException
+
         from services.api.authorization import require_membership_role
 
         dependency = require_membership_role("viewer").dependency
@@ -126,6 +135,7 @@ class TestMembershipAuthority(unittest.TestCase):
 
     def test_missing_membership_is_denied(self):
         from fastapi import HTTPException
+
         from services.api.authorization import require_membership_role
 
         dependency = require_membership_role("viewer").dependency
