@@ -1,0 +1,35 @@
+================================================================================
+BAR ASSOCIATION HALL, BANSWARA — LUMION 3D IMPORT & EXTRUSION GUIDE
+================================================================================
+Generated for: Lumion 12.5, Lumion 2023, Lumion 2024 Pro
+Units: INCHES (or FEET / METERS depending on import unit selector)
+
+1. RECOMMENDED CAD FILES FOR LUMION IMPORT:
+   - Ground Floor: CAD/A-101-GF-Presentation-Furniture-Plan.dxf
+   - First Floor : CAD/A-102-FF-Presentation-Furniture-Plan.dxf
+   - Structural  : CAD/S-101-GF-Column-Structural-Grid-Plan.dxf
+
+2. LAYER EXTRUSION HEIGHT SCHEDULE:
+   -----------------------------------------------------------------------------
+   LAYER NAME    | LUMION MATERIAL ASSIGNMENT        | SUGGESTED 3D HEIGHT
+   -----------------------------------------------------------------------------
+   A-WALL        | Plaster / Concrete / Masonry     | 11'-0" (132 inches)
+   A-DOOR        | Wood / Glass / Metal Frames       | 7'-0" (84 inches)
+   A-WINDOW      | Pure Glass / Aluminium Mullions   | Sill: 3'-0", Lintel: 7'-0"
+   A-PORCH       | Exterior Pavers / Concrete Slab   | Plinth: +1'-6" (18 inches)
+   A-STAIR       | Granite / Marble Steps            | Total rise: 11'-0"
+   A-FURN        | Wood / Leather / Chrome           | Tables: 2'-6", Chairs: 3'-0"
+   S-COLUMN      | Structural RCC / Heavy Concrete   | 11'-0" to underside of beam
+   -----------------------------------------------------------------------------
+
+3. ARCHITECTURAL ADAPTATIONS INCORPORATED:
+   - Main Entrance: Relocated to East Long Wall with a grand 12'-0" × 8'-0" porch.
+   - Fenestration: Windows placed on all 4 elevations (North, South, East, West).
+   - Adopted Area: 4,427.50 Sq. Ft. per floor (consistent with setback envelope).
+
+4. HOW TO IMPORT INTO LUMION:
+   Step 1: Open Lumion -> New Scene -> Plain Landscape.
+   Step 2: Click 'Import Model' (green plus icon) -> Select DXF from CAD/ folder.
+   Step 3: Set Import Units to 'Inches' (or scale by 0.0254 if importing into Meters).
+   Step 4: Assign Lumion Glass material to A-WINDOW layer for realistic reflections.
+================================================================================

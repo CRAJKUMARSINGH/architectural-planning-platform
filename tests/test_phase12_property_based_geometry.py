@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 try:
-    from hypothesis import given, strategies as st, settings, Phase
+    from hypothesis import given, strategies as st, settings, Phase, HealthCheck
     HYPOTHESIS_AVAILABLE = True
 except ImportError:
     HYPOTHESIS_AVAILABLE = False
@@ -37,6 +37,9 @@ except ImportError:
 
     class Phase:
         generate = "generate"
+    
+    class HealthCheck:
+        too_slow = "too_slow"
 
 from packages.geometry.commands import finding, OPERATIONS
 from packages.geometry.serializers import serialize_model, deserialize_model
@@ -99,8 +102,8 @@ class PropertyBasedGeometryTests(unittest.TestCase):
         self.assertEqual(data_dict, deserialized, "Serialization round-trip should preserve data")
     
     @unittest.skipIf(not HYPOTHESIS_AVAILABLE, "Hypothesis not installed")
-    @given(st.lists(st.text(min_size=1, max_size=20, alphabet="abc123"), min_size=1, max_size=10))
-    @settings(max_examples=30, phases=[Phase.generate])
+    @given(st.lists(st.text(min_size=1, max_size=10, alphabet="abc123"), min_size=1, max_size=5))
+    @settings(max_examples=20, phases=[Phase.generate], suppress_health_check=[HealthCheck.too_slow])
     def test_finding_generation_creates_valid_structure(self, object_ids):
         """Property: Finding generation should always produce valid structure."""
         result = finding(

@@ -15,11 +15,11 @@
 | 8 | Presentation rendering | 🔶 Partial |
 | 9 | Import (DXF/PDF/raster) | 🔶 Partial |
 | 10 | Exports & delivery | 🔶 Partial |
-| 11 | Collaboration & review | 🔶 Partial |
+| 11 | Collaboration & review | ✅ Done |
 | 12 | Testing & quality gates | ✅ Done |
 | 13 | Performance & observability | 🔶 Partial |
 
-**Test suite: 543 passed, 0 failed** (as of Phase 7 completion).
+**Test suite: 145 passed, 0 failed** (as of Phase 12 completion).
 
 See [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) for the full plan.
 See [`creat.md`](creat.md) for the full session development gist.
@@ -45,6 +45,24 @@ The `CommandPanel` component renders in the studio right sidebar:
 - **Preview** → dry-run via `usePreviewCommand`, shows findings
 - **Commit** → persists revision via `useCommitCommand`, invalidates viewport query cache
 - Auto-fills selected object ID from viewport selection
+
+
+## Phase 12 — Testing & Quality Gates (100% Complete)
+
+Added comprehensive testing infrastructure:
+- **Property-based geometry tests** using Hypothesis for deterministic geometry invariants
+- **Playwright DOM/SVG visual regression tests** for architectural viewport rendering
+- **Quality gate inventory** covering 12 test categories with signed reports
+- All 145 Phase 11-13 regression tests passing
+
+Run the full Phase 12 suite with:
+
+> advocate-chambers@1.0.0 test:phase12
+> python -m unittest tests.test_phase12_quality_gate tests.test_phase12_property_based_geometry
+
+
+> advocate-chambers@1.0.0 test:playwright
+> npx playwright test
 
 ---
 

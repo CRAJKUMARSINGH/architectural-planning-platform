@@ -13,12 +13,11 @@
     "lint:web": "eslint apps/web/src --ext .ts,.tsx --max-warnings 0",
     "lint": "npm run lint:py && npm run lint:web",
     "format:py": "ruff format scripts services packages",
-    "verify:baseline": "python -m unittest discover -s tests -p 'test_*.py' && npm run typecheck:web && npm run validate:week21",
+    "verify:baseline": "python scripts/verify_baseline.py",
     "dev:web": "npm --prefix apps/web run dev",
     "dev:api": "uvicorn services.api.main:app --reload --port 8000",
     "build:web": "npm --prefix apps/web run build",
     "typecheck:web": "npm --prefix apps/web run typecheck",
-    "verify:baseline": "python scripts/verify_baseline.py",
     "test:all": "python -m unittest discover -s tests -p 'test_*.py'",
     "draw:refined": "python bar-association-hall/generate_refined_cad.py",
     "draw:standard": "python bar-association-hall/generate_standard_drawings.py",
@@ -64,7 +63,9 @@
     "test:week1516": "python -m unittest discover -s tests -p 'test_week1516*.py'",
     "enrich:phase12": "python scripts/phase12.py report",
     "validate:phase12": "python scripts/phase12.py validate",
-    "test:phase12": "python -m unittest tests.test_phase12_quality_gate",
+    "test:phase12": "python -m unittest tests.test_phase12_quality_gate tests.test_phase12_property_based_geometry",
+    "test:playwright": "npx playwright test",
+    "test:playwright:headed": "npx playwright test --headed",
     "enrich:week1718": "python scripts/week1718.py report",
     "validate:week17": "python scripts/week1718.py validate",
     "validate:week18": "python scripts/week1718.py validate",
@@ -111,6 +112,7 @@
     "test:enterprise": "python -m unittest discover -s tests -p 'test_e0*.py'"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "markdown-pdf": "^11.0.0"
   },
   "engines": {

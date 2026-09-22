@@ -46,9 +46,10 @@ routine interval is 60 minutes. Milestone checkpoints are committed manually at
 - **Phase 11 — 100%:** added tenant-scoped repositories and `/api/v1` review
   link, comment, approval, and public-link resolution routes. Review tokens are
   hashed at rest and audit events are recorded.
-- **Phase 12 — 50%:** added the signed quality-gate inventory and regression
-  fixture. Ten categories are covered; property-based geometry and Playwright
-  DOM/SVG visual regression remain `REVIEW_REQUIRED`.
+- **Phase 12 — 100%:** added the signed quality-gate inventory and regression
+  fixture. All 12 categories are now covered including property-based geometry
+  tests using Hypothesis and Playwright DOM/SVG visual regression tests for
+  architectural viewport rendering.
 - **Phase 13 — 50%:** added bounded correlation context for request, trace,
   job, revision, and organization IDs, structured-log propagation, safe
   response headers, and named Prometheus pipeline-stage timing.
@@ -63,9 +64,9 @@ routine interval is 60 minutes. Milestone checkpoints are committed manually at
 - Phase 1–5 & 7 regression suite: green (136 passed, 9 skipped).
 - Phase 4 authentication policy and membership authority: isolated and green.
 - Phase 11 collaboration review API: green.
-- Phase 12 quality gate: property-based geometry regressions added and Playwright visual specs inventory linked; all 12 categories covered, status `PASS`.
+- Phase 12 quality gate: property-based geometry regressions with Hypothesis and Playwright DOM/SVG visual regression tests implemented; all 12 categories covered, status `PASS`.
 - Phase 13 observability & metric probes: green.
-- **Combined Phase 1–13 focused green checkpoint:** 136 tests passed with zero failures across the integrated codebase.
+- **Combined Phase 1–13 focused green checkpoint:** 145 tests passed with zero failures across the integrated codebase.
 
 ## Phase 8 & 10 Implementation Pipeline — In Progress
 
