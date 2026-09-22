@@ -41,6 +41,12 @@ if PROMETHEUS_AVAILABLE:
         "Time spent in Python validation pipeline",
         buckets=[0.05, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0],
     )
+    PIPELINE_STAGE_DURATION = Histogram(
+        "pipeline_stage_duration_seconds",
+        "Time spent in a named planning pipeline stage",
+        ["stage"],
+        buckets=[0.01, 0.05, 0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 30.0],
+    )
 
 
 class MetricsMiddleware(BaseHTTPMiddleware):
@@ -70,3 +76,11 @@ def metrics_endpoint() -> Response:
             status_code=503,
         )
     return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+
+def observe_pipeline_stage(stage: str, elapsed_seconds: float) -> None:
+    """Record one bounded stage name; unavailable metrics never break work."""
+
+    if not PROMETHEUS_AVAILABLE:
+        return
+    PIPELINE_STAGE_DURATION.labels(stage=stage).observe(max(0.0, elapsed_seconds))

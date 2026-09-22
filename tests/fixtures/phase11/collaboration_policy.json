@@ -1,0 +1,27 @@
+{
+  "version": "phase11.collaboration-policy.v1",
+  "reviewViews": ["technical", "presentation"],
+  "anchorTypes": [
+    "room",
+    "space",
+    "wall",
+    "opening",
+    "dimension",
+    "validation-finding",
+    "render-viewpoint"
+  ],
+  "approvalStates": [
+    "Draft",
+    "Review",
+    "Client Presentation",
+    "Preliminary Coordination",
+    "Not Issuable"
+  ],
+  "securityInvariants": [
+    "raw review tokens are returned only at creation",
+    "review links pin one project revision",
+    "comments cannot target an object outside the pinned model",
+    "review records are organization-scoped through the project",
+    "approval transitions are append-only events"
+  ]
+}

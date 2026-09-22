@@ -926,6 +926,23 @@ quality baseline.
 | **E09** | Staging & Release | ✅ **Complete** | `docker-compose.staging.yml`, `release.yml` workflow with SBOM, `release_check.py`, Makefile docker targets, release checklist with professional disclaimer |
 | **E10** | Stabilization | ✅ **Complete** | Runbooks (queue-stuck, artifact-missing, DB migration), ADRs frozen, concurrent job safety, load scenario fixture, enterprise candidate readiness checks |
 
+### Phase 4 task status — authentication and tenancy hardening
+
+The next implementation-plan phase is applied on `main`:
+
+- OIDC issuer, audience, expiry, clock-skew, and rotating JWKS validation are
+  supported when `OIDC_ISSUER` is configured.
+- Production/staging configuration rejects `AUTH_DISABLED` and the default
+  development JWT secret.
+- Project-scoped authorization now treats the active database membership as the
+  authority for organization access and effective role.
+- Disabled or soft-deleted users are denied before project-scoped work.
+- Migration `0003_user_disabled_at` and the Phase 4 policy fixture/regression
+  suite are included.
+
+This phase does not certify identity-provider configuration or professional
+architectural review; those remain deployment/operator responsibilities.
+
 ### Fixture & Regression Test Coverage (added 2026-09-20)
 
 Comprehensive fixtures and expanded regression tests were added for all enterprise
@@ -1011,5 +1028,43 @@ python scripts/enterprise/release_check.py
 > structural adequacy, or accessibility (RPwD) final compliance. All outputs
 > require independent professional review by licensed architects, engineers,
 > and statutory authorities before use in regulated contexts.
+
+## Phase 11–13 implementation checkpoint — applied with explicit follow-ups
+
+The next due phases in `docs/IMPLEMENTATION_PLAN.md` are now advanced without
+duplicating the already-completed Week 11–18 enrichment tracks.
+
+- **Phase 11 — collaboration and review:** durable, tenant-scoped review links,
+  revision-pinned comments, append-only approval events, reviewer identity,
+  audit records, one-way token storage, public-link resolution, and a reversible
+  `0004_collaboration_review` migration are implemented.
+- **Phase 12 — testing and quality gates:** the signed
+  `phase12-quality-gate-report.json` inventory covers ten regression categories
+  and keeps the gate at `REVIEW_REQUIRED` for the two missing harnesses:
+  property-based geometry and Playwright DOM/SVG visual regression.
+- **Phase 13 — performance and observability:** bounded correlation IDs are
+  propagated through structured logs and response headers, and named
+  Prometheus pipeline-stage timing is available without making metrics a
+  runtime dependency.
+
+Focused commands:
+
+```bash
+python -m unittest tests.test_phase11_collaboration
+python scripts/phase12.py validate
+python -m unittest tests.test_phase12_quality_gate tests.test_phase13_observability
+```
+
+Phases 14–15 are not defined in the current plan and are therefore listed as
+due scope definition, not implemented work. The public API collaboration
+models require the FastAPI/SQLAlchemy deployment dependencies; this lightweight
+workspace verifies their pure policy and contract behavior when those optional
+dependencies are absent.
+
+Final focused checkpoint: **114 tests passed** across the changed Phase 11–13
+scope and related enrichment/authentication regressions. The full repository
+suite was also attempted; its remaining non-green results are pre-existing
+E03 SQLite UUID, E06 router-path, E07/Phase 5 environment-order, and legacy
+auth-state issues, documented in `CREAT.md` rather than masked.
 
 ---

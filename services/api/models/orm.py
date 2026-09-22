@@ -30,6 +30,11 @@ UUID = Uuid
 
 from .base import Base, TimestampMixin
 
+# Keep the Postgres JSONB contract while allowing the documented SQLite
+# development fallback to create and exercise the same ORM schema.
+# JSONB (defined above) is the SQLite-compatible JSON column type.
+JSON_TYPE = JSONB
+
 # ---------------------------------------------------------------------------
 # Organization  (ADR-003 primary isolation boundary)
 # ---------------------------------------------------------------------------
@@ -54,6 +59,7 @@ class User(TimestampMixin, Base):
     external_auth_id: Mapped[str | None] = mapped_column(Text, unique=True)
     email: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
     display_name: Mapped[str | None] = mapped_column(Text)
+    disabled_at: Mapped[datetime | None] = mapped_column(nullable=True)
 
     memberships: Mapped[list["Membership"]] = relationship(back_populates="user")
 
@@ -153,6 +159,110 @@ class Revision(Base):
 
 
 # ---------------------------------------------------------------------------
+# Collaboration and review (Phase 11 — append-only review records)
+# ---------------------------------------------------------------------------
+VALID_REVIEW_VIEWS = ("technical", "presentation")
+VALID_REVIEW_ANCHORS = (
+    "room",
+    "space",
+    "wall",
+    "opening",
+    "dimension",
+    "validation-finding",
+    "render-viewpoint",
+)
+VALID_APPROVAL_STATES = (
+    "Draft",
+    "Review",
+    "Client Presentation",
+    "Preliminary Coordination",
+    "Not Issuable",
+)
+
+
+class ReviewLink(Base):
+    """Immutable bearer link pinned to one project revision."""
+
+    __tablename__ = "review_links"
+    __table_args__ = (
+        UniqueConstraint("token_hash"),
+        CheckConstraint("view IN ('technical','presentation')", name="ck_review_link_view"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("projects.id", ondelete="RESTRICT"), nullable=False
+    )
+    revision_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("revisions.id", ondelete="RESTRICT"), nullable=False
+    )
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    view: Mapped[str] = mapped_column(String(20), nullable=False)
+    created_by_user_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
+    )
+    expires_at: Mapped[datetime | None] = mapped_column(nullable=True)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+
+
+class ReviewComment(Base):
+    """Append-only comment anchored to a pinned revision."""
+
+    __tablename__ = "review_comments"
+    __table_args__ = (
+        CheckConstraint(
+            "anchor_type IN ('room','space','wall','opening','dimension',"
+            "'validation-finding','render-viewpoint')",
+            name="ck_review_comment_anchor_type",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("projects.id", ondelete="RESTRICT"), nullable=False
+    )
+    revision_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("revisions.id", ondelete="RESTRICT"), nullable=False
+    )
+    author_user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="RESTRICT"), nullable=False
+    )
+    anchor_type: Mapped[str] = mapped_column(String(30), nullable=False)
+    anchor_id: Mapped[str] = mapped_column(String(200), nullable=False)
+    viewpoint: Mapped[dict] = mapped_column(JSON_TYPE, nullable=False, default=dict)
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="open")
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+
+
+class ReviewApproval(Base):
+    """Immutable approval-state event; current state is the latest event."""
+
+    __tablename__ = "review_approvals"
+    __table_args__ = (
+        CheckConstraint(
+            "state IN ('Draft','Review','Client Presentation',"
+            "'Preliminary Coordination','Not Issuable')",
+            name="ck_review_approval_state",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("projects.id", ondelete="RESTRICT"), nullable=False
+    )
+    revision_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("revisions.id", ondelete="RESTRICT"), nullable=False
+    )
+    reviewer_user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="RESTRICT"), nullable=False
+    )
+    state: Mapped[str] = mapped_column(String(30), nullable=False)
+    note: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+
+
+# ---------------------------------------------------------------------------
 # Job
 # ---------------------------------------------------------------------------
 VALID_JOB_TYPES = ("generate", "validate", "enrich", "quality_gate", "export", "benchmark")
@@ -183,7 +293,7 @@ class Job(Base):
     type: Mapped[str] = mapped_column(String(30), nullable=False)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="queued")
     progress: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    payload: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    payload: Mapped[dict] = mapped_column(JSON_TYPE, nullable=False, default=dict)
     error: Mapped[str | None] = mapped_column(Text)
     created_by_user_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
@@ -238,6 +348,6 @@ class AuditEvent(Base):
     action: Mapped[str] = mapped_column(Text, nullable=False)
     resource_type: Mapped[str] = mapped_column(Text, nullable=False)
     resource_id: Mapped[str | None] = mapped_column(Text)
-    payload: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    payload: Mapped[dict] = mapped_column(JSON_TYPE, nullable=False, default=dict)
     request_id: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)

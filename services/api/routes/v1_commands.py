@@ -24,6 +24,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from services.api.auth import AuthUser, require_editor
+from services.api.authorization import require_project_editor
 from services.api.db.session import get_session
 from services.api.repository_sql import (
     SqlAuditRepository,
@@ -230,7 +231,7 @@ def preview_command(
     req: CommandRequest,
     response: Response,
     user: AuthUser,
-    _editor: Any = require_editor,
+    _editor: Any = require_project_editor,
     if_match: Annotated[str | None, Header(alias="if-match")] = None,
     session: Session = Depends(get_session),
 ) -> CommandPreviewResponse:
@@ -275,7 +276,7 @@ def commit_command(
     req: CommandRequest,
     response: Response,
     user: AuthUser,
-    _editor: Any = require_editor,
+    _editor: Any = require_project_editor,
     idempotency_key: Annotated[str | None, Header(alias="idempotency-key")] = None,
     if_match: Annotated[str | None, Header(alias="if-match")] = None,
     session: Session = Depends(get_session),

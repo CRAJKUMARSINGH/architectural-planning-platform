@@ -1,0 +1,26 @@
+{
+  "phase": "phase4-authentication-and-tenancy",
+  "requiredTokenValidation": [
+    "oidc_issuer",
+    "audience",
+    "jwks_signature",
+    "expiry",
+    "clock_skew",
+    "key_rotation",
+    "organization_membership",
+    "role_claim",
+    "disabled_user_state"
+  ],
+  "roles": {
+    "owner": ["viewer", "reviewer", "editor", "owner"],
+    "editor": ["viewer", "reviewer", "editor"],
+    "reviewer": ["viewer", "reviewer"],
+    "viewer": ["viewer"]
+  },
+  "denyCases": [
+    "missing_membership",
+    "disabled_user",
+    "token_role_higher_than_membership",
+    "auth_disabled_in_production"
+  ]
+}

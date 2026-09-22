@@ -9,6 +9,11 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from services.api.auth import AuthUser, require_editor, require_owner
+from services.api.authorization import (
+    require_project_editor,
+    require_project_owner,
+    require_project_viewer,
+)
 from services.api.db.session import get_session
 from services.api.repository_sql import SqlAuditRepository, SqlJobRepository, SqlProjectRepository, SqlRevisionRepository
 
@@ -73,7 +78,7 @@ def list_projects(user: AuthUser, session: Session = Depends(get_session)):
 def create_project(
     req: ProjectCreateRequest,
     user: AuthUser,
-    _: Any = require_editor,
+    _: Any = require_project_editor,
     session: Session = Depends(get_session),
 ):
     repo = SqlProjectRepository(session)
@@ -95,6 +100,7 @@ def create_project(
 def get_project(
     project_id: uuid.UUID,
     user: AuthUser,
+    _: Any = require_project_viewer,
     session: Session = Depends(get_session),
 ):
     repo = SqlProjectRepository(session)
@@ -108,7 +114,7 @@ def get_project(
 def delete_project(
     project_id: uuid.UUID,
     user: AuthUser,
-    _: Any = require_owner,
+    _: Any = require_project_owner,
     session: Session = Depends(get_session),
 ):
     repo = SqlProjectRepository(session)
@@ -129,7 +135,7 @@ def enqueue_job(
     project_id: uuid.UUID,
     req: JobEnqueueRequest,
     user: AuthUser,
-    _: Any = require_editor,
+    _: Any = require_project_editor,
     session: Session = Depends(get_session),
 ):
     # Verify org access
@@ -171,6 +177,7 @@ def get_job(
     project_id: uuid.UUID,
     job_id: uuid.UUID,
     user: AuthUser,
+    _: Any = require_project_viewer,
     session: Session = Depends(get_session),
 ):
     # Verify org access
@@ -190,6 +197,7 @@ def list_revisions(
     project_id: uuid.UUID,
     user: AuthUser,
     response: Response,
+    _: Any = require_project_viewer,
     session: Session = Depends(get_session),
 ):
     proj_repo = SqlProjectRepository(session)

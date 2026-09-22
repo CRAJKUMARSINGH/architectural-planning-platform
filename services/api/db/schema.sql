@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS users (
     external_auth_id TEXT UNIQUE,            -- from IdP (Clerk / Keycloak)
     email            TEXT NOT NULL UNIQUE,
     display_name     TEXT,
+    disabled_at      TIMESTAMPTZ,
     created_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
     deleted_at       TIMESTAMPTZ
@@ -137,6 +138,49 @@ CREATE TABLE IF NOT EXISTS audit_events (
 );
 
 -- ---------------------------------------------------------------------------
+-- Collaboration and review (Phase 11 — append-only records)
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS review_links (
+    id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id         UUID NOT NULL REFERENCES projects(id) ON DELETE RESTRICT,
+    revision_id        UUID NOT NULL REFERENCES revisions(id) ON DELETE RESTRICT,
+    token_hash         TEXT NOT NULL UNIQUE,
+    view               TEXT NOT NULL CHECK (view IN ('technical', 'presentation')),
+    created_by_user_id UUID REFERENCES users(id),
+    expires_at         TIMESTAMPTZ,
+    created_at         TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS review_comments (
+    id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id       UUID NOT NULL REFERENCES projects(id) ON DELETE RESTRICT,
+    revision_id      UUID NOT NULL REFERENCES revisions(id) ON DELETE RESTRICT,
+    author_user_id   UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+    anchor_type      TEXT NOT NULL CHECK (anchor_type IN (
+        'room', 'space', 'wall', 'opening', 'dimension',
+        'validation-finding', 'render-viewpoint'
+    )),
+    anchor_id        TEXT NOT NULL,
+    viewpoint        JSONB NOT NULL DEFAULT '{}',
+    body             TEXT NOT NULL,
+    status           TEXT NOT NULL DEFAULT 'open',
+    created_at       TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS review_approvals (
+    id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id        UUID NOT NULL REFERENCES projects(id) ON DELETE RESTRICT,
+    revision_id       UUID NOT NULL REFERENCES revisions(id) ON DELETE RESTRICT,
+    reviewer_user_id  UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+    state             TEXT NOT NULL CHECK (state IN (
+        'Draft', 'Review', 'Client Presentation',
+        'Preliminary Coordination', 'Not Issuable'
+    )),
+    note              TEXT,
+    created_at        TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- ---------------------------------------------------------------------------
 -- Indexes
 -- ---------------------------------------------------------------------------
 CREATE INDEX IF NOT EXISTS idx_projects_org         ON projects(organization_id);
@@ -151,6 +195,12 @@ CREATE INDEX IF NOT EXISTS idx_audit_org_created    ON audit_events(organization
 CREATE INDEX IF NOT EXISTS idx_audit_actor          ON audit_events(actor_user_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_memberships_user     ON memberships(user_id);
 CREATE INDEX IF NOT EXISTS idx_memberships_org      ON memberships(organization_id);
+CREATE INDEX IF NOT EXISTS idx_review_links_project
+    ON review_links(project_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_review_comments_project_revision
+    ON review_comments(project_id, revision_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_review_approvals_project_created
+    ON review_approvals(project_id, created_at);
 
 -- ---------------------------------------------------------------------------
 -- Dev seed: local single-developer org + user (non-production only)

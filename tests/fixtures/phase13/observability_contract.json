@@ -1,0 +1,28 @@
+{
+  "version": "phase13.observability-contract.v1",
+  "correlationFields": [
+    "request_id",
+    "trace_id",
+    "job_id",
+    "revision_id",
+    "org_id"
+  ],
+  "measuredStages": [
+    "brief_compilation",
+    "quick_validation",
+    "full_validation",
+    "revision_creation",
+    "render_2d",
+    "scene_load_3d",
+    "server_render",
+    "dxf_export",
+    "pdf_export",
+    "artifact_upload"
+  ],
+  "securityRules": [
+    "arbitrary inbound headers are never echoed",
+    "correlation identifiers are bounded to safe characters",
+    "request and trace identifiers are returned on every response",
+    "logs do not include authorization or cookie headers"
+  ]
+}

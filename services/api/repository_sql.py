@@ -12,7 +12,16 @@ from typing import Any
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
-from .models.orm import Artifact, AuditEvent, Job, Project, Revision
+from .models.orm import (
+    Artifact,
+    AuditEvent,
+    Job,
+    Project,
+    ReviewApproval,
+    ReviewComment,
+    ReviewLink,
+    Revision,
+)
 
 
 def _row(obj: Any) -> dict[str, Any]:
@@ -102,6 +111,17 @@ class SqlProjectRepository:
 class SqlRevisionRepository:
     def __init__(self, session: Session) -> None:
         self._s = session
+
+    def get_for_project(
+        self, project_id: uuid.UUID, revision_id: uuid.UUID
+    ) -> dict[str, Any] | None:
+        row = self._s.scalar(
+            select(Revision).where(
+                Revision.id == revision_id,
+                Revision.project_id == project_id,
+            )
+        )
+        return _row(row) if row else None
 
     def create(
         self,
@@ -297,3 +317,114 @@ class SqlAuditRepository:
         q = select(AuditEvent).where(AuditEvent.organization_id == org_id)
         rows = self._s.scalars(q.order_by(AuditEvent.created_at.desc()).limit(limit)).all()
         return [_row(r) for r in rows]
+
+
+# ---------------------------------------------------------------------------
+# Collaboration and review
+# ---------------------------------------------------------------------------
+class SqlCollaborationRepository:
+    """Persist review records while keeping them scoped to a project revision."""
+
+    def __init__(self, session: Session) -> None:
+        self._s = session
+
+    def create_review_link(
+        self,
+        project_id: uuid.UUID,
+        revision_id: uuid.UUID,
+        token_hash: str,
+        view: str,
+        created_by_user_id: uuid.UUID,
+        expires_at: datetime | None = None,
+    ) -> dict[str, Any]:
+        link = ReviewLink(
+            project_id=project_id,
+            revision_id=revision_id,
+            token_hash=token_hash,
+            view=view,
+            created_by_user_id=created_by_user_id,
+            expires_at=expires_at,
+        )
+        self._s.add(link)
+        self._s.flush()
+        return _row(link)
+
+    def list_review_links(self, project_id: uuid.UUID) -> list[dict[str, Any]]:
+        rows = self._s.scalars(
+            select(ReviewLink)
+            .where(ReviewLink.project_id == project_id)
+            .order_by(ReviewLink.created_at.desc())
+        ).all()
+        return [_row(row) for row in rows]
+
+    def get_review_link_by_hash(self, token_hash: str) -> dict[str, Any] | None:
+        row = self._s.scalar(select(ReviewLink).where(ReviewLink.token_hash == token_hash))
+        return _row(row) if row else None
+
+    def create_comment(
+        self,
+        project_id: uuid.UUID,
+        revision_id: uuid.UUID,
+        author_user_id: uuid.UUID,
+        anchor_type: str,
+        anchor_id: str,
+        body: str,
+        viewpoint: dict[str, Any] | None,
+    ) -> dict[str, Any]:
+        comment = ReviewComment(
+            project_id=project_id,
+            revision_id=revision_id,
+            author_user_id=author_user_id,
+            anchor_type=anchor_type,
+            anchor_id=anchor_id,
+            body=body,
+            viewpoint=viewpoint or {},
+        )
+        self._s.add(comment)
+        self._s.flush()
+        return _row(comment)
+
+    def list_comments(
+        self, project_id: uuid.UUID, revision_id: uuid.UUID | None = None
+    ) -> list[dict[str, Any]]:
+        query = select(ReviewComment).where(ReviewComment.project_id == project_id)
+        if revision_id is not None:
+            query = query.where(ReviewComment.revision_id == revision_id)
+        rows = self._s.scalars(query.order_by(ReviewComment.created_at.asc())).all()
+        return [_row(row) for row in rows]
+
+    def latest_approval(self, project_id: uuid.UUID) -> dict[str, Any] | None:
+        row = self._s.scalar(
+            select(ReviewApproval)
+            .where(ReviewApproval.project_id == project_id)
+            .order_by(ReviewApproval.created_at.desc())
+            .limit(1)
+        )
+        return _row(row) if row else None
+
+    def list_approvals(self, project_id: uuid.UUID) -> list[dict[str, Any]]:
+        rows = self._s.scalars(
+            select(ReviewApproval)
+            .where(ReviewApproval.project_id == project_id)
+            .order_by(ReviewApproval.created_at.asc())
+        ).all()
+        return [_row(row) for row in rows]
+
+    def create_approval(
+        self,
+        project_id: uuid.UUID,
+        revision_id: uuid.UUID,
+        reviewer_user_id: uuid.UUID,
+        state: str,
+        note: str | None,
+    ) -> dict[str, Any]:
+        approval = ReviewApproval(
+            project_id=project_id,
+            revision_id=revision_id,
+            reviewer_user_id=reviewer_user_id,
+            state=state,
+            note=note,
+        )
+        self._s.add(approval)
+        self._s.flush()
+        return _row(approval)
