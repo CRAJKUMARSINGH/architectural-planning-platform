@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ArtifactPanel } from './components/ArtifactPanel';
+import { CommandPanel } from './components/CommandPanel';
 import { ProductModePanel } from './components/ProductModePanel';
 import { ProjectLevelSelector } from './components/ProjectLevelSelector';
 import { PropertyInspector } from './components/PropertyInspector';
@@ -439,6 +440,7 @@ function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft
         </main>
         <aside className="studio-sidebar studio-sidebar--right">
           <PropertyInspector projectId={projectId} level={level} selectedId={selectedId} />
+          <CommandPanel projectId={projectId} level={level} selectedId={selectedId} />
         </aside>
       </div>
     </div>
