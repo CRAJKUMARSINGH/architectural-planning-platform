@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "phase": "15-ai-assisted-generative-space-planning",
+  "contractVersion": "phase15.scope-stub.v1",
+  "status": "PENDING_PRODUCT_OWNER_SPECIFICATION",
+  "title": "Phase 15 — AI-Assisted Generative Space Planning & Architectural Co-Pilot",
+  "scopeDescription": "Target scope reserved for LLM-assisted brief-to-program synthesis, programmatic adjacency optimization, automated spatial candidate layout exploration, and human-in-the-loop review workflow.",
+  "deliverables": [
+    "Brief-to-program semantic parser",
+    "Spatial adjacency graph solver",
+    "Candidate layout generator with confidence scoring",
+    "Human review and edit acceptance gate"
+  ],
+  "exitCriteria": [
+    "Product owner defines AI copilot interaction model and safety boundaries",
+    "Generative layout contracts approved with non-destructive guarantees",
+    "Regression fixtures committed"
+  ]
+}
