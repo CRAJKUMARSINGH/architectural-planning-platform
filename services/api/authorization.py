@@ -70,3 +70,4 @@ def require_membership_role(minimum_role: str) -> Any:
 require_project_viewer = require_membership_role("viewer")
 require_project_editor = require_membership_role("editor")
 require_project_owner = require_membership_role("owner")
+require_project_reviewer = require_membership_role("reviewer")

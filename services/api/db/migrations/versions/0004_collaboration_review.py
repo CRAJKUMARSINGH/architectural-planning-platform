@@ -16,7 +16,7 @@ def upgrade() -> None:
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()")),
         sa.Column("project_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("projects.id", ondelete="RESTRICT"), nullable=False),
         sa.Column("revision_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("revisions.id", ondelete="RESTRICT"), nullable=False),
-        sa.Column("token_hash", sa.String(64), nullable=False, unique=True),
+        sa.Column("token_hash", sa.String(64), nullable=False),
         sa.Column("view", sa.String(20), nullable=False),
         sa.Column("created_by_user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=True),
         sa.Column("expires_at", sa.DateTime(timezone=True), nullable=True),

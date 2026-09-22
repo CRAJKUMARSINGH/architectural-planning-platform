@@ -21,6 +21,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, ConfigDict
 
 from services.api.auth import assert_auth_configuration
+from services.api.routes.v1_collaboration import (
+    public_router as collaboration_public_router,
+    router as collaboration_router,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 BA_HALL = ROOT / "bar-association-hall"
@@ -160,6 +164,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Phase 11 durable review API.  The legacy prototype endpoints below remain
+# available for the editor transition, while new collaboration records use
+# the authenticated /api/v1 surface.
+app.include_router(collaboration_router, prefix="/api")
+app.include_router(collaboration_public_router, prefix="/api")
 
 
 # ---------------------------------------------------------------------------

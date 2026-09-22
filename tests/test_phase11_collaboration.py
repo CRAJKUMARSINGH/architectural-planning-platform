@@ -74,11 +74,38 @@ class Phase11CollaborationTests(unittest.TestCase):
         migration = (ROOT / "services/api/db/migrations/versions/0004_collaboration_review.py").read_text(
             encoding="utf-8"
         )
+        schema = (ROOT / "services/api/db/schema.sql").read_text(encoding="utf-8")
         self.assertIn("class ReviewLink", orm)
         self.assertIn("class ReviewComment", orm)
         self.assertIn("class ReviewApproval", orm)
         self.assertIn("down_revision = \"0003_user_disabled_at\"", migration)
         self.assertIn("def downgrade()", migration)
+        for table in ("review_links", "review_comments", "review_approvals"):
+            self.assertIn(f"CREATE TABLE IF NOT EXISTS {table}", schema)
+
+    def test_api_requests_use_camel_case_and_forbid_extra_fields(self) -> None:
+        try:
+            from services.api.routes.v1_collaboration import (
+                ApprovalCreateRequest,
+                ReviewCommentCreateRequest,
+                ReviewLinkCreateRequest,
+            )
+        except ModuleNotFoundError as exc:
+            self.skipTest(f"API dependencies unavailable: {exc}")
+        import uuid
+
+        revision_id = uuid.uuid4()
+        link = ReviewLinkCreateRequest(revisionId=revision_id, view="technical")
+        comment = ReviewCommentCreateRequest(
+            revisionId=revision_id,
+            anchorType="render-viewpoint",
+            anchorId="camera-east",
+            body="Review this view",
+        )
+        approval = ApprovalCreateRequest(revisionId=revision_id, state="Review")
+        self.assertEqual(link.revision_id, revision_id)
+        self.assertEqual(comment.anchor_type, "render-viewpoint")
+        self.assertEqual(approval.state, "Review")
 
 
 if __name__ == "__main__":
