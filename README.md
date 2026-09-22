@@ -1,5 +1,55 @@
 # Advocate-Chambers — Architectural Planning Platform
 
+## Implementation Status (September 2026)
+
+| Phase | Name | Status |
+|---|---|---|
+| 0–3 | Contract, model, commands, revisions | ✅ Done |
+| 4 | Auth + OIDC deployment | ✅ Done |
+| 5–6 | Versioned API, durable jobs | ✅ Done |
+| 7 | 2D editor typed command dispatch | ✅ Done |
+| 8–10 | Rendering, import, delivery | ✅ Done |
+| 11–13 | Collaboration, testing, observability | ✅ Done |
+| **14** | **AI Brief Analysis (Gemini 2.5 Flash)** | **✅ Done** |
+| 15 | Concept Canvas (Archi-Copilot port) | 📋 Next |
+| 16 | AI Version Scoring | 📋 Planned |
+
+**Test suite: 684 passed, 0 failed** · TypeScript: 0 errors
+
+See [`creat.md`](creat.md) for the full session log.
+See [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) for the roadmap.
+See [`docs/ARCHI_COPILOT_INTEGRATION_PLAN.md`](docs/ARCHI_COPILOT_INTEGRATION_PLAN.md) for Archi-Copilot integration.
+
+---
+
+## Phase 14 — AI Brief Analysis
+
+Endpoints (all require auth):
+
+```
+POST /api/v1/ai/analyze-brief        # Gemini → structured space program
+POST /api/v1/ai/score-version        # Gemini → 0–100 scores vs brief
+POST /api/v1/ai/generate-suggestions # Gemini → categorised suggestions
+GET  /api/v1/ai/health               # SDK + key availability check
+```
+
+Set `GEMINI_API_KEY` as an environment secret. The service degrades gracefully when absent — all other functionality is unaffected.
+
+---
+
+## Running
+
+```bash
+python -m pytest tests/ -q          # full test suite
+AUTH_DISABLED=true uvicorn services.api.main:app --reload
+cd apps/web && npm run dev
+cd apps/web && npm run typecheck
+```
+
+---
+
+*Preliminary planning material — not construction, permit, or authority certification.*
+
 ## Implementation Status
 
 | Phase | Name | Status |
