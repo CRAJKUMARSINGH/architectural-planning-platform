@@ -230,3 +230,169 @@ def list_revisions(
         )
         for r in revisions
     ]
+
+
+# ---------------------------------------------------------------------------
+# Phase 5 vertical slice — canonical analysis endpoint (ticket #9 + #12)
+# ---------------------------------------------------------------------------
+
+class AnalysisResponse(BaseModel):
+    """Versioned canonical analysis — drives the Viewport2D component."""
+    reportVersion: str = ""
+    status: str = "unavailable"
+    spaces: list[dict[str, Any]] = Field(default_factory=list)
+    graph: dict[str, Any] = Field(default_factory=dict)
+    openings: list[dict[str, Any]] = Field(default_factory=list)
+    findings: list[dict[str, Any]] = Field(default_factory=list)
+    findingCounts: dict[str, int] = Field(default_factory=dict)
+    # Optional enriched fields — present when the geometry engine is available
+    week5: dict[str, Any] | None = None
+    week6: dict[str, Any] | None = None
+    connectors: list[dict[str, Any]] | None = None
+    program: dict[str, Any] | None = None
+    orientation: dict[str, Any] | None = None
+    adjacencies: list[dict[str, Any]] | None = None
+    week7: dict[str, Any] | None = None
+    week8: dict[str, Any] | None = None
+    rulePack: dict[str, Any] | None = None
+    drawingQuality: dict[str, Any] | None = None
+
+    model_config = {"extra": "allow"}
+
+
+@router.get("/{project_id}/analysis", response_model=AnalysisResponse)
+def get_project_analysis(
+    project_id: uuid.UUID,
+    level: str | None = None,
+    user: AuthUser = None,  # type: ignore[assignment]
+    _: Any = require_project_viewer,
+    session: Session = Depends(get_session),
+) -> AnalysisResponse:
+    """Return the canonical geometry analysis for a project level.
+
+    This is the versioned, auth-protected replacement for the legacy /analysis
+    endpoint.  The React Viewport2D component calls this route.
+
+    When the geometry engine is available the response includes the full
+    Week 3–8 enrichment graph.  When the engine is unavailable the endpoint
+    returns an unavailable sentinel so the UI can render a graceful fallback
+    instead of surfacing a 503.
+    """
+    # --- org access guard ------------------------------------------------
+    proj_repo = SqlProjectRepository(session)
+    proj = proj_repo.get(project_id, user.org_id)
+    if not proj:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # --- geometry engine ------------------------------------------------
+    # The actual analysis is produced by the week34/56/78 enrichment pipeline
+    # living in scripts/.  We delegate to the legacy /analysis logic rather
+    # than duplicate it, keeping a single source of truth.
+    import sys  # noqa: PLC0415
+    from pathlib import Path as _Path  # noqa: PLC0415
+
+    _root = _Path(__file__).resolve().parents[3]
+    _ba = _root / "bar-association-hall"
+    for _p in (str(_root / "scripts"), str(_ba)):
+        if _p not in sys.path:
+            sys.path.insert(0, _p)
+
+    try:
+        from drawing_model import load_model  # type: ignore[import]  # noqa: PLC0415
+        from week34 import enrichment_report  # type: ignore[import]  # noqa: PLC0415
+        from week56 import enrichment_report as week56_report  # type: ignore[import]  # noqa: PLC0415
+        from week78 import enrichment_report as week78_report  # type: ignore[import]  # noqa: PLC0415
+        from week2 import load_canonical_model  # type: ignore[import]  # noqa: PLC0415
+    except ImportError:
+        # Geometry engine not available — return a well-structured unavailable
+        # sentinel rather than a 503 so the viewport degrades gracefully.
+        return AnalysisResponse(
+            status="engine-unavailable",
+            graph={"nodes": [], "edges": [], "routes": []},
+        )
+
+    try:
+        site, plans = load_model()
+        report = enrichment_report(site, plans)
+        canonical = load_canonical_model()
+        coordination = week56_report(canonical)
+        enriched = week78_report(canonical)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"analysis failed: {exc}") from exc
+
+    # --- filter by level -----------------------------------------------
+    selected_level = level if level in {"GF", "FF"} else None
+
+    spaces = [
+        {
+            "id": space.get("id"),
+            "levelId": space.get("level"),
+            "name": space.get("name"),
+            "rect": space.get("rect"),
+            "roomUse": space.get("roomUse"),
+        }
+        for space in plans.get("spaces", [])
+        if selected_level is None or space.get("level") == selected_level
+    ]
+
+    graph = report["week3"]["graph"]
+    graph["nodes"] = [
+        node for node in graph["nodes"]
+        if selected_level is None
+        or node.get("levelId") == selected_level
+        or node.get("kind") == "exterior-zone"
+    ]
+    node_ids = {node["id"] for node in graph["nodes"]}
+    graph["edges"] = [
+        edge for edge in graph["edges"]
+        if edge.get("from") in node_ids and edge.get("to") in node_ids
+    ]
+    graph["routes"] = [
+        route for route in graph["routes"]
+        if selected_level is None or route.get("levelId") == selected_level
+    ]
+
+    schedule = [
+        item for item in report["week4"]["schedule"]
+        if selected_level is None or item.get("levelId") == selected_level
+    ]
+    findings: list[dict[str, Any]] = [
+        f for f in report["findings"]
+        if selected_level is None or f.get("levelId") == selected_level
+    ]
+    findings.extend(
+        f for f in (
+            coordination["week5"]["findings"] + coordination["week6"]["findings"]
+        )
+        if selected_level is None or f.get("levelId") in {None, selected_level}
+    )
+    findings.extend(
+        f for f in (
+            enriched["week7"]["findings"] + enriched["week8"]["findings"]
+        )
+        if selected_level is None or f.get("levelId") in {None, selected_level}
+    )
+
+    return AnalysisResponse(
+        reportVersion=enriched.get("reportVersion", ""),
+        status=enriched.get("status", "REVIEW_REQUIRED"),
+        findingCounts={
+            sev: sum(1 for f in findings if f["severity"] == sev)
+            for sev in ("BLOCKER", "ERROR", "WARNING")
+            if any(f["severity"] == sev for f in findings)
+        },
+        spaces=spaces,
+        graph=graph,
+        openings=schedule,
+        findings=findings,
+        week5=coordination.get("week5"),
+        week6=coordination.get("week6"),
+        connectors=coordination.get("week5", {}).get("connectors"),
+        program=coordination.get("week6", {}).get("program"),
+        orientation=coordination.get("week6", {}).get("program", {}).get("orientation"),
+        adjacencies=coordination.get("week6", {}).get("program", {}).get("adjacencyEvaluations"),
+        week7=enriched.get("week7"),
+        week8=enriched.get("week8"),
+        rulePack=enriched.get("week7", {}).get("selectedRulePack"),
+        drawingQuality=enriched.get("week8"),
+    )

@@ -1,0 +1,20 @@
+{
+  "version": "phase5.analysis-contract.v1",
+  "description": "Contract for GET /api/v1/projects/{id}/analysis — Phase 5 vertical slice ticket #9 and #12",
+  "routePattern": "/api/v1/projects/{project_id}/analysis",
+  "queryParams": ["level"],
+  "requiredResponseFields": ["status", "spaces", "graph", "openings", "findings"],
+  "graphRequiredFields": ["nodes", "edges", "routes"],
+  "validLevels": ["GF", "FF"],
+  "gracefulDegradation": {
+    "engineUnavailable": {
+      "status": "engine-unavailable",
+      "graphEmpty": true
+    }
+  },
+  "authRequired": true,
+  "minimumRole": "viewer",
+  "cacheKey": "['analysis', projectId, level]",
+  "frontendComponent": "apps/web/src/components/Viewport2D.tsx",
+  "legacyFallback": "/analysis"
+}

@@ -57,9 +57,15 @@ export function Viewport2D({ projectId, level, selectedId, onSelect }: Props): R
   const analysis = useQuery<Analysis>({
     queryKey: ['analysis', projectId, level],
     queryFn: async () => {
-      const response = await fetch(`/analysis?level=${level}`);
-      if (!response.ok) throw new Error('Analysis API unavailable');
-      return (await response.json()) as Analysis;
+      // Phase 5 vertical slice — use versioned project-scoped analysis endpoint.
+      // Falls back to the legacy /analysis if the versioned route returns 404
+      // (e.g. during the migration window).
+      const versioned = await fetch(`/api/v1/projects/${projectId}/analysis?level=${level}`);
+      if (versioned.ok) return (await versioned.json()) as Analysis;
+      // Legacy fallback
+      const legacy = await fetch(`/analysis?level=${level}`);
+      if (!legacy.ok) throw new Error('Analysis API unavailable');
+      return (await legacy.json()) as Analysis;
     },
   });
   const data = analysis.data ?? FALLBACK;
