@@ -296,9 +296,11 @@ class TestPhase7PreviewRoute(unittest.TestCase):
         import services.api.auth as _auth
         self._auth_patch = patch.object(_auth, "AUTH_DISABLED", True)
         self._auth_patch.start()
+        import os as _os_p7; _os_p7.environ["AUTH_DISABLED"] = "true"
 
     def tearDown(self):
         self._auth_patch.stop()
+        import os as _os_p7td; _os_p7td.environ.pop("AUTH_DISABLED", None)
         for p in self._patches:
             p.stop()
 
@@ -432,9 +434,11 @@ class TestPhase7CommitRoute(unittest.TestCase):
         import services.api.auth as _auth
         self._auth_patch = patch.object(_auth, "AUTH_DISABLED", True)
         self._auth_patch.start()
+        import os as _os_p7; _os_p7.environ["AUTH_DISABLED"] = "true"
 
     def tearDown(self):
         self._auth_patch.stop()
+        import os as _os_p7td; _os_p7td.environ.pop("AUTH_DISABLED", None)
         for p in self._patches:
             p.stop()
 
