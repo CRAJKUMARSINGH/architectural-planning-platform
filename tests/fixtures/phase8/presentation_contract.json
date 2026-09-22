@@ -1,0 +1,32 @@
+{
+  "version": "phase8.presentation-contract.v1",
+  "cameraPresets": [
+    "top-down-plan",
+    "axonometric-east-front",
+    "perspective-courtyard",
+    "isometric-overview"
+  ],
+  "styleVersions": [
+    "presentation-residential-v1",
+    "presentation-commercial-v1"
+  ],
+  "assetCatalogVersion": "assets-v3",
+  "requiredManifestFields": [
+    "schemaVersion",
+    "manifestId",
+    "modelSha256",
+    "rendererVersion",
+    "styleVersion",
+    "assetCatalogVersion",
+    "camera",
+    "output",
+    "seed",
+    "presentationOnly"
+  ],
+  "rules": {
+    "presentationCannotMutateGeometry": true,
+    "manifestMustValidateAgainstSchema": true,
+    "rendersMustIncludeDisclaimer": true,
+    "assetsMustHaveClearanceEnvelopes": true
+  }
+}
