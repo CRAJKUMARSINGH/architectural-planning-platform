@@ -20,6 +20,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, ConfigDict
 
+from services.api.auth import assert_auth_configuration
+
 ROOT = Path(__file__).resolve().parents[2]
 BA_HALL = ROOT / "bar-association-hall"
 SCHEMA_PATH = ROOT / "packages" / "schema" / "project-v2.schema.json"
@@ -144,6 +146,12 @@ app = FastAPI(
     ),
     version="1.0.0-week20",
 )
+
+
+@app.on_event("startup")
+def validate_auth_configuration() -> None:
+    """Reject unsafe auth settings before accepting any API traffic."""
+    assert_auth_configuration()
 
 app.add_middleware(
     CORSMiddleware,

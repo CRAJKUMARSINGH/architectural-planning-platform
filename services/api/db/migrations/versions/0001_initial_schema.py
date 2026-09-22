@@ -35,6 +35,7 @@ def upgrade() -> None:
         sa.Column("external_auth_id", sa.Text, unique=True),
         sa.Column("email", sa.Text, nullable=False, unique=True),
         sa.Column("display_name", sa.Text),
+        sa.Column("disabled_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
         sa.Column("deleted_at", sa.DateTime(timezone=True), nullable=True),

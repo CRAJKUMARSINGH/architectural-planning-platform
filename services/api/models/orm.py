@@ -46,6 +46,7 @@ class User(TimestampMixin, Base):
     external_auth_id: Mapped[str | None] = mapped_column(Text, unique=True)
     email: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
     display_name: Mapped[str | None] = mapped_column(Text)
+    disabled_at: Mapped[datetime | None] = mapped_column(nullable=True)
 
     memberships: Mapped[list["Membership"]] = relationship(back_populates="user")
 

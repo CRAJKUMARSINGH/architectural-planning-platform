@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS users (
     external_auth_id TEXT UNIQUE,            -- from IdP (Clerk / Keycloak)
     email            TEXT NOT NULL UNIQUE,
     display_name     TEXT,
+    disabled_at      TIMESTAMPTZ,
     created_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
     deleted_at       TIMESTAMPTZ
