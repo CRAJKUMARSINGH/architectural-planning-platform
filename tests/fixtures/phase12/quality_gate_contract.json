@@ -1,0 +1,65 @@
+{
+  "version": "phase12.quality-gate-contract.v1",
+  "categories": [
+    {
+      "id": "command-unit",
+      "status": "covered",
+      "testPaths": ["tests/test_phase2_commands.py"]
+    },
+    {
+      "id": "topology-and-openings",
+      "status": "covered",
+      "testPaths": ["tests/test_week34_enrichment.py"]
+    },
+    {
+      "id": "stairs-routes-and-areas",
+      "status": "covered",
+      "testPaths": ["tests/test_week56_enrichment.py", "tests/test_week78_enrichment.py"]
+    },
+    {
+      "id": "unit-conversion-and-serialization",
+      "status": "covered",
+      "testPaths": ["tests/test_week1112_enrichment.py", "tests/test_phase1_contracts.py"]
+    },
+    {
+      "id": "revision-replay-and-stale-conflict",
+      "status": "covered",
+      "testPaths": ["tests/test_phase3_persistence.py", "tests/test_phase4_authentication.py"]
+    },
+    {
+      "id": "api-contracts-and-tenancy",
+      "status": "covered",
+      "testPaths": ["tests/test_e03_auth_expanded.py", "tests/test_e06_api.py"]
+    },
+    {
+      "id": "worker-retry-and-outage-behavior",
+      "status": "covered",
+      "testPaths": ["tests/test_e04_jobs_expanded.py", "tests/test_e10_stabilization.py"]
+    },
+    {
+      "id": "artifact-hashes-and-migrations",
+      "status": "covered",
+      "testPaths": ["tests/test_e02_persistence.py", "tests/test_e04_jobs.py"]
+    },
+    {
+      "id": "security-upload-and-path-traversal",
+      "status": "covered",
+      "testPaths": ["tests/test_e08_security_expanded.py"]
+    },
+    {
+      "id": "adversarial-quality-gate",
+      "status": "covered",
+      "testPaths": ["tests/test_week22_adversarial.py", "tests/test_week23_adversarial.py"]
+    },
+    {
+      "id": "property-based-geometry",
+      "status": "pending",
+      "testPaths": []
+    },
+    {
+      "id": "playwright-dom-svg-visual-regression",
+      "status": "pending",
+      "testPaths": []
+    }
+  ]
+}
