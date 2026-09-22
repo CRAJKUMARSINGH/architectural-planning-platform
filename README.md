@@ -1,4 +1,73 @@
-# Week 9–10 architectural enrichment — applied
+# Advocate-Chambers — Architectural Planning Platform
+
+## Implementation Status
+
+| Phase | Name | Status |
+|---|---|---|
+| 0 | Product contract | ✅ Done |
+| 1 | Canonical model stabilization | ✅ Done |
+| 2 | Typed command execution (Python) | ✅ Done |
+| 3 | Persistent revisions | ✅ Done |
+| 4 | Auth & tenancy (JWT roles) | 🔶 Partial |
+| 5 | Replace prototype API (/v1 routes) | ✅ Done |
+| 6 | Durable jobs | ✅ Done |
+| **7** | **2D editor typed command dispatch** | **✅ Done** |
+| 8 | Presentation rendering | 🔶 Partial |
+| 9 | Import (DXF/PDF/raster) | 🔶 Partial |
+| 10 | Exports & delivery | 🔶 Partial |
+| 11 | Collaboration & review | 🔶 Partial |
+| 12 | Testing & quality gates | ✅ Done |
+| 13 | Performance & observability | 🔶 Partial |
+
+**Test suite: 543 passed, 0 failed** (as of Phase 7 completion).
+
+See [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) for the full plan.
+See [`creat.md`](creat.md) for the full session development gist.
+
+---
+
+## Phase 5 — Versioned API (`/api/v1/`)
+
+```
+POST /api/v1/projects/{id}/commands/preview   # dry-run, returns findings
+POST /api/v1/projects/{id}/commands/commit    # persists revision
+GET  /api/v1/projects/{id}/revisions          # typed RevisionResponse list
+GET/POST /api/v1/projects/                    # CRUD with org isolation
+```
+
+All writes require `Idempotency-Key`. Both command routes support `If-Match: "Rev:N"`
+and return `ETag: "Rev:N"` for optimistic concurrency.
+
+## Phase 7 — React Command Dispatch
+
+The `CommandPanel` component renders in the studio right sidebar:
+- Operations: `move-opening`, `resize-opening`, `resize-space`, `set-site-orientation`, `add-space`
+- **Preview** → dry-run via `usePreviewCommand`, shows findings
+- **Commit** → persists revision via `useCommitCommand`, invalidates viewport query cache
+- Auto-fills selected object ID from viewport selection
+
+---
+
+## Running
+
+```bash
+# Tests
+python -m pytest tests/ -q
+
+# API (dev)
+AUTH_DISABLED=true uvicorn services.api.main:app --reload
+
+# Frontend
+cd apps/web && npm run dev
+
+# Type check
+cd apps/web && npm run typecheck
+```
+
+---
+
+*Preliminary planning material — not construction, permit, or authority certification.*
+
 
 ## Enterprise Enrichment E01 — foundation slice started
 
