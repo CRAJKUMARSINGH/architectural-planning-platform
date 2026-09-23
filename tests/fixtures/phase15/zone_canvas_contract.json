@@ -1,0 +1,30 @@
+{
+  "version": "phase15.zone-canvas-contract.v1",
+  "description": "Contract for Phase 15 ZoneCanvas — upstream zone-sketch that dispatches add-space commands",
+  "sourceRepo": "https://github.com/CRAJKUMARSINGH/Archi-Copilot",
+  "zoneTypes": ["living", "sleeping", "service", "circulation", "outdoor", "work", "other"],
+  "canvasUnit": {
+    "pixels": 12,
+    "inches": 12,
+    "description": "1 canvas unit = 12 inches = 1 foot"
+  },
+  "commandDispatch": {
+    "operation": "add-space",
+    "requiredParameters": ["spaceId", "levelId", "name", "rect", "roomUse"],
+    "route": "/api/v1/projects/{projectId}/commands/commit",
+    "idempotencyKeyRequired": true,
+    "ifMatchHeader": "optional"
+  },
+  "architecturePrinciple": "Zone blocks are ephemeral UI state. They never directly mutate the canonical model. Only accepted add-space commands produce canonical revisions.",
+  "frontendFile": "apps/web/src/components/ZoneCanvas.tsx",
+  "multiFloor": {
+    "supported": true,
+    "defaultFloor": "Ground Floor",
+    "levelIdConversion": "floor name -> uppercase, spaces to dashes, max 8 chars"
+  },
+  "gridSnap": {
+    "pixels": 24,
+    "feet": 2,
+    "description": "Zones snap to 2-foot grid"
+  }
+}

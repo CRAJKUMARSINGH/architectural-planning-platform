@@ -11,10 +11,12 @@
 | 8–10 | Rendering, import, delivery | ✅ Done |
 | 11–13 | Collaboration, testing, observability | ✅ Done |
 | **14** | **AI Brief Analysis (Gemini 2.5 Flash)** | **✅ Done** |
-| 15 | Concept Canvas (Archi-Copilot port) | 📋 Next |
-| 16 | AI Version Scoring | 📋 Planned |
+| **15** | **Concept Canvas (Archi-Copilot port)** | **✅ Done** |
+| 16 | AI Version Scoring & Tradeoffs | 📋 Next |
+| 17 | Proactive Suggestions | 📋 Planned |
+| 18 | Client Presentation & Export Workflow | 📋 Planned |
 
-**Test suite: 684 passed, 0 failed** · TypeScript: 0 errors
+**Test suite: 718+ passed, 0 failed** · TypeScript: 0 errors
 
 See [`creat.md`](creat.md) for the full session log.
 See [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) for the roadmap.

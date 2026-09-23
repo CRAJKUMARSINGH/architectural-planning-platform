@@ -402,7 +402,7 @@ def compile_brief(text: str, *, default_units: str = "inch") -> dict[str, Any]:
         assumptions.append("No output format was requested; generation should stop at a reviewable brief.")
 
     elapsed_ms = round((time.perf_counter() - started) * 1000, 3)
-    return {
+    result = {
         "compilerVersion": COMPILER_VERSION,
         "input": source,
         "facts": facts,
@@ -413,6 +413,43 @@ def compile_brief(text: str, *, default_units: str = "inch") -> dict[str, Any]:
         "status": "ready" if not missing_topology else "needs-review",
         "performance": {"compileDurationMs": elapsed_ms, "telemetry": "local-only"},
     }
+    return result
+
+
+def compile_brief_with_ai(
+    text: str,
+    *,
+    project_context: dict[str, Any] | None = None,
+    default_units: str = "inch",
+) -> dict[str, Any]:
+    """Compile a brief with AI-assisted enhancement using Gemini API when available."""
+    base_result = compile_brief(text, default_units=default_units)
+    try:
+        from services.ai.ai_service import get_ai_service  # noqa: PLC0415
+        ai_service = get_ai_service()
+        if ai_service.available:
+            ai_analysis = ai_service.analyze_brief(text, project_context=project_context)
+            base_result["aiEnrichment"] = {
+                "version": "ai-brief-analysis.v1",
+                "summary": ai_analysis.summary,
+                "spaceProgram": ai_analysis.space_program,
+                "constraints": ai_analysis.constraints,
+                "opportunities": ai_analysis.opportunities,
+                "openQuestions": ai_analysis.open_questions,
+                "provenance": ai_analysis.provenance,
+                "modelVersion": ai_analysis.model_version,
+            }
+        else:
+            base_result["aiEnrichment"] = {
+                "available": False,
+                "reason": "Gemini SDK not installed or GEMINI_API_KEY not configured",
+            }
+    except Exception as exc:
+        base_result["aiEnrichment"] = {
+            "available": False,
+            "error": str(exc),
+        }
+    return base_result
 
 
 def parse_command(text: str) -> dict[str, Any]:

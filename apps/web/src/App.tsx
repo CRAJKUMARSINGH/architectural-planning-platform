@@ -6,6 +6,7 @@ import { ProjectLevelSelector } from './components/ProjectLevelSelector';
 import { PropertyInspector } from './components/PropertyInspector';
 import { ValidationPanel } from './components/ValidationPanel';
 import { Viewport2D } from './components/Viewport2D';
+import { ZoneCanvas } from './components/ZoneCanvas';
 import './App.css';
 
 type LevelId = 'GF' | 'FF';
@@ -432,6 +433,11 @@ function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft
         <aside className="studio-sidebar">
           <ProductModePanel />
           <ProjectLevelSelector level={level} onChange={setLevel} />
+          <ZoneCanvas
+            projectId={projectId}
+            currentRevision={1}
+            authorId="browser-user"
+          />
           <ValidationPanel projectId={projectId} level={level} />
           <ArtifactPanel projectId={projectId} level={level} />
         </aside>
