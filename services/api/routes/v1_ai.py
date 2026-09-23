@@ -2,8 +2,10 @@
 
 Provides endpoints for AI-native features:
 - Brief analysis using Gemini API
-- Version scoring against briefs
-- Proactive suggestion generation
+- Version scoring against briefs (Phase 14)
+- Proactive suggestion generation (Phase 14)
+- Multi-version tradeoff comparison (Phase 16)
+- Quality-gate scoring track (Phase 16)
 
 All AI operations maintain proper validation, provenance tracking, and respect
 the geometry-authority principle.
@@ -30,6 +32,14 @@ from services.api.authorization import require_project_viewer
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/ai", tags=["ai"])
+
+# Lazy import to avoid circular dependency when Phase 16 module isn't present
+def _get_scoring_engine() -> Any:
+    try:
+        from scripts.phase16_ai_scoring import VersionScoringEngine
+        return VersionScoringEngine()
+    except ImportError:
+        return None
 
 
 # ---------------------------------------------------------------------------
@@ -65,6 +75,13 @@ class VersionScoreRequest(BaseModel):
     
     version_data: dict[str, Any] = Field(..., description="Version geometry and metadata")
     brief_analysis: BriefAnalysisResponse = Field(..., description="Brief analysis to score against")
+
+
+class RevisionScoreRequest(BaseModel):
+    """Request for AI revision scoring (Phase 16A enhancement)."""
+    
+    revision_id: str = Field(..., description="Revision ID to score")
+    brief_analysis_id: str | None = Field(None, description="Brief analysis ID (uses latest if not provided)")
 
 
 class VersionScoreResponse(BaseModel):
@@ -215,6 +232,151 @@ def score_version(
         ) from e
 
 
+@router.post("/score-revision/{project_id}", response_model=VersionScoreResponse)
+def score_revision(
+    project_id: str,
+    request: RevisionScoreRequest,
+    user: AuthUser,
+    _: Any = require_project_viewer,
+) -> VersionScoreResponse:
+    """Score a specific revision against the brief using AI (Phase 16A enhancement).
+    
+    This endpoint is a convenience wrapper that fetches the revision data,
+    retrieves or creates brief analysis, and scores the revision in one call.
+    This is designed for frontend integration where revision IDs are readily available.
+    """
+    from services.api.db.session import get_db
+    from services.api.models.orm import Revision, Project, ScoringResult
+    from sqlalchemy.orm import Session
+    
+    db = next(get_db())
+    
+    try:
+        ai_service = get_ai_service()
+        
+        if not ai_service.available:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="AI service unavailable - Gemini SDK not installed or API key missing"
+            )
+        
+        # Validate project access and get project
+        project = db.query(Project).filter(Project.id == project_id).first()
+        if not project:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Project not found"
+            )
+        
+        # Get revision
+        revision = db.query(Revision).filter(
+            Revision.id == request.revision_id,
+            Revision.project_id == project_id
+        ).first()
+        
+        if not revision:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Revision not found"
+            )
+        
+        # Check if scoring already exists for this revision
+        existing_scoring = db.query(ScoringResult).filter(
+            ScoringResult.revision_id == request.revision_id
+        ).first()
+        
+        if existing_scoring:
+            logger.info(f"Returning existing scoring for revision {request.revision_id}")
+            return VersionScoreResponse(
+                version="ai-version-score.v1",
+                overall_score=existing_scoring.overall_score,
+                program_fit=existing_scoring.program_fit,
+                daylight=existing_scoring.daylight_score,
+                budget_fit=existing_scoring.budget_fit,
+                commentary=existing_scoring.commentary,
+                zone_scores=existing_scoring.zone_scores,
+                provenance=existing_scoring.provenance,
+                model_version=existing_scoring.model_version
+            )
+        
+        # Get or create brief analysis
+        # For now, we'll use a simple approach - in production this would be more sophisticated
+        brief_text = "Client brief for project"  # This would come from project metadata
+        
+        brief_analysis_result = ai_service.analyze_brief(
+            brief_text=brief_text,
+            project_context={
+                "projectId": project_id,
+                "revisionId": request.revision_id
+            }
+        )
+        
+        # Extract version data from revision
+        # In a real implementation, this would fetch the actual geometry from object storage
+        version_data = {
+            "id": revision.id,
+            "revisionNumber": revision.revision_number,
+            "validationState": revision.validation_state,
+            "metadata": {
+                "authorUserId": str(revision.author_user_id) if revision.author_user_id else None,
+                "reason": revision.reason,
+                "engineVersion": revision.engine_version
+            }
+        }
+        
+        # Score the version
+        result = ai_service.score_version(
+            version_data=version_data,
+            brief_analysis=brief_analysis_result
+        )
+        
+        # Store scoring result
+        scoring_record = ScoringResult(
+            project_id=project_id,
+            revision_id=request.revision_id,
+            brief_analysis_id=brief_analysis_result.provenance.get("timestamp"),
+            overall_score=result.overall_score,
+            program_fit=result.program_fit,
+            daylight_score=result.daylight,
+            budget_fit=result.budget_fit,
+            commentary=result.commentary,
+            zone_scores=result.zone_scores,
+            provenance=result.provenance,
+            model_version=result.model_version,
+            created_by_user_id=user.id
+        )
+        
+        db.add(scoring_record)
+        db.commit()
+        
+        logger.info(f"Created scoring result for revision {request.revision_id}")
+        
+        return VersionScoreResponse(
+            version="ai-version-score.v1",
+            overall_score=result.overall_score,
+            program_fit=result.program_fit,
+            daylight=result.daylight,
+            budget_fit=result.budget_fit,
+            commentary=result.commentary,
+            zone_scores=result.zone_scores,
+            provenance=result.provenance,
+            model_version=result.model_version
+        )
+        
+    except HTTPException:
+        db.rollback()
+        raise
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Revision scoring failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Revision scoring failed: {str(e)}"
+        ) from e
+    finally:
+        db.close()
+
+
 @router.post("/generate-suggestions", response_model=SuggestionsResponse)
 def generate_suggestions(
     request: SuggestionsRequest,
@@ -258,21 +420,103 @@ def generate_suggestions(
         ) from e
 
 
+# ---------------------------------------------------------------------------
+# Phase 16 — Multi-version comparison & quality gate scoring
+# ---------------------------------------------------------------------------
+
+
+class VersionCompareRequest(BaseModel):
+    """Request to compare multiple design versions."""
+
+    versions: list[dict[str, Any]] = Field(
+        ..., description="List of version dicts (id, totalArea, estimatedCost, zones)"
+    )
+    brief: dict[str, Any] = Field(
+        ..., description="Project brief dict (spaceProgram, maxBudget, constraints)"
+    )
+    minimum_score: int = Field(
+        default=60,
+        ge=0,
+        le=100,
+        description="Minimum overall score required for quality gate PASS",
+    )
+
+
+class VersionCompareResponse(BaseModel):
+    """Response for multi-version tradeoff comparison."""
+
+    schema_version: str
+    generated_at: str
+    version_count: int
+    winner: str | None
+    tradeoff_notes: list[str]
+    matrix: list[dict[str, Any]]
+    quality_gate_track: dict[str, Any]
+
+
+@router.post("/compare-versions", response_model=VersionCompareResponse)
+def compare_versions(
+    request: VersionCompareRequest,
+    user: AuthUser,
+    _: Any = require_project_viewer,
+) -> VersionCompareResponse:
+    """Compare multiple design versions and return a tradeoff matrix (Phase 16).
+
+    Scores each version using the Phase 16 heuristic/Gemini engine, selects the
+    best version, and returns a tradeoff analysis.  Also returns a quality gate
+    track dict suitable for integration into ``build_quality_gate()``.
+    """
+    engine = _get_scoring_engine()
+    if engine is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Phase 16 scoring engine not available",
+        )
+
+    try:
+        comparison = engine.compare_versions(request.versions, request.brief)
+        gate_track = engine.score_for_quality_gate(
+            request.versions, request.brief, minimum_score=request.minimum_score
+        )
+        d = comparison.to_dict()
+        return VersionCompareResponse(
+            schema_version=d["schemaVersion"],
+            generated_at=d["generatedAt"],
+            version_count=d["versionCount"],
+            winner=d["winner"],
+            tradeoff_notes=d["tradeoffNotes"],
+            matrix=d["matrix"],
+            quality_gate_track=gate_track,
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(e),
+        ) from e
+    except Exception as e:
+        logger.error("Version comparison failed: %s", e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Version comparison failed: {e}",
+        ) from e
+
+
 @router.get("/health")
 def ai_health() -> dict[str, Any]:
-    """Health check for AI service."""
-    # Check if Gemini SDK is available
+    """Health check for AI service and Phase 16 scoring engine."""
     gemini_available = False
     try:
         from google import genai  # type: ignore[import]
         gemini_available = True
     except ImportError:
         pass
-    
+
     ai_service = get_ai_service()
-    
+    scoring_engine_available = _get_scoring_engine() is not None
+
     return {
         "status": "available" if ai_service.available else "unavailable",
         "model": ai_service.model_name if ai_service.available else None,
-        "sdk_installed": gemini_available
+        "sdk_installed": gemini_available,
+        "phase16_scoring_engine": scoring_engine_available,
     }

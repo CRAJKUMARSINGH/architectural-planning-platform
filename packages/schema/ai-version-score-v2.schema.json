@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://advocate-chambers.local/schemas/ai-version-score-v2.schema.json",
+  "title": "AI Version Score v2 with Tradeoff Analysis",
+  "description": "Schema for AI-powered design-version scoring and tradeoff comparison (Phase 16). Extends ai-version-score.v1 with circulation scoring, letter grades, flags, and the full tradeoff comparison envelope.",
+  "type": "object",
+  "required": ["schemaVersion", "versionId", "overallScore", "programFit", "daylight", "budgetFit", "circulationScore", "commentary", "grade", "scoredBy", "provenance"],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "enum": ["ai-version-score.v1"],
+      "description": "Schema version identifier"
+    },
+    "versionId": {
+      "type": "string",
+      "description": "Identifier of the design version being scored"
+    },
+    "grade": {
+      "type": "string",
+      "enum": ["A", "B", "C", "D", "F"],
+      "description": "Letter grade derived from overallScore (A>=90, B>=80, C>=70, D>=60, F<60)"
+    },
+    "overallScore": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Weighted overall score: 35% program fit, 25% daylight, 25% budget fit, 15% circulation"
+    },
+    "programFit": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "How well the design matches the brief space program"
+    },
+    "daylight": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Adequacy of natural light provision across zones"
+    },
+    "budgetFit": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "How well the estimated cost fits within the client budget"
+    },
+    "circulationScore": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Adequacy of circulation / movement space (new in Phase 16)"
+    },
+    "commentary": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Written assessment narrative calling out strengths and weaknesses"
+    },
+    "zoneScores": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["zoneName", "score", "notes"],
+        "properties": {
+          "zoneName": { "type": "string" },
+          "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "areaSqm": { "type": "number", "minimum": 0 },
+          "briefTargetSqm": { "type": "number", "minimum": 0 },
+          "areaFitPct": { "type": "number" },
+          "daylightAssessment": { "type": "string", "enum": ["adequate", "poor", "excellent"] },
+          "notes": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "flags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Red-flag items that require designer attention"
+    },
+    "scoredBy": {
+      "type": "string",
+      "enum": ["gemini", "heuristic"],
+      "description": "Which scoring engine produced this result"
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Audit trail for the scoring operation",
+      "properties": {
+        "scorer": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "totalAreaSqm": { "type": "number" },
+        "zonesEvaluated": { "type": "integer" },
+        "model": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false,
+
+  "$defs": {
+    "TradeoffComparison": {
+      "title": "AI Tradeoff Comparison",
+      "description": "Side-by-side matrix comparing two or more design versions",
+      "type": "object",
+      "required": ["schemaVersion", "generatedAt", "versionCount", "matrix"],
+      "properties": {
+        "schemaVersion": { "type": "string", "enum": ["ai-tradeoff.v1"] },
+        "generatedAt": { "type": "string", "format": "date-time" },
+        "versionCount": { "type": "integer", "minimum": 1 },
+        "winner": { "type": ["string", "null"] },
+        "tradeoffNotes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "matrix": {
+          "type": "array",
+          "items": { "$ref": "#" }
+        }
+      }
+    },
+    "AIScoringGate": {
+      "title": "AI Scoring Quality Gate Track",
+      "description": "Quality gate track dict contributed by VersionScoringEngine.score_for_quality_gate()",
+      "type": "object",
+      "required": ["status", "schemaVersion", "bestVersionId", "bestOverallScore", "bestGrade", "minimumScoreRequired", "versionsEvaluated"],
+      "properties": {
+        "status": { "type": "string", "enum": ["PASS", "REVIEW_REQUIRED", "INCOMPLETE"] },
+        "schemaVersion": { "type": "string", "enum": ["ai-scoring-gate.v1"] },
+        "bestVersionId": { "type": "string" },
+        "bestOverallScore": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "bestGrade": { "type": "string", "enum": ["A", "B", "C", "D", "F"] },
+        "minimumScoreRequired": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "versionsEvaluated": { "type": "integer", "minimum": 0 },
+        "winner": { "type": ["string", "null"] },
+        "tradeoffNotes": { "type": "array", "items": { "type": "string" } },
+        "scoredBy": { "type": "string" },
+        "matrix": { "type": "array" }
+      }
+    }
+  }
+}

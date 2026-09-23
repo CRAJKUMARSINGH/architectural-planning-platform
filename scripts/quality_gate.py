@@ -32,6 +32,7 @@ WEEK23_REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "week23-advers
 WEEK24_REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "week24-anonymized-review-results.json"
 WEEK25_REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "week25-performance-report.json"
 WEEK26_REPORT_PATH = ROOT / "bar-association-hall" / "standard" / "week26-reproducibility-report.json"
+AI_SCORING_REPORT_DIR = ROOT / "bar-association-hall" / "ai-scoring"
 
 QUALITY_GATE_VERSION = "week21.quality-gate.v1"
 STATES = ("PASS", "REVIEW_REQUIRED", "BLOCKED", "INCOMPLETE")
@@ -242,6 +243,40 @@ def _overall_status(track_statuses: list[str]) -> str:
     return "PASS"
 
 
+def evaluate_ai_scoring(result: dict[str, Any] | None) -> dict[str, Any]:
+    """Evaluate Phase 16 AI version scoring evidence.
+
+    The AI-scoring track is advisory.  It can reach PASS or REVIEW_REQUIRED
+    but never BLOCKED — it must not prevent a release on its own.
+    """
+    if result is None:
+        return {
+            "status": "INCOMPLETE",
+            "message": "AI scoring evidence has not been supplied",
+            "missingEvidence": True,
+            "advisory": True,
+        }
+
+    required = ("schemaVersion", "bestVersionId", "bestOverallScore", "minimumScoreRequired")
+    missing = [f for f in required if f not in result]
+    if missing:
+        return {
+            "status": "INCOMPLETE",
+            "missingFields": missing,
+            "message": "AI scoring result is missing required fields",
+            "advisory": True,
+        }
+
+    gate_status = result.get("status", "INCOMPLETE")
+    # Never promote to BLOCKED from AI scoring alone
+    effective_status = gate_status if gate_status in ("PASS", "REVIEW_REQUIRED", "INCOMPLETE") else "REVIEW_REQUIRED"
+    return {
+        **result,
+        "status": effective_status,
+        "advisory": True,
+    }
+
+
 def build_quality_gate(
     *,
     adversarial: dict[str, Any] | None = None,
@@ -249,8 +284,13 @@ def build_quality_gate(
     performance: dict[str, Any] | None = None,
     reproducibility: dict[str, Any] | None = None,
     baseline: dict[str, Any] | None = None,
+    ai_scoring: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Build a deterministic quality-gate report from supplied evidence."""
+    """Build a deterministic quality-gate report from supplied evidence.
+
+    ``ai_scoring`` (Phase 16) is an advisory track — it reports PASS or
+    REVIEW_REQUIRED but cannot force BLOCKED.
+    """
 
     baseline_result = _evaluate_baseline(
         baseline
@@ -263,15 +303,22 @@ def build_quality_gate(
             "verification": "Week 21 baseline recorded from the current regression run",
         }
     )
+    ai_scoring_result = evaluate_ai_scoring(ai_scoring)
     tracks = {
         "adversarial": evaluate_adversarial(adversarial),
         "professionalReview": evaluate_professional_review(professional_review),
         "performance": evaluate_performance(performance),
         "reproducibility": evaluate_reproducibility(reproducibility),
         "regression": baseline_result,
+        "aiScoring": ai_scoring_result,  # Phase 16 advisory track
     }
-    statuses = [track["status"] for track in tracks.values()]
-    status = _overall_status(statuses)
+    # Hard-gate statuses exclude the advisory aiScoring track
+    hard_track_statuses = [
+        v["status"]
+        for k, v in tracks.items()
+        if k != "aiScoring"
+    ]
+    status = _overall_status(hard_track_statuses)
     hard_gates = {
         "criticalDefectDetection": tracks["adversarial"]["status"],
         "dangerousFalseNegatives": tracks["adversarial"]["status"],
@@ -324,10 +371,12 @@ def validate_quality_gate(report: dict[str, Any]) -> list[str]:
 
     if report.get("releaseReady") != (report.get("status") == "PASS"):
         errors.append("releaseReady must be true only when status is PASS")
+    # Advisory tracks (e.g. aiScoring) excluded from hard-gate PASS constraint.
+    hard_tracks = {k: v for k, v in tracks.items() if not v.get("advisory", False)}
     if report.get("status") == "PASS" and any(
-        track.get("status") != "PASS" for track in tracks.values()
+        track.get("status") != "PASS" for track in hard_tracks.values()
     ):
-        errors.append("PASS requires every track to pass")
+        errors.append("PASS requires every hard-gate track to pass")
     return errors
 
 
