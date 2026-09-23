@@ -335,6 +335,43 @@ class Artifact(Base):
 
 
 # ---------------------------------------------------------------------------
+# ScoringResult  (Phase 16A — AI version scoring results)
+# ---------------------------------------------------------------------------
+class ScoringResult(Base):
+    """AI-generated scoring results for design versions against briefs."""
+    
+    __tablename__ = "scoring_results"
+    __table_args__ = (
+        UniqueConstraint("revision_id"),
+        CheckConstraint("overall_score >= 0 AND overall_score <= 100", name="ck_scoring_overall_score"),
+        CheckConstraint("program_fit >= 0 AND program_fit <= 100", name="ck_scoring_program_fit"),
+        CheckConstraint("daylight_score >= 0 AND daylight_score <= 100", name="ck_scoring_daylight_score"),
+        CheckConstraint("budget_fit >= 0 AND budget_fit <= 100", name="ck_scoring_budget_fit"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False
+    )
+    revision_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("revisions.id", ondelete="CASCADE"), nullable=False, unique=True
+    )
+    brief_analysis_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    overall_score: Mapped[int] = mapped_column(Integer, nullable=False)
+    program_fit: Mapped[int] = mapped_column(Integer, nullable=False)
+    daylight_score: Mapped[int] = mapped_column(Integer, nullable=False)
+    budget_fit: Mapped[int] = mapped_column(Integer, nullable=False)
+    commentary: Mapped[str] = mapped_column(Text, nullable=False)
+    zone_scores: Mapped[dict] = mapped_column(JSON_TYPE, nullable=False, default=list)
+    provenance: Mapped[dict] = mapped_column(JSON_TYPE, nullable=False, default=dict)
+    model_version: Mapped[str] = mapped_column(String(50), nullable=False, default="gemini-2.5-flash")
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_by_user_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
+    )
+
+
+# ---------------------------------------------------------------------------
 # AuditEvent  (immutable — never UPDATE or DELETE)
 # ---------------------------------------------------------------------------
 class AuditEvent(Base):

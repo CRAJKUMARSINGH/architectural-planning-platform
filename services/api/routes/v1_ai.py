@@ -245,11 +245,11 @@ def score_revision(
     retrieves or creates brief analysis, and scores the revision in one call.
     This is designed for frontend integration where revision IDs are readily available.
     """
-    from services.api.db.session import get_db
+    from services.api.db.session import get_session
     from services.api.models.orm import Revision, Project, ScoringResult
     from sqlalchemy.orm import Session
     
-    db = next(get_db())
+    db = next(get_session())
     
     try:
         ai_service = get_ai_service()

@@ -6,6 +6,7 @@ import { ProjectLevelSelector } from './components/ProjectLevelSelector';
 import { PropertyInspector } from './components/PropertyInspector';
 import { ValidationPanel } from './components/ValidationPanel';
 import { Viewport2D } from './components/Viewport2D';
+import { VersionScoringPanel } from './components/VersionScoringPanel';
 import { ZoneCanvas } from './components/ZoneCanvas';
 import './App.css';
 
@@ -415,6 +416,19 @@ function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const projectId = draft.projectId;
 
+  // Mock revision for VersionScoringPanel - in production this would come from the API
+  const mockRevision = {
+    id: `revision-${projectId}`,
+    revisionNumber: 1,
+    createdAt: new Date().toISOString(),
+    briefText: draft.narration || 'Client brief for project',
+    metadata: {
+      siteSize: 100,
+      budget: 50000,
+      stylePreferences: ['modern']
+    }
+  };
+
   return (
     <div className="studio-shell">
       <header className="studio-header">
@@ -437,6 +451,10 @@ function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft
             projectId={projectId}
             currentRevision={1}
             authorId="browser-user"
+          />
+          <VersionScoringPanel
+            projectId={projectId}
+            currentRevision={mockRevision}
           />
           <ValidationPanel projectId={projectId} level={level} />
           <ArtifactPanel projectId={projectId} level={level} />
