@@ -1,4 +1,4 @@
-"""FastAPI thin adapter — Patch 2 of TRANSFORMATION_PATCH_GUIDE.
+"""FastAPI thin adapter.
 
 Geometry authority remains in Python (traecad_engine + the two drawing
 generators under /bar-association-hall). FastAPI only exposes typed endpoints

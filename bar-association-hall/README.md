@@ -33,14 +33,14 @@ D-FF-07`. This is recorded as a precise `ROOM_HAS_UNJUSTIFIED_EXTERNAL_DOOR`
 
 - `ground_floor_preliminary.svg` - Coordinated ground-floor review plan.
 - `first_floor_preliminary.svg` - Coordinated first-floor review plan.
-- `derived_g_plus_1_plan.pdf` - Printable five-page derived plan set with site diagram, floor plans, area reconciliation, cost basis, and review actions.
+- `derived_g_plus_1_plan.pdf` - Printable five-page plan set with site diagram, floor plans, area reconciliation, cost basis, and review actions.
 - `preliminary_plan_review.md` - Design basis, room schedules, and review checklist.
 - `preliminary_plans.json` - Coordinate source for both plan drawings.
-- `generate_plan_pdf.py` - Rebuilds the derived PDF from the JSON inputs using the local Chromium print path.
+- `generate_plan_pdf.py` - Rebuilds the PDF from the JSON inputs using the local Chromium print path.
 
 The refined drawings use the simple coordinate setback envelope of **4,427.5 sq ft per floor**. The brief's earlier **4,785 sq ft** figure is retained in the estimate as an unresolved assumption and is intentionally not used to inflate these preliminary layouts.
 
-The derived PDF follows the coordinate-based 4,427.5 sq ft envelope. It is a planning study, not a construction, approval, fire-NOC, or structural drawing.
+The PDF follows the coordinate-based 4,427.5 sq ft envelope. It is a planning study, not a construction, approval, fire-NOC, or structural drawing.
 
 Revision B makes the circulation explicit: the hall entry is centered on the south long wall, and the stair has an independent 4'-0" clear exterior entry for first-floor visitors. The stair note separates the 4'-0" clear flight width from the 11" tread depth.
 

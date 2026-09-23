@@ -45,7 +45,7 @@ class DeliveryPackage:
     created_at: str
     artifacts: list[ExportMetadata] = field(default_factory=list)
     quality_gate_report: dict[str, Any] = field(default_factory=dict)
-    # quality_gate_status is derived from the validation_report when built;
+    # quality_gate_status is calculated from the validation_report when built;
     # stored explicitly so tests can read it as a plain attribute.
     quality_gate_status: str = "REVIEW_REQUIRED"
     validation_report: dict[str, Any] = field(default_factory=dict)

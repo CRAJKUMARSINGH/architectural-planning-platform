@@ -2,7 +2,7 @@
 """Week 9 and Week 10 architectural-intelligence enrichment.
 
 Week 9 adds a scaled, occupancy-aware presentation layer.  Furniture is
-derived from the validated model but is deliberately stored outside the
+based on the validated model but is deliberately stored outside the
 authoritative rooms, walls, openings, and routes.
 
 Week 10 adds deterministic candidate comparison, a transparent scorecard,

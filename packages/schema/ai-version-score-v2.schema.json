@@ -18,7 +18,7 @@
     "grade": {
       "type": "string",
       "enum": ["A", "B", "C", "D", "F"],
-      "description": "Letter grade derived from overallScore (A>=90, B>=80, C>=70, D>=60, F<60)"
+      "description": "Letter grade calculated from overallScore (A>=90, B>=80, C>=70, D>=60, F<60)"
     },
     "overallScore": {
       "type": "integer",

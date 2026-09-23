@@ -278,8 +278,8 @@ ul {{ padding-left:18px; }}
 
 <section class="page">
   <div class="kicker">Advocate Chambers · Bar Association Banswara</div>
-  <h1>Derived G+1<br>Preliminary Plan Set</h1>
-  <p class="sub">A dimensioned architectural preliminary package for a ground-floor Bar Association hall and first-floor Bar Library, derived from the stored L-shaped plot geometry and the room schedule in the repository.</p>
+  <h1>G+1<br>Preliminary Plan Set</h1>
+  <p class="sub">A dimensioned architectural preliminary package for a ground-floor Bar Association hall and first-floor Bar Library, based on the stored L-shaped plot geometry and the room schedule in the repository.</p>
   <hr class="rule">
   <div class="grid">
     <div class="card"><div class="label">Plot geometry</div><div class="value">L-shaped</div><p>98′ west depth · 60′ north · 35′ south</p></div>

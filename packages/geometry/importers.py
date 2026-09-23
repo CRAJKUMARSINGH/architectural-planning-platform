@@ -49,7 +49,7 @@ class ImportProvenanceTracker:
             "sourceFormat": self.source_format,
             "sourceHash": self.source_hash,
             "confidence": max(0.0, min(1.0, float(confidence))),
-            "provenance": f"imported-from-{self.source_format}",
+            "provenance": f"imported-{self.source_format}",
             "reviewRequired": review_required or (confidence < 0.90),
         }
         return tagged

@@ -1,7 +1,6 @@
 {
   "version": "phase15.zone-canvas-contract.v1",
-  "description": "Contract for Phase 15 ZoneCanvas — upstream zone-sketch that dispatches add-space commands",
-  "sourceRepo": "https://github.com/CRAJKUMARSINGH/Archi-Copilot",
+  "description": "Contract for Phase 15 ZoneCanvas — zone-sketch that dispatches add-space commands",
   "zoneTypes": ["living", "sleeping", "service", "circulation", "outdoor", "work", "other"],
   "canvasUnit": {
     "pixels": 12,

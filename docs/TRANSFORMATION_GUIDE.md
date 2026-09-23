@@ -1,4 +1,4 @@
-# Advocate-Chambers: Future React + CAD Platform Transformation Patch Guide
+# Advocate-Chambers: Future React + CAD Platform Transformation Guide
 
 **Status:** Future migration plan — do not apply as a blind rewrite  
 **Target baseline:** React 19.3 + TypeScript  
@@ -61,11 +61,11 @@ Advocate-Chambers/
 
 Do not move or rename the current CAD directories until the new pipeline can regenerate byte-different but geometrically equivalent outputs and the review package has passed.
 
-## 3. Patch sequence
+## 3. Implementation sequence
 
-Apply these patches as separate pull requests. Each PR must be runnable and reversible.
+Apply these phases as separate pull requests. Each PR must be runnable and reversible.
 
-### Patch 0 — Freeze and inventory
+### Phase 0 — Freeze and inventory
 
 Create a branch:
 
@@ -84,7 +84,7 @@ Record:
 
 Add a machine-readable artifact manifest. Never use a rendered PDF or AI image as the migration source.
 
-### Patch 1 — Add the typed schema package
+### Phase 1 — Add the typed schema package
 
 Create `packages/schema/project.schema.json` with these top-level objects:
 
@@ -121,7 +121,7 @@ Every drawable object needs:
 
 Use stable IDs, not array indexes. Preserve the original planning JSON through an explicit adapter; do not silently reinterpret old coordinates.
 
-### Patch 2 — Wrap the existing Python engine
+### Phase 2 — Wrap the existing Python engine
 
 Create a thin FastAPI service. The first version should expose:
 
@@ -159,7 +159,7 @@ The API must return a job ID for generation:
 
 The generator must write to a job-specific temporary folder, then publish only after validation succeeds. Never let a browser request overwrite the source JSON.
 
-### Patch 3 — Add the React editor shell
+### Phase 3 — Add the React editor shell
 
 Create `apps/web` with:
 
@@ -194,7 +194,7 @@ validate plan
 generate review set
 ```
 
-### Patch 4 — Build the geometry command layer
+### Phase 4 — Build the geometry command layer
 
 All edits flow through typed commands:
 
@@ -258,7 +258,7 @@ A valid dog-legged stair must have:
 - no overlap with walls, doors, furniture, or required circulation;
 - a clear start and clear end;
 - guard/handrail metadata;
-- a section/elevation representation derived from the same parameters.
+- a section/elevation representation based on the same parameters.
 
 ### Automated tests
 

@@ -1,12 +1,11 @@
 /**
  * ZoneCanvas — Phase 15 upstream concept sketching.
  *
- * Ported concept from Archi-Copilot.  Lets the architect sketch draggable,
- * resizable zone blocks (Living, Sleeping, Service, Circulation, etc.) on a
- * canvas, then dispatch each zone as an `add-space` command through the
- * existing Phase 7 useCommitCommand hook.
+ * Lets the architect sketch draggable, resizable zone blocks (Living, Sleeping,
+ * Service, Circulation, etc.) on a canvas, then dispatch each zone as an
+ * `add-space` command through the existing Phase 7 useCommitCommand hook.
  *
- * Architecture rule (from IMPLEMENTATION_PLAN.md Phase 7 + Archi-Copilot):
+ * Architecture rule (from IMPLEMENTATION_PLAN.md Phase 7):
  *   Zone blocks are EPHEMERAL UI STATE.
  *   They are never stored as canonical geometry.
  *   Pressing "Send to editor" dispatches typed add-space commands through

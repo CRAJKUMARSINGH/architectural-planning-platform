@@ -1850,17 +1850,6 @@
     },
     {
       "classificationConfidence": "explicit",
-      "gitBlobSha": "458b4b3da97e188abcbec1f881fcb31175950656",
-      "path": "bar-association-hall/_patch_99pct.py",
-      "projectId": "bar-association-hall",
-      "proposedCanonicalPath": "projects/bar-association-hall/02-source/_patch_99pct.py",
-      "reviewRequired": false,
-      "role": "source-or-project-document",
-      "storage": "git",
-      "workspaceBytes": 70250
-    },
-    {
-      "classificationConfidence": "explicit",
       "gitBlobSha": "974f5b2a61f79e228070a54c50ec5069d631b0c4",
       "path": "bar-association-hall/amenities.md",
       "projectId": "bar-association-hall",

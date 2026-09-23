@@ -245,7 +245,7 @@
           "type": "object",
           "properties": {
             "kind": {"enum": ["door", "window"]},
-            "tag": {"type": "string", "description": "D-01, W-01, D-MAIN, etc. Displayed beside swing arc in 3DHome convention."},
+            "tag": {"type": "string", "description": "D-01, W-01, D-MAIN, etc. Displayed beside swing arc."},
             "hostSpace": {"type": "string"},
             "hostWall": {"type": "string"},
             "wall": {"enum": ["north", "south", "east", "west"]},

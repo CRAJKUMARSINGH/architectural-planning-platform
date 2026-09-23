@@ -37,6 +37,6 @@
   "securityRequirements": [
     "API keys stored as encrypted environment secrets",
     "AI operations require proper authentication",
-    "AI modifications go through complete validation pipeline"
+    "AI operations go through complete validation pipeline"
   ]
 }

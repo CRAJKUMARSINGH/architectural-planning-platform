@@ -178,7 +178,7 @@ class TestZoneToAddSpaceMapping(unittest.TestCase):
         p = self._params()
         self.assertEqual(p["spaceId"], "zone-test-001")
 
-    def test_level_id_derived_from_floor(self):
+    def test_level_id_calculated_from_floor(self):
         p = self._params(floor="Ground Floor")
         self.assertEqual(p["levelId"], "GROUND-F")
 

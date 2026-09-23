@@ -22,7 +22,7 @@ or furniture collections.  They must not silently mutate a presentation layer.
 - Reusing a key with different request parameters is rejected.
 - A stale base revision returns `REVISION_CONFLICT`; geometry is never merged
   implicitly.
-- Revision hashes are derived from canonical JSON with sorted keys and stable
+- Revision hashes are calculated from canonical JSON with sorted keys and stable
   numeric normalization.
 - Persistence, authorization, and durable job execution remain follow-up
   work from the implementation plan.
