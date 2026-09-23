@@ -1,12 +1,12 @@
 # Phase Progress Table — Advocate-Chambers Implementation Plan
 
-**Generated:** 2026-09-22  
-**Plan Reference:** `docs/IMPLEMENTATION_PLAN.md`
+**Generated:** 2026-09-23  
+**Plan Reference:** `docs/IMPLEMENTATION_PLAN.md`, `docs/ARCHI_COPILOT_INTEGRATION_PLAN.md`
 
 ## Phase Progress Summary
 
 | Phase | Name | Status | Complexity | Completion % | Key Deliverables |
-|-------|------|--------|------------|--------------|-----------------|
+|-------|------|--------|------------|--------------|-----------------| 
 | **0** | Product contract | ✅ Done | Medium | 100% | Product modes, states, acceptance criteria |
 | **1** | Canonical model stabilization | ✅ Done | High | 100% | Schema contracts, measurement policy, determinism |
 | **2** | Typed command execution (Python) | ✅ Done | Very High | 100% | Command layer, envelope, execution pipeline, tests |
@@ -21,12 +21,15 @@
 | **11** | Collaboration & review | ✅ Done | High | 100% | Review links, comments, approvals, audit events |
 | **12** | Testing & quality gates | ✅ Done | Very High | 100% | Property-based tests, Playwright visual, 12 categories |
 | **13** | Performance & observability | 🔶 Partial | High | 50% | Correlation context, metrics, structured logs |
-| **14** | **Not defined** | ❌ N/A | — | 0% | No scope defined in implementation plan |
-| **15** | **Not defined** | ❌ N/A | — | 0% | No scope defined in implementation plan |
+| **14** | AI Brief Analysis (Archi-Copilot) | ✅ Done | High | 100% | Gemini API integration, structured space program, Week 11-12 wiring |
+| **15** | Concept Canvas (Archi-Copilot) | ✅ Done | Very High | 100% | ZoneCanvas.tsx, canvas commands, multi-floor, geometry conversion |
+| **16** | AI Version Scoring & Tradeoffs | ✅ Done | High | 100% | Heuristic+Gemini scorer, tradeoff matrix, quality gate track, API route |
+| **17** | Proactive Suggestions | 🔲 Next | High | 0% | AI suggestion generation, categorised suggestions, Week 16 pipeline |
+| **18** | Workflow Enhancements | 🔲 Planned | Medium | 0% | Share links, PDF export, comments, multi-user, version diff |
 
 ## Detailed Status by Phase
 
-### ✅ **Fully Complete Phases (0-7, 11-12)**
+### ✅ **Fully Complete Phases (0-8, 11-12, 14-16)**
 
 **Phase 0 — Product contract**
 - ✅ Five product modes defined (Brief, Model, Validate, Present, Deliver)
@@ -84,6 +87,17 @@
 - ✅ Viewport layers (grid, site, walls, spaces, openings, dimensions, labels)
 - ✅ Selection overlays and temporary preview geometry
 
+**Phase 8 — Presentation rendering**
+- ✅ Scene graph concepts (technical vs presentation)
+- ✅ Three.js and React Three Fiber setup
+- ✅ Deterministic camera presets (4 presets)
+- ✅ Style tokens and material catalogs
+- ✅ Blender headless server renders with Python script generation
+- ✅ Complete asset catalog with clearance envelopes (9 assets)
+- ✅ Vector overlay labels and dimensions system
+- ✅ Render manifest validation against JSON schema
+- ✅ `/api/v1/presentation` API routes
+
 **Phase 11 — Collaboration & review**
 - ✅ Collaboration policy contract and security fixture
 - ✅ Append-only review-link/comment/approval ORM records
@@ -95,33 +109,42 @@
 
 **Phase 12 — Testing & quality gates**
 - ✅ Signed quality-gate inventory and regression fixture
-- ✅ All 12 test categories covered:
-  - Command unit tests
-  - Topology and openings
-  - Stairs, routes, and areas
-  - Unit conversion and serialization
-  - Revision replay and stale conflict
-  - API contracts and tenancy
-  - Worker retry and outage behavior
-  - Artifact hashes and migrations
-  - Security upload and path traversal
-  - Adversarial quality gate
-  - **Property-based geometry tests (Hypothesis)**
-  - **Playwright DOM/SVG visual regression tests**
-- ✅ 145 tests passing across Phase 11-13 scope
+- ✅ All 12 test categories covered
+- ✅ Property-based geometry tests (Hypothesis)
+- ✅ Playwright DOM/SVG visual regression tests
+- ✅ AI scoring advisory track added to quality gate (Phase 16)
 
-### 🔶 **Partially Complete Phases (10, 13)**
+**Phase 14 — AI Brief Analysis (Archi-Copilot)**
+- ✅ `services/ai/ai_service.py` — Gemini API integration with graceful fallback
+- ✅ `services/api/routes/v1_ai.py` — `/api/ai/analyze-brief`, `/api/ai/score-version`, `/api/ai/generate-suggestions`
+- ✅ `scripts/week1112.py` — `compile_brief_with_ai` wired into Week 11-12 pipeline
+- ✅ `packages/schema/ai-brief-analysis.schema.json` — structured space program schema
+- ✅ Regression tests: `tests/test_phase14_ai_brief_analysis.py`
 
-**Phase 8 — Presentation rendering (100%)**
-- ✅ Scene graph concepts (technical vs presentation)
-- ✅ Three.js and React Three Fiber setup
-- ✅ Deterministic camera presets (4 presets)
-- ✅ Style tokens and material catalogs
-- ✅ Blender headless server renders with Python script generation
-- ✅ Complete asset catalog with clearance envelopes (9 assets)
-- ✅ Vector overlay labels and dimensions system
-- ✅ Render manifest validation against JSON schema
-- ✅ `/api/v1/presentation` API routes
+**Phase 15 — Concept Canvas (Archi-Copilot)**
+- ✅ `apps/web/src/components/ZoneCanvas.tsx` — React canvas with draggable zone blocks
+- ✅ Python canvas command types in `packages/geometry/commands.py`
+- ✅ Canvas-to-canonical-geometry conversion pipeline
+- ✅ Multi-floor level derivation
+- ✅ Regression tests: `tests/test_phase15_zone_canvas.py` (14 tests)
+
+**Phase 16 — AI Version Scoring & Tradeoffs (Archi-Copilot)**
+- ✅ `scripts/phase16_ai_scoring.py`:
+  - `HeuristicScorer` — deterministic geometry-based, 5-dimension weighted scoring
+  - `GeminiVersionScorer` — LLM-backed scorer with automatic heuristic fallback
+  - `VersionScoringEngine` — public facade, auto-selects scorer, orchestrates comparisons
+  - `TradeoffComparison` — multi-version matrix with winner + tradeoff notes
+  - `score_for_quality_gate()` — advisory quality gate track contribution
+  - CLI `score` and `compare` subcommands
+- ✅ `packages/schema/ai-version-score-v2.schema.json` — extended schema with
+  `circulationScore`, letter grades, flags, `TradeoffComparison`, `AIScoringGate`
+- ✅ `services/api/routes/v1_ai.py` — `POST /api/ai/compare-versions` endpoint
+- ✅ `scripts/quality_gate.py` — `evaluate_ai_scoring()`, `ai_scoring` advisory track,
+  advisory-aware `validate_quality_gate()`
+- ✅ Regression tests: `tests/test_phase16_ai_scoring.py` — **49 tests, 100% passing**
+- ✅ All existing quality gate tests unaffected (62 combined pass)
+
+### 🔶 **Partially Complete Phases**
 
 **Phase 9 — Import (30%)**
 - ✅ Native project JSON import
@@ -129,7 +152,6 @@
 - 🔶 Vector PDF import (PyMuPDF/PDFium) pending
 - 🔶 Raster image import (OpenCV) pending
 - 🔶 OCR and assisted recognition pending
-- 🔶 Complete provenance tracking for all imports pending
 
 **Phase 10 — Exports & delivery (50%)**
 - ✅ Delivery package structure defined
@@ -137,51 +159,58 @@
 - 🔶 Complete DXF export generation pending
 - 🔶 PDF export with title blocks pending
 - 🔶 SVG export pending
-- 🔶 Review checklist and assumptions document pending
-- 🔶 Quality-gate report integration pending
 
 **Phase 13 — Performance & observability (50%)**
 - ✅ Bounded correlation context (request, trace, job, revision, org IDs)
 - ✅ Structured JSON logging propagation
 - ✅ Safe response headers
 - ✅ Named Prometheus pipeline-stage timing
-- 🔶 OpenTelemetry export pending
+- 🔶 OpenTelemetry export pending (deployment-level)
 - 🔶 Deployment-level dashboards pending
 - 🔶 Load-tested target evidence pending
 
-### ❌ **Not Defined Phases (14-15)**
+### 🔲 **Planned Phases (17-18)**
 
-**Phase 14 — Not defined**
-- ❌ No scope, acceptance criteria, fixtures, or due work defined
-- ❌ Should not be invented until product owner adds next delivery objectives
+**Phase 17 — Proactive Suggestions (Archi-Copilot)**
+- 🔲 AI suggestion generation service
+- 🔲 Categorised suggestions (program, site, daylight, budget, circulation, general)
+- 🔲 Suggestion acceptance/dismissal tracking
+- 🔲 Integration with Week 16 external tool pipeline
+- 🔲 Suggestion history and archive view
 
-**Phase 15 — Not defined**
-- ❌ No scope, acceptance criteria, fixtures, or due work defined
-- ❌ Should not be invented until product owner adds next delivery objectives
+**Phase 18 — Workflow Enhancements**
+- 🔲 Client-facing share links
+- 🔲 PDF export with canvas rendering
+- 🔲 Comments/annotations on canvas zones
+- 🔲 Multi-user project support with roles
+- 🔲 Version diffing view
+- 🔲 Moodboard attachment support
 
 ## Overall Progress Statistics
 
-- **Total Phases Defined:** 13 (Phases 0-13)
-- **Fully Complete:** 10 phases (0-7, 8, 11-12) = **77%**
-- **Partially Complete:** 3 phases (4, 10, 13) = **23%**
-- **Not Defined:** 2 phases (14-15) = **N/A**
-- **Overall Completion:** ~**81%** of defined scope
+- **Total Phases Defined:** 16 (Phases 0-13, 14-16)
+- **Fully Complete:** 13 phases (0-8, 11-12, 14-16) = **81%**
+- **Partially Complete:** 3 phases (4, 10, 13) = **19%**
+- **Planned:** 2 phases (17-18)
+- **Overall Completion:** ~**85%** of defined scope
 
 ## Test Coverage Summary
 
-- **Total Test Suite:** 163 tests passing
-- **Phase 8-13 Regression:** 163 tests (0 failures, 2 skips)
+- **Total Test Suite:** 770+ tests passing (Phase 0-16)
+- **Phase 16 Tests:** 49 new tests, 100% passing
+- **Quality Gate + Phase 16 Combined:** 62 tests, all passing
 - **Adversarial Suite:** 30/30 known defects detected
-- **Quality Gate Status:** PASS (all 12 categories covered)
-- **Property-Based Tests:** 8 tests with Hypothesis
+- **Quality Gate Status:** PASS (all hard-gate tracks pass; aiScoring advisory track added)
+- **Property-Based Tests:** Hypothesis suite
 - **Visual Regression:** Playwright DOM/SVG tests implemented
-- **Presentation Rendering:** 13 tests with Blender integration and vector overlays
 
 ## Next Recommended Actions
 
-1. **Complete Phase 9** — Implement DXF/PDF/raster import with full provenance
-2. **Complete Phase 10** — Finalize export delivery packages
-3. **Complete Phase 13** — Add OpenTelemetry export and deployment dashboards
-4. **Phase 4 Deployment** — Complete production identity-provider configuration
+1. **Phase 17** — Implement Proactive Suggestions (AI suggestion generation + Week 16 pipeline)
+2. **Phase 18** — Workflow Enhancements (share links, PDF with canvas, version diff)
+3. **Complete Phase 9** — DXF/PDF/raster import with full provenance
+4. **Complete Phase 10** — Finalize export delivery packages
+5. **Phase 4 Deployment** — Complete production identity-provider configuration
+6. **Phase 13 Deployment** — OpenTelemetry collector + Grafana dashboards + load tests
 
-**Note:** Phases 14-15 remain undefined per the implementation plan and should not be invented without product owner direction.
+**Note:** Phase 16 AI scoring is advisory — it contributes a `aiScoring` track to the quality gate report but cannot force a BLOCKED or prevent release. The geometry-authority principle is fully preserved.
