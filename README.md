@@ -123,3 +123,22 @@ cd apps/web && npm run typecheck
 ---
 
 *Preliminary planning material — not construction, permit, or authority certification.*
+
+## Quick Release
+
+When all checks pass and you're ready to tag a release:
+
+```bash
+# Verify everything is green first
+make verify
+npm run test:week22
+npm run test:week23
+
+# Tag and push — triggers the release workflow
+git checkout main
+git pull
+git tag -a v1.0.1 -m "Release v1.0.1"
+git push origin v1.0.1
+```
+
+The release workflow will run the full quality gate, adversarial suite, and produce signed artifacts. See [`docs/FINISHING_GUIDE.md`](docs/FINISHING_GUIDE.md) for the full release checklist.

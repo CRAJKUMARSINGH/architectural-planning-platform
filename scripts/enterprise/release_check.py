@@ -79,7 +79,7 @@ def check_baselines() -> CheckResult:
 
 def run(version: str) -> None:
     print(f"\n{'='*60}")
-    print(f"  Release Checklist — Advocate-Chambers v{version}")
+    print(f"  Release Checklist — Architectural Planning Platform v{version}")
     print(f"  {datetime.now(UTC).isoformat()}")
     print(f"{'='*60}\n")
 
