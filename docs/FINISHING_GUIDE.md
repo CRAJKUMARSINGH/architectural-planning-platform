@@ -105,7 +105,7 @@ git clone https://github.com/CRAJKUMARSINGH/Advocate-Chambers.git
 cd Advocate-Chambers
 
 # Python dependencies
-pip install -e ".[dev]"
+pip install -e ".[api,dev]"
 
 # Node workspace dependencies
 npm install
@@ -395,17 +395,28 @@ All CI steps that enforce correctness must fail closed. The use of `|| true` is 
 - quality-gate contract checks
 - performance validation
 
+### `make verify` is fail-closed
+
+`make verify` is a fail-closed baseline check. Lint, typecheck, tests, and Week 21 quality-gate validation must fail the command when they fail. It must never silently pass a broken state.
+
 ### Phase 14/15 regression checks
 
-Phases 14 (AI Brief Analysis) and 15 (Concept Canvas) are complete. Any change touching `services/ai`, `packages/geometry`, or `apps/web/src/components/canvas` must not regress the existing 718+ passing tests.
+Phases 14 (AI Brief Analysis) and 15 (Concept Canvas) are complete. Any change touching `services/ai`, `packages/geometry`, or `apps/web/src/components/canvas` must not regress the existing 718+ passing tests. The Phase 14/15 baseline check must run as:
+
+```bash
+python -m unittest \
+  tests.test_phase14_ai_brief_analysis \
+  tests.test_phase14_brief_compiler_integration \
+  tests.test_phase15_zone_canvas
+```
 
 ### Gemini secret handling
 
-`GEMINI_API_KEY` must never be committed. It is injected as a GitHub Actions secret for CI runs that test AI endpoints. All other functionality must degrade gracefully when the key is absent.
+`GEMINI_API_KEY` must never be committed or printed to logs. It must be configured through a secrets manager (GitHub Actions secrets for CI). Missing keys must use the deterministic fallback path — all other functionality must degrade gracefully when the key is absent.
 
 ### AI advisory status
 
-All AI-generated analysis, scoring, and suggestions are advisory. They do not constitute architectural, structural, fire-safety, or accessibility certification. This boundary must remain explicit in API responses and documentation.
+All AI-generated analysis, scoring, and suggestions are advisory. They must pass schema validation and human review before they can influence canonical geometry. They do not constitute architectural, structural, fire-safety, or accessibility certification. This boundary must remain explicit in API responses and documentation.
 
 ### Python geometry authority
 
@@ -413,7 +424,7 @@ Python is the sole authority for geometry, rules, validation, revisions, and det
 
 ### Professional review requirements
 
-All outputs from this platform are preliminary planning material. Construction readiness, permit issuability, structural adequacy, fire/life-safety compliance, and accessibility (RPwD) compliance all require independent review by licensed professionals and statutory authorities.
+All outputs from this platform are preliminary planning material. Construction readiness, permit issuability, structural adequacy, fire/life-safety compliance, and accessibility (RPwD) compliance all require independent review by licensed professionals and statutory authorities. A release is not construction, permit, structural, fire, accessibility, or statutory approval.
 
 ### Deferred repository rename
 

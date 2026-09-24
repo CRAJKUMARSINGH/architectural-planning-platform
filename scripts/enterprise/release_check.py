@@ -9,9 +9,8 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -81,7 +80,7 @@ def check_baselines() -> CheckResult:
 def run(version: str) -> None:
     print(f"\n{'='*60}")
     print(f"  Release Checklist — Advocate-Chambers v{version}")
-    print(f"  {datetime.now(timezone.utc).isoformat()}")
+    print(f"  {datetime.now(UTC).isoformat()}")
     print(f"{'='*60}\n")
 
     checks = [

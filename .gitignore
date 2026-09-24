@@ -22,3 +22,4 @@ app_local.db
 
 # Nested duplicate repository — stale subfolder, not tracked
 Advocate-Chambers/
+Advocate-Chambers-verification-hardening/
