@@ -1,11 +1,46 @@
 {
-  "generatedFromCommit": "8c107972e515deb1b60f2325c267b0d4f8377dba",
+  "generatedFromCommit": "90bb07d",
   "migrationPolicy": {
     "deletionAllowed": false,
     "duplicateCleanupRequiresReview": true,
     "legacyPathsPreserved": true,
     "mode": "index-first",
-    "sourceOfTruthMustBeDeclared": true
+    "sourceOfTruthMustBeDeclared": true,
+    "proposedFutureLayout": "legacy-projects/<project-id>/",
+    "migrationStatus": "BLOCKED_BY_RUNTIME_DEPENDENCIES",
+    "migrationNote": "bar-association-hall is a live canonical model path used by the API (services/api/main.py, services/api/persistence.py), worker (services/worker/tasks.py), 20+ scripts, 7 test files, 2 CI jobs, and the release workflow. Moving it requires a coordinated update of 30+ files. Jamuniya-Shaktawat and CAD-Drawings are lower risk but are also verified by week28.py and referenced in project-inventory.json. No folder moves until a dedicated migration branch is prepared."
+  },
+  "proposedFutureStructure": {
+    "description": "Target layout when migration is executed. Not yet applied.",
+    "layout": {
+      "legacy-projects/bar-association-hall/": "current bar-association-hall/",
+      "legacy-projects/jamuniya-shaktawat/": "current Jamuniya-Shaktawat/",
+      "legacy-projects/advocate-chambers/": "current CAD-Drawings/"
+    },
+    "prerequisiteUpdates": [
+      ".github/workflows/ci.yml — update bar-association-hall/standard/* artifact paths",
+      ".github/workflows/release.yml — update artifact bundle paths",
+      "scripts/quality_gate.py — update REPORT_PATH and all weekly report paths",
+      "scripts/verify_baseline.py — update live report comparison paths",
+      "scripts/enterprise/check_quality_gate.py — update REPORT_PATH default",
+      "scripts/enterprise/release_check.py — update all check_* report paths",
+      "benchmarks/run_benchmark.py — update REPORT_PATH",
+      "scripts/generate_cad.py — update DXF_DIR and PDF_DIR",
+      "scripts/week1.py through week28.py — update MODEL_ROOT and hardcoded paths",
+      "services/api/main.py — update BA_HALL variable",
+      "services/api/persistence.py — update model storage key string",
+      "services/api/routes/v1_projects.py — update sys.path insert",
+      "services/worker/tasks.py — update sys.path insert",
+      "tests/test_week1_validation.py — update MODEL_ROOT",
+      "tests/test_week1314_enrichment.py — update DXF_PATH and PDF_PATH",
+      "tests/test_week1516_enrichment.py — update canonical model path",
+      "tests/test_phase2_commands.py — update model storage key reference",
+      "tests/test_week28_organization.py — update expected project roots",
+      "tests/test_e10_stabilization.py — update load scenario fixture path",
+      "projects/project-registry.json — update roots and sourceOfTruth",
+      "projects/project-inventory.json — update all 200+ path entries",
+      ".gitignore, .eslintrc.cjs, .prettierignore, pyproject.toml — update ignore rules"
+    ]
   },
   "projects": [
     {
@@ -18,7 +53,7 @@
         "06-archive"
       ],
       "confidence": "explicit",
-      "description": "Banswara G+1 planning and coordinated drawing package.",
+      "description": "Banswara G+1 planning and coordinated drawing package. Live canonical model path — bar-association-hall/standard/ is the output location for all quality-gate, adversarial, and performance reports consumed by CI and the release workflow.",
       "name": "Bar Association Hall",
       "projectId": "bar-association-hall",
       "roots": [
@@ -26,7 +61,8 @@
         "code-junction/Bar-Association-Standard-Drawing-Package"
       ],
       "sourceOfTruth": "bar-association-hall/standard/source",
-      "status": "DELIVERED_ARCHIVE"
+      "status": "DELIVERED_ARCHIVE",
+      "runtimeDependencyLevel": "HIGH — do not move without migration branch"
     },
     {
       "canonicalLayout": [
@@ -45,7 +81,8 @@
         "Jamuniya-Shaktawat"
       ],
       "sourceOfTruth": "Jamuniya-Shaktawat/CAD",
-      "status": "DELIVERED_ARCHIVE"
+      "status": "DELIVERED_ARCHIVE",
+      "runtimeDependencyLevel": "LOW — week28.py and project-inventory.json reference this; update both before moving"
     },
     {
       "canonicalLayout": [
@@ -64,7 +101,8 @@
         "CAD-Drawings"
       ],
       "sourceOfTruth": "CAD-Drawings",
-      "status": "DELIVERED_ARCHIVE"
+      "status": "DELIVERED_ARCHIVE",
+      "runtimeDependencyLevel": "MEDIUM — generate_cad.py writes here; week1314.py, week28.py, and project-inventory.json reference this; update all before moving"
     }
   ],
   "reviewScope": {
@@ -77,5 +115,5 @@
     "description": "Application, validation, schemas, and repository documentation shared by all projects.",
     "projectId": "shared-repository"
   },
-  "version": "week28.project-registry.v1"
+  "version": "week28.project-registry.v2"
 }
