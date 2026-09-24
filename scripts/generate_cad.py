@@ -30,7 +30,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "bar-association-hall"))
 from sheet_layout import dxf_text_height
 
-BASE_DIR = Path(r"e:\Rajkumar\Advocate-Chambers")
+BASE_DIR = Path(__file__).resolve().parents[1]
 DXF_DIR = BASE_DIR / "CAD-Drawings" / "DXF"
 PDF_DIR = BASE_DIR / "CAD-Drawings" / "PDF"
 DXF_DIR.mkdir(parents=True, exist_ok=True)

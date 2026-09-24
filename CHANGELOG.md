@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to **Advocate-Chambers** are documented here.  
+All notable changes to the **Architectural Planning Platform** are documented here.  
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).  
 Versioning follows [Semantic Versioning](https://semver.org/).
 
@@ -102,5 +102,5 @@ Frozen reports: `baselines/2026-09-20/`
 ---
 
 <!-- Links -->
-[Unreleased]: https://github.com/CRAJKUMARSINGH/Advocate-Chambers/compare/v1.0.0-enterprise-baseline...HEAD
-[1.0.0-enterprise-baseline]: https://github.com/CRAJKUMARSINGH/Advocate-Chambers/releases/tag/v1.0.0-enterprise-baseline
+[Unreleased]: https://github.com/CRAJKUMARSINGH/architectural-planning-platform/compare/v1.0.0-enterprise-baseline...HEAD
+[1.0.0-enterprise-baseline]: https://github.com/CRAJKUMARSINGH/architectural-planning-platform/releases/tag/v1.0.0-enterprise-baseline

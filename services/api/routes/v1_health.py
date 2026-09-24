@@ -14,7 +14,7 @@ def health() -> dict[str, Any]:
     """Liveness probe — always returns 200 if process is up."""
     return {
         "status": "ok",
-        "service": "advocate-chambers-api",
+        "service": "architectural-planning-platform-api",
         "version": "1.0.0-enterprise",
         "authoritativeGeometry": "python",
     }

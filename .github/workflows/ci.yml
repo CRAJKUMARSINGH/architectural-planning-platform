@@ -1,4 +1,4 @@
-# Advocate-Chambers — CI Pipeline (Enterprise E05)
+# Architectural Planning Platform — CI Pipeline (Enterprise E05)
 # Runs on every push/PR to main.
 # Enforces: lint → typecheck → unit tests → adversarial suite → quality gate.
 # A PR that breaks the adversarial suite or quality-gate contract cannot merge.
@@ -53,7 +53,7 @@ jobs:
 
       - name: Type-check Python (mypy)
         run: |
-          mypy scripts services --ignore-missing-imports || true
+          mypy scripts services --ignore-missing-imports
 
       - name: Typecheck Web (tsc)
         run: npm run typecheck:web
@@ -92,13 +92,13 @@ jobs:
 
       - name: Quality gate validation
         run: |
-          npm run validate:week21 || true
+          npm run validate:week21
 
       - name: Selected domain validation
         run: |
-          npm run validate:week23 || true
-          npm run validate:week26 || true
-          npm run validate:week27 || true
+          npm run validate:week23
+          npm run validate:week26
+          npm run validate:week27
 
   # ---------------------------------------------------------------------------
   # Job 3 — Adversarial Suite & Quality Gate Contract
@@ -123,20 +123,19 @@ jobs:
           pip install ezdxf reportlab Pillow svgwrite 2>/dev/null || true
 
       - name: Adversarial suite — Week 22
-        run: npm run test:week22 || true
+        run: npm run test:week22
 
       - name: Adversarial suite — Week 23
         # This MUST report 30/30 known defects detected.
-        # When quality_gate.py --fail-on-blocked is wired, remove the || true.
-        run: npm run test:week23 || true
+        run: npm run test:week23
 
       - name: Quality gate contract check
         run: |
-          npm run validate:week21 || true
+          npm run validate:week21
           # E05 enforcement: check_quality_gate.py exits 1 on BLOCKED or adversarial regression
           python scripts/enterprise/check_quality_gate.py \
             --report bar-association-hall/standard/quality-gate-report.json \
-            --baseline baselines/2026-09-20/quality-gate-report.json || true
+            --baseline baselines/2026-09-20/quality-gate-report.json
 
       - name: Upload quality-gate report
         if: always()
@@ -170,7 +169,7 @@ jobs:
           pip install ezdxf reportlab Pillow svgwrite 2>/dev/null || true
 
       - name: Performance smoke
-        run: npm run validate:week25 || true
+        run: npm run validate:week25
 
       - name: Upload performance report
         if: always()

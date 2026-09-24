@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/CRAJKUMARSINGH/Advocate-Chambers/blob/main/packages/schema/week26-reproducibility-report.schema.json",
+  "$id": "https://github.com/CRAJKUMARSINGH/architectural-planning-platform/blob/main/packages/schema/week26-reproducibility-report.schema.json",
   "title": "Week 26 reproducibility and failure-recovery report",
   "type": "object",
   "additionalProperties": true,

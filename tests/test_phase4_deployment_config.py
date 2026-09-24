@@ -66,7 +66,7 @@ class TestPhase4DeploymentArtifacts:
         adr_text = ADR_PATH.read_text(encoding="utf-8")
         assert "OIDC_JWKS_URL" in adr_text
         assert "AUTH_DISABLED" in adr_text
-        assert "advocate-chambers-api" in adr_text
+        assert "architectural-planning-platform-api" in adr_text
         for role in contract["roles"]:
             assert role in adr_text
 
@@ -95,7 +95,7 @@ class TestPhase4AuthConfigurationValidation:
 
         monkeypatch.setattr(auth_mod, "ENVIRONMENT", "production")
         monkeypatch.setattr(auth_mod, "AUTH_DISABLED", False)
-        monkeypatch.setattr(auth_mod, "OIDC_ISSUER", "https://auth.example.com/realms/advocate-chambers")
+        monkeypatch.setattr(auth_mod, "OIDC_ISSUER", "https://auth.example.com/realms/architectural-planning-platform")
         monkeypatch.setattr(auth_mod, "OIDC_AUDIENCE", "")
         monkeypatch.setattr(auth_mod, "OIDC_JWKS_URL", "")
 

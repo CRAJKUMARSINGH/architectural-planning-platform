@@ -40,13 +40,13 @@ jobs:
 
       - name: Quality gate
         run: |
-          npm run validate:week21 || true
-          python scripts/enterprise/check_quality_gate.py --fail-on-blocked || true
+          npm run validate:week21
+          python scripts/enterprise/check_quality_gate.py --fail-on-blocked
 
       - name: Adversarial suite
         run: |
-          npm run test:week22 || true
-          npm run test:week23 || true
+          npm run test:week22
+          npm run test:week23
 
       - name: Release checklist
         run: python scripts/enterprise/release_check.py --version "${{ github.ref_name }}"
@@ -57,7 +57,7 @@ jobs:
         uses: anchore/sbom-action@v0
         with:
           format: spdx-json
-          output-file: advocate-chambers-${{ github.ref_name }}.sbom.json
+          output-file: architectural-planning-platform-${{ github.ref_name }}.sbom.json
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v7
@@ -75,7 +75,7 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           body: |
-            ## Advocate-Chambers ${{ github.ref_name }}
+            ## Architectural Planning Platform ${{ github.ref_name }}
 
             **Quality Gate:** See attached `quality-gate-report.json`
             **Adversarial Suite:** 30/30 known defects detected (see `week23-adversarial-expansion-report.json`)

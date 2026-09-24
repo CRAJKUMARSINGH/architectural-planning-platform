@@ -15,7 +15,8 @@ import os
 from pathlib import Path
 import math
 
-sys.path.insert(0, r"e:\Rajkumar\Advocate-Chambers\scripts")
+_SCRIPTS = Path(__file__).resolve().parent.parent / "scripts"
+sys.path.insert(0, str(_SCRIPTS))
 from traecad_engine import (
     ezdxf, FT, colors, TextEntityAlignment,
     RenderContext, Frontend, Configuration,
@@ -23,7 +24,7 @@ from traecad_engine import (
     MatplotlibBackend, plt, pymupdf, PAPER_SIZES, PT_PER_MM,
 )
 
-BASE = Path(r"e:\Rajkumar\Advocate-Chambers\bar-association-hall")
+BASE = Path(__file__).resolve().parent
 DXF_DIR = BASE / "CAD"
 PDF_DIR = BASE / "PDF"
 PDF_DIR.mkdir(parents=True, exist_ok=True)

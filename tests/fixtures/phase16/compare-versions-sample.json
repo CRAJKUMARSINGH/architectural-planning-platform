@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "phase16.compare-versions.v1",
+  "description": "2 versions: good-scoring (vA) vs poor-scoring (vB)",
+  "versions": [
+    {
+      "id": "ver-a-good",
+      "totalArea": 7800,
+      "estimatedCost": 4200000,
+      "zones": [
+        {
+          "zoneName": "Chamber Hall",
+          "area": 850,
+          "windows": 4,
+          "southExposure": true
+        },
+        {
+          "zoneName": "Library",
+          "area": 420,
+          "windows": 3,
+          "southExposure": true
+        },
+        {
+          "zoneName": "Chambers x 12",
+          "area": 4800,
+          "windows": 24,
+          "southExposure": true
+        },
+        {
+          "zoneName": "Circulation",
+          "area": 900,
+          "windows": 0,
+          "southExposure": false
+        }
+      ],
+      "orientation": "main-entrance-south-98ft"
+    },
+    {
+      "id": "ver-b-poor",
+      "totalArea": 5200,
+      "estimatedCost": 5100000,
+      "zones": [
+        {
+          "zoneName": "Chamber Hall",
+          "area": 520,
+          "windows": 1,
+          "southExposure": false
+        },
+        {
+          "zoneName": "Library",
+          "area": 200,
+          "windows": 0,
+          "southExposure": false
+        },
+        {
+          "zoneName": "Chambers x 6",
+          "area": 2400,
+          "windows": 6,
+          "southExposure": false
+        },
+        {
+          "zoneName": "Circulation",
+          "area": 1800,
+          "windows": 0,
+          "southExposure": false
+        }
+      ],
+      "orientation": "main-entrance-north"
+    }
+  ],
+  "brief": {
+    "spaceProgram": [
+      {
+        "name": "Chamber Hall",
+        "targetArea": 800,
+        "priority": "must-have"
+      },
+      {
+        "name": "Library",
+        "targetArea": 400,
+        "priority": "must-have"
+      },
+      {
+        "name": "Chambers (units)",
+        "targetCount": 12,
+        "priority": "must-have"
+      }
+    ],
+    "maxBudget": 4500000,
+    "constraints": [
+      "Main entrance on 98-ft south wall",
+      "Min 12 advocate chambers",
+      "Total covered area >= 7500 sq ft"
+    ],
+    "preferences": [
+      "South-facing daylight preferred for all occupied rooms"
+    ]
+  },
+  "minimumScore": 60,
+  "expected": {
+    "winner": "ver-a-good",
+    "qualityGateStatus": "PASS",
+    "winnerOverallScoreMinimum": 60
+  }
+}

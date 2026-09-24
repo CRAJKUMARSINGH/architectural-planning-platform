@@ -1,6 +1,6 @@
 # Enterprise Roadmap — 10-Week Detailed Plan
 
-**Baseline:** Current `main` of Advocate-Chambers (domain enrichment through ~Week 28 complete).  
+**Baseline:** Current `main` of Architectural Planning Platform (domain enrichment through ~Week 28 complete).  
 **Goal:** Production-ready platform foundation without diluting the conservative review-first philosophy.
 
 ---

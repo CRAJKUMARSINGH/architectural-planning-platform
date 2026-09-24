@@ -51,7 +51,10 @@ FONT SIZES: ALL 3x the NBC minimum (300% increase as directed)
 import sys, math
 from pathlib import Path
 
-sys.path.insert(0, r"e:\Rajkumar\Advocate-Chambers\scripts")
+# Use path relative to this file so the script works regardless of folder name
+_HERE = Path(__file__).resolve().parent
+_SCRIPTS = _HERE.parent / "scripts"
+sys.path.insert(0, str(_SCRIPTS))
 from traecad_engine import (
     FT, IN, MM, PAPER_SIZES,
     ProjectConfig, setup_doc,
@@ -76,7 +79,7 @@ TX_TITLE  = (1.0/2.0)  * 3   # 1.500"
 # =============================================================================
 # PROJECT CONFIG
 # =============================================================================
-BASE    = Path(r"e:\Rajkumar\Advocate-Chambers\bar-association-hall")
+BASE    = Path(__file__).resolve().parent
 OUT_DXF = BASE / "CAD"
 OUT_PDF = BASE / "PDF"
 OUT_DXF.mkdir(parents=True, exist_ok=True)

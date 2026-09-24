@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://advocate-chambers.local/schemas/command.schema.json",
-  "title": "Advocate-Chambers Command Envelope v1",
+  "$id": "https://github.com/CRAJKUMARSINGH/architectural-planning-platform/blob/main/packages/schema/command.schema.json",
+  "title": "Architectural Planning Platform Command Envelope v1",
   "description": "A typed, replayable request to preview or commit one model operation.",
   "type": "object",
   "additionalProperties": false,

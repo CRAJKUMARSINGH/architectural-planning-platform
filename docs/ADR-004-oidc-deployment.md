@@ -6,7 +6,7 @@
 
 ## 1. Context and Problem Statement
 
-Advocate-Chambers requires strict multi-tenant isolation, cryptographically verified user identity, and tenant-scoped role enforcement. While local development can use static bearer tokens or test secrets under isolated conditions, staging and production deployments must integrate with standard OpenID Connect (OIDC) identity providers (Keycloak, Auth0, Okta, AWS Cognito).
+The Architectural Planning Platform requires strict multi-tenant isolation, cryptographically verified user identity, and tenant-scoped role enforcement. While local development can use static bearer tokens or test secrets under isolated conditions, staging and production deployments must integrate with standard OpenID Connect (OIDC) identity providers (Keycloak, Auth0, Okta, AWS Cognito).
 
 ## 2. Decision
 
@@ -21,7 +21,7 @@ We mandate the following deployment configuration for all staging and production
    - `sub`: Canonical UUID of the user.
    - `org_id`: UUID of the organization/tenant isolation boundary.
    - `role`: One of `owner`, `editor`, `reviewer`, `viewer`.
-   - `aud`: Must match `OIDC_AUDIENCE` (`advocate-chambers-api`).
+   - `aud`: Must match `OIDC_AUDIENCE` (`architectural-planning-platform-api`).
    - `iss`: Must match `OIDC_ISSUER`.
    - `exp` & `nbf`: Standard expiration with configurable clock skew (`AUTH_CLOCK_SKEW_SECONDS`, max 300s).
 
@@ -66,4 +66,4 @@ To deploy Keycloak locally for testing the OIDC flow:
 ```powershell
 docker-compose -f deploy/oidc/docker-compose.oidc.yml up -d
 ```
-The imported realm will be accessible at `http://localhost:8080/realms/advocate-chambers`.
+The imported realm will be accessible at `http://localhost:8080/realms/architectural-planning-platform`.

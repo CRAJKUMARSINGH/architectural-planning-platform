@@ -3,7 +3,7 @@ version: '3.8'
 services:
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.96.0
-    container_name: advocate-chambers-otel-collector
+    container_name: app-otel-collector
     command: ["--config=/etc/otelcol-contrib/config.yaml"]
     volumes:
       - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
@@ -17,7 +17,7 @@ services:
 
   prometheus:
     image: prom/prometheus:v2.50.1
-    container_name: advocate-chambers-prometheus
+    container_name: app-prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -33,7 +33,7 @@ services:
 
   grafana:
     image: grafana/grafana:10.4.0
-    container_name: advocate-chambers-grafana
+    container_name: app-grafana
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin

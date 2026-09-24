@@ -40,7 +40,7 @@
     "exporters": ["prometheus", "debug"]
   },
   "grafana": {
-    "dashboardUid": "advocate-chambers-obs-v1",
+    "dashboardUid": "app-obs-v1",
     "requiredPanels": [
       "HTTP Request Rate (RPS)",
       "HTTP Request Latency (P95 / P99)",
@@ -56,7 +56,7 @@
     "deploy/observability/prometheus.yml",
     "deploy/observability/grafana/provisioning/datasources/prometheus.yml",
     "deploy/observability/grafana/provisioning/dashboards/dashboards.yml",
-    "deploy/observability/grafana/dashboards/advocate-chambers.json",
+    "deploy/observability/grafana/dashboards/architectural-planning-platform.json",
     "scripts/load_test.py"
   ]
 }

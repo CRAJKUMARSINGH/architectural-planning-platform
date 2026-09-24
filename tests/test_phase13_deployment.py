@@ -6,7 +6,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT_PATH = ROOT / "tests" / "fixtures" / "phase13" / "deployment_contract.json"
-DASHBOARD_PATH = ROOT / "deploy" / "observability" / "grafana" / "dashboards" / "advocate-chambers.json"
+DASHBOARD_PATH = ROOT / "deploy" / "observability" / "grafana" / "dashboards" / "architectural-planning-platform.json"
 OTEL_CONFIG_PATH = ROOT / "deploy" / "observability" / "otel-collector-config.yaml"
 PROMETHEUS_CONFIG_PATH = ROOT / "deploy" / "observability" / "prometheus.yml"
 LOAD_TEST_SCRIPT_PATH = ROOT / "scripts" / "load_test.py"
@@ -43,7 +43,7 @@ class TestPhase13DeploymentArtifacts:
 
     def test_prometheus_scrape_config_targets(self):
         content = PROMETHEUS_CONFIG_PATH.read_text(encoding="utf-8")
-        assert "advocate-chambers-api" in content
+        assert "architectural-planning-platform-api" in content
         assert "/metrics" in content
         assert "otel-collector" in content
 

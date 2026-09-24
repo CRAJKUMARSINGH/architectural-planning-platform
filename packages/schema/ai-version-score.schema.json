@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://advocate-chambers.dev/schemas/ai-version-score.v1.json",
+  "$id": "https://github.com/CRAJKUMARSINGH/architectural-planning-platform/schemas/ai-version-score.v1.json",
   "title": "AI Version Score",
   "description": "AI-powered scoring of design version against brief",
   "type": "object",

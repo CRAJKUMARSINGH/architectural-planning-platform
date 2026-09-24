@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://advocate-chambers.local/schemas/finding.schema.json",
-  "title": "Advocate-Chambers Validation Finding v1",
+  "$id": "https://github.com/CRAJKUMARSINGH/architectural-planning-platform/blob/main/packages/schema/finding.schema.json",
+  "title": "Architectural Planning Platform Validation Finding v1",
   "description": "An explainable validation result attached to model objects.",
   "type": "object",
   "additionalProperties": false,

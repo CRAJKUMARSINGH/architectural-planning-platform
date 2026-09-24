@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://advocate-chambers.local/schemas/project-v1.schema.json",
-  "title": "Advocate-Chambers Parametric Project Schema v1",
+  "$id": "https://github.com/CRAJKUMARSINGH/architectural-planning-platform/blob/main/packages/schema/project-v1.schema.json",
+  "title": "Architectural Planning Platform Parametric Project Schema v1",
   "description": "Authoritative source-of-truth shape for React 19.3 + Python hybrid CAD platform. Patch 1 (typed schema package). Every drawable carries id + kind + levelId + geometry + source + status + revision for provenance tracing.",
   "type": "object",
   "required": [

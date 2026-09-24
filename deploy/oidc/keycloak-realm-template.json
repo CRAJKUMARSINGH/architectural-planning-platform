@@ -1,7 +1,7 @@
 {
-  "realm": "advocate-chambers",
+  "realm": "architectural-planning-platform",
   "enabled": true,
-  "displayName": "Advocate-Chambers Identity Realm",
+  "displayName": "Architectural Planning Platform Identity Realm",
   "sslRequired": "external",
   "registrationAllowed": false,
   "loginWithEmailAllowed": true,
@@ -45,12 +45,12 @@
   ],
   "clients": [
     {
-      "clientId": "advocate-chambers-api",
-      "name": "Advocate-Chambers Core API",
+      "clientId": "architectural-planning-platform-api",
+      "name": "Architectural Planning Platform Core API",
       "description": "Backend API resource server accepting Bearer JWTs with OIDC validation",
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
-      "secret": "advocate-chambers-api-service-secret",
+      "secret": "app-api-service-secret",
       "bearerOnly": true,
       "standardFlowEnabled": false,
       "implicitFlowEnabled": false,
@@ -65,7 +65,7 @@
           "protocolMapper": "oidc-audience-mapper",
           "consentRequired": false,
           "config": {
-            "included.client.audience": "advocate-chambers-api",
+            "included.client.audience": "architectural-planning-platform-api",
             "id.token.claim": "false",
             "access.token.claim": "true"
           }
@@ -99,8 +99,8 @@
       ]
     },
     {
-      "clientId": "advocate-chambers-spa",
-      "name": "Advocate-Chambers React Frontend",
+      "clientId": "architectural-planning-platform-spa",
+      "name": "Architectural Planning Platform React Frontend",
       "description": "Single-page application client using Authorization Code Flow + PKCE",
       "enabled": true,
       "publicClient": true,

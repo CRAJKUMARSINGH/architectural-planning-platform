@@ -18,7 +18,7 @@ processors:
 exporters:
   prometheus:
     endpoint: 0.0.0.0:8889
-    namespace: advocate_chambers
+    namespace: architectural_planning_platform
     send_timestamps: true
   debug:
     verbosity: detailed

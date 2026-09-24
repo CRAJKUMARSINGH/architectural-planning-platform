@@ -2,13 +2,13 @@
   "_comment": "Expected structured log output fields for E07 observability regression.",
   "requiredFields": ["ts", "level", "service", "logger", "msg"],
   "optionalFields": ["request_id", "job_id", "user_id", "org_id", "exc"],
-  "serviceValue": "advocate-chambers-api",
+  "serviceValue": "architectural-planning-platform-api",
   "logLevels": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
   "accessLogSample": {
     "ts": "2026-09-20T10:00:00",
     "level": "INFO",
-    "service": "advocate-chambers-api",
-    "logger": "advocate.api.access",
+    "service": "architectural-planning-platform-api",
+    "logger": "app.api.access",
     "msg": "GET /health 200",
     "request_id": "req-abc-123",
     "method": "GET",
@@ -18,7 +18,7 @@
   },
   "healthEndpointExpected": {
     "status": "ok",
-    "service": "advocate-chambers-api",
+    "service": "architectural-planning-platform-api",
     "authoritativeGeometry": "python"
   }
 }

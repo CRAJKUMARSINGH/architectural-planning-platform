@@ -292,7 +292,7 @@
   ],
   "refresh": "5s",
   "schemaVersion": 39,
-  "tags": ["advocate-chambers", "observability", "pipeline", "performance"],
+  "tags": ["architectural-planning-platform", "observability", "pipeline", "performance"],
   "templating": {
     "list": []
   },
@@ -302,7 +302,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Advocate-Chambers Pipeline & Observability Dashboard",
-  "uid": "advocate-chambers-obs-v1",
+  "title": "Architectural Planning Platform — Pipeline & Observability Dashboard",
+  "uid": "app-obs-v1",
   "version": 1
 }

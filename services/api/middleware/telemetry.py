@@ -96,7 +96,7 @@ class OtelConfig:
     def from_env(cls) -> "OtelConfig":
         """Build config from the current process environment."""
         endpoint = os.environ.get(_OTEL_ENDPOINT_VAR) or None
-        service_name = os.environ.get(_OTEL_SERVICE_NAME_VAR, "advocate-chambers-api")
+        service_name = os.environ.get(_OTEL_SERVICE_NAME_VAR, "architectural-planning-platform-api")
         insecure_raw = os.environ.get(_OTEL_INSECURE_VAR, "false").lower()
         insecure = insecure_raw in ("1", "true", "yes")
         return cls(
@@ -282,7 +282,7 @@ class OtelJsonFormatter(logging.Formatter):
             "severity": record.levelname,
             "message": record.getMessage(),
             "logger": record.name,
-            "service": os.environ.get(_OTEL_SERVICE_NAME_VAR, "advocate-chambers-api"),
+            "service": os.environ.get(_OTEL_SERVICE_NAME_VAR, "architectural-planning-platform-api"),
         }
 
         otel = getattr(record, "otel", None)

@@ -18,6 +18,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
 from services.ai.ai_service import (
     AIService,
@@ -28,6 +29,7 @@ from services.ai.ai_service import (
 )
 from services.api.auth import AuthUser, get_current_user
 from services.api.authorization import require_project_viewer
+from services.api.db.session import get_session
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +82,7 @@ class VersionScoreRequest(BaseModel):
 class RevisionScoreRequest(BaseModel):
     """Request for AI revision scoring (Phase 16A enhancement)."""
     
-    revision_id: str = Field(..., description="Revision ID to score")
+    revision_id: uuid.UUID = Field(..., description="Revision ID to score")
     brief_analysis_id: str | None = Field(None, description="Brief analysis ID (uses latest if not provided)")
 
 
@@ -234,10 +236,11 @@ def score_version(
 
 @router.post("/score-revision/{project_id}", response_model=VersionScoreResponse)
 def score_revision(
-    project_id: str,
+    project_id: uuid.UUID,
     request: RevisionScoreRequest,
     user: AuthUser,
     _: Any = require_project_viewer,
+    db: Session = Depends(get_session),
 ) -> VersionScoreResponse:
     """Score a specific revision against the brief using AI (Phase 16A enhancement).
     
@@ -245,11 +248,7 @@ def score_revision(
     retrieves or creates brief analysis, and scores the revision in one call.
     This is designed for frontend integration where revision IDs are readily available.
     """
-    from services.api.db.session import get_session
     from services.api.models.orm import Revision, Project, ScoringResult
-    from sqlalchemy.orm import Session
-    
-    db = next(get_session())
     
     try:
         ai_service = get_ai_service()
@@ -260,18 +259,19 @@ def score_revision(
                 detail="AI service unavailable - Gemini SDK not installed or API key missing"
             )
         
-        # Validate project access and get project
-        project = db.query(Project).filter(Project.id == project_id).first()
+        pid = uuid.UUID(str(project_id))
+        rid = uuid.UUID(str(request.revision_id))
+
+        project = db.query(Project).filter(Project.id == pid).first()
         if not project:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Project not found"
             )
         
-        # Get revision
         revision = db.query(Revision).filter(
-            Revision.id == request.revision_id,
-            Revision.project_id == project_id
+            Revision.id == rid,
+            Revision.project_id == pid
         ).first()
         
         if not revision:
@@ -280,9 +280,8 @@ def score_revision(
                 detail="Revision not found"
             )
         
-        # Check if scoring already exists for this revision
         existing_scoring = db.query(ScoringResult).filter(
-            ScoringResult.revision_id == request.revision_id
+            ScoringResult.revision_id == rid
         ).first()
         
         if existing_scoring:
@@ -299,41 +298,35 @@ def score_revision(
                 model_version=existing_scoring.model_version
             )
         
-        # Get or create brief analysis
-        # For now, we'll use a simple approach - in production this would be more sophisticated
-        brief_text = "Client brief for project"  # This would come from project metadata
+        brief_text = "Client brief for project"
         
         brief_analysis_result = ai_service.analyze_brief(
             brief_text=brief_text,
             project_context={
-                "projectId": project_id,
-                "revisionId": request.revision_id
+                "projectId": str(project_id),
+                "revisionId": str(request.revision_id),
             }
         )
         
-        # Extract version data from revision
-        # In a real implementation, this would fetch the actual geometry from object storage
         version_data = {
-            "id": revision.id,
+            "id": str(revision.id),
             "revisionNumber": revision.revision_number,
             "validationState": revision.validation_state,
             "metadata": {
                 "authorUserId": str(revision.author_user_id) if revision.author_user_id else None,
                 "reason": revision.reason,
-                "engineVersion": revision.engine_version
-            }
+                "engineVersion": revision.engine_version,
+            },
         }
         
-        # Score the version
         result = ai_service.score_version(
             version_data=version_data,
             brief_analysis=brief_analysis_result
         )
         
-        # Store scoring result
         scoring_record = ScoringResult(
-            project_id=project_id,
-            revision_id=request.revision_id,
+            project_id=pid,
+            revision_id=rid,
             brief_analysis_id=brief_analysis_result.provenance.get("timestamp"),
             overall_score=result.overall_score,
             program_fit=result.program_fit,
@@ -343,11 +336,10 @@ def score_revision(
             zone_scores=result.zone_scores,
             provenance=result.provenance,
             model_version=result.model_version,
-            created_by_user_id=user.id
+            created_by_user_id=user.user_id,
         )
         
         db.add(scoring_record)
-        db.commit()
         
         logger.info(f"Created scoring result for revision {request.revision_id}")
         
@@ -360,21 +352,17 @@ def score_revision(
             commentary=result.commentary,
             zone_scores=result.zone_scores,
             provenance=result.provenance,
-            model_version=result.model_version
+            model_version=result.model_version,
         )
         
     except HTTPException:
-        db.rollback()
         raise
     except Exception as e:
-        db.rollback()
         logger.error(f"Revision scoring failed: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Revision scoring failed: {str(e)}"
         ) from e
-    finally:
-        db.close()
 
 
 @router.post("/generate-suggestions", response_model=SuggestionsResponse)
@@ -383,33 +371,32 @@ def generate_suggestions(
     user: AuthUser,
     _: Any = require_project_viewer,
 ) -> SuggestionsResponse:
-    """Generate proactive design suggestions using AI.
-    
-    This endpoint generates categorized suggestions for design improvements
-    based on the project brief, version, and context data.
+    """Generate proactive design suggestions with heuristic fallback (Phase 17).
+
+    Uses Gemini when available; degrades transparently to the deterministic
+    :class:`HeuristicSuggestionEngine` when the SDK/key are absent or when
+    the remote call fails.  Suggestions are always returned in a uniform
+    schema carrying category, priority, text, SHA-256 hash and provenance.
+
+    The returned objects match the ``ai-suggestions.v1`` schema documented
+    in :ref:`Phase 17 <docs/IMPLEMENTATION_PLAN.md>`.
     """
     try:
         ai_service = get_ai_service()
-        
-        if not ai_service.available:
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="AI service unavailable - Gemini SDK not installed or API key missing"
-            )
-        
+
         result = ai_service.generate_suggestions(
             project_data=request.project_data,
-            categories=request.categories
+            categories=request.categories,
         )
-        
+
         return SuggestionsResponse(
             version="ai-suggestions.v1",
             suggestions=result.suggestions,
             categories=result.categories,
             provenance=result.provenance,
-            model_version=result.model_version
+            model_version=result.model_version,
         )
-        
+
     except HTTPException:
         raise
     except Exception as e:

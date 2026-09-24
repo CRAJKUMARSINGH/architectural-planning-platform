@@ -18,3 +18,7 @@ artifacts/
 output/
 *.db
 advocate_chambers_local.db
+app_local.db
+
+# Nested duplicate repository — stale subfolder, not tracked
+Advocate-Chambers/

@@ -1,7 +1,7 @@
 {
   "__comment": "E07 Observability — Grafana dashboard. Import via Grafana UI: + → Import → paste JSON.",
-  "title": "Advocate-Chambers Platform",
-  "uid": "advocate-chambers-v1",
+  "title": "Architectural Planning Platform",
+  "uid": "architectural-planning-platform-v1",
   "version": 1,
   "timezone": "browser",
   "panels": [

@@ -22,7 +22,7 @@ _SessionLocal: Optional[sessionmaker] = None
 def _sync_database_url() -> str:
     url = os.environ.get(
         "DATABASE_URL",
-        "sqlite:///./advocate_chambers_local.db",
+        "sqlite:///./app_local.db",
     )
     return url.replace("postgresql+asyncpg://", "postgresql+psycopg://")
 

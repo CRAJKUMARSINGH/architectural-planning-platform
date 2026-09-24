@@ -1,4 +1,4 @@
-# Advocate-Chambers Implementation Plan
+# Architectural Planning Platform — Implementation Plan
 
 ## 1. Product objective
 
@@ -653,7 +653,7 @@ Prometheus stage histograms cover the ten canonical pipeline measurements.
 OpenTelemetry exporter integration, OpenTelemetry Collector container definitions
 (`deploy/observability/otel-collector-config.yaml`), Prometheus scraping
 (`deploy/observability/prometheus.yml`), Grafana provisioning & pipeline latency
-dashboards (`deploy/observability/grafana/dashboards/advocate-chambers.json`),
+dashboards (`deploy/observability/grafana/dashboards/architectural-planning-platform.json`),
 and standalone pipeline load-testing tools (`scripts/load_test.py`) are
 committed and validated with automated regression tests.
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/CRAJKUMARSINGH/Advocate-Chambers/blob/main/packages/schema/week21-performance-result.schema.json",
+  "$id": "https://github.com/CRAJKUMARSINGH/architectural-planning-platform/blob/main/packages/schema/week21-performance-result.schema.json",
   "title": "Week 21 performance benchmark result",
   "type": "object",
   "additionalProperties": true,

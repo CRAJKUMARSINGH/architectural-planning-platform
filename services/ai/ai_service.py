@@ -166,44 +166,125 @@ class AIService:
             raise RuntimeError(f"Version scoring failed: {e}") from e
     
     def generate_suggestions(self, project_data: dict[str, Any], categories: list[str] | None = None) -> SuggestionResult:
-        """Generate proactive design suggestions.
-        
+        """Generate proactive design suggestions with heuristic fallback.
+
+        Primary path uses Gemini when SDK + key are available and the call
+        succeeds.  On ANY failure (service unavailable, SDK missing, LLM
+        exception, parse failure) the call degrades transparently to the
+        deterministic Python :class:`HeuristicSuggestionEngine` so that the
+        endpoint never returns 503 on valid input.
+
         Args:
             project_data: Project brief, version, and context data
             categories: Optional list of suggestion categories to generate
-            
+
         Returns:
-            SuggestionResult with categorized suggestions
-            
-        Raises:
-            RuntimeError: If AI service is unavailable
+            SuggestionResult with categorized suggestions.  ``provenance``
+            always contains a ``fallback`` key indicating whether the
+            heuristic engine was used and which rule-pack produced the list.
         """
-        if not self.available:
-            raise RuntimeError("AI service unavailable - Gemini SDK not installed or API key missing")
-        
-        target_categories = categories or ["program", "site", "daylight", "budget", "circulation", "general"]
-        prompt = self._build_suggestions_prompt(project_data, target_categories)
-        
+        requested = (
+            [c.strip().lower() for c in categories]
+            if categories
+            else ["program", "daylight", "budget", "circulation", "general"]
+        )
+
         try:
-            response = self.model.generate_content(prompt)
-            result_text = response.text
-            
-            # Parse the suggestions response
-            suggestions = self._parse_suggestions(result_text)
-            suggestions.categories = target_categories
-            suggestions.provenance = {
-                "model": self.model_name,
-                "timestamp": _get_timestamp(),
-                "project_id": project_data.get("id"),
-                "categories_requested": target_categories
-            }
-            
-            logger.info(f"Suggestions generated: {len(suggestions.suggestions)} across {len(target_categories)} categories")
-            return suggestions
-            
-        except Exception as e:
-            logger.error(f"Suggestion generation failed: {e}")
-            raise RuntimeError(f"Suggestion generation failed: {e}") from e
+            from scripts.phase17_suggestions import (  # noqa: PLC0415  — lazy import to keep ai_service importable from unit tests that haven't yet created scripts/__init__ etc.
+                HeuristicSuggestionEngine as _HeuristicEngine,
+            )
+        except Exception:
+            _HeuristicEngine = None  # type: ignore[assignment,misc]
+
+        # ---------------------------------------------------------------------
+        # Gemini path — only attempted when SDK + key are actually available
+        # and the request is not explicitly scoped to heuristic-only categories.
+        # ---------------------------------------------------------------------
+        if self.available:
+            try:
+                prompt = self._build_suggestions_prompt(project_data, requested)
+                response = self.model.generate_content(prompt)
+                parsed = self._parse_suggestions(response.text)
+                # Normalize: ensure each suggestion dict has the documented keys
+                normalized: list[dict[str, Any]] = []
+                for s in parsed.suggestions:
+                    item: dict[str, Any] = {
+                        "category": str(s.get("category", "general")).strip().lower(),
+                        "text": str(s.get("text", "")).strip(),
+                        "priority": str(s.get("priority", "medium")).strip().lower(),
+                    }
+                    if not item["text"]:
+                        continue
+                    # Deterministic hash even for LLM output so dedupe works later.
+                    from scripts.phase17_suggestions import Suggestion as _HS
+                    item["hash"] = _HS(
+                        category=item["category"], text=item["text"], priority=item["priority"],
+                    ).suggestion_hash
+                    for extra in ("ruleId", "evidence"):
+                        if extra in s:
+                            item[extra] = s[extra]
+                    normalized.append(item)
+                provenance = {
+                    "model": self.model_name,
+                    "timestamp": _get_timestamp(),
+                    "project_id": project_data.get("id"),
+                    "categories_requested": requested,
+                    "fallback": False,
+                    "engine": "gemini",
+                }
+                logger.info(
+                    "Suggestions generated via Gemini: %d across %d categories",
+                    len(normalized), len({s["category"] for s in normalized}),
+                )
+                return SuggestionResult(
+                    suggestions=normalized,
+                    categories=sorted({s["category"] for s in normalized}),
+                    provenance=provenance,
+                    model_version=self.model_name,
+                )
+            except Exception as exc:  # noqa: BLE001
+                logger.warning(
+                    "Gemini suggestion generation failed (%s); falling back to heuristic", exc
+                )
+                # fall through to heuristic below
+
+        # ---------------------------------------------------------------------
+        # Heuristic fallback (always available, fully deterministic)
+        # ---------------------------------------------------------------------
+        if _HeuristicEngine is None:
+            raise RuntimeError(
+                "AI service unavailable and heuristic suggestion engine could not be imported"
+            )
+        engine = _HeuristicEngine()
+        raw = engine.generate(project_data, categories=requested)
+        converted: list[dict[str, Any]] = []
+        for sug in raw.suggestions:
+            d = sug.to_dict()
+            converted.append({
+                "category": d["category"],
+                "text": d["text"],
+                "priority": d["priority"],
+                "hash": d["hash"],
+                "ruleId": d.get("ruleId"),
+                "evidence": d.get("evidence", {}),
+            })
+        provenance = {
+            **raw.provenance,
+            "project_id": project_data.get("id"),
+            "categories_requested": requested,
+            "fallback": True,
+            "engine": engine.ENGINE_VERSION,
+        }
+        logger.info(
+            "Suggestions generated via heuristic fallback: %d across %d categories",
+            len(converted), len(raw.categories),
+        )
+        return SuggestionResult(
+            suggestions=converted,
+            categories=raw.categories,
+            provenance=provenance,
+            model_version=raw.model_version,
+        )
     
     def _build_brief_analysis_prompt(self, brief_text: str, context: dict[str, Any]) -> str:
         """Build prompt for brief analysis."""

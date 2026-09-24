@@ -34,9 +34,9 @@
     "ES512"
   ],
   "keycloak": {
-    "realmName": "advocate-chambers",
-    "clientId": "advocate-chambers-api",
-    "spaClientId": "advocate-chambers-spa",
+    "realmName": "architectural-planning-platform",
+    "clientId": "architectural-planning-platform-api",
+    "spaClientId": "architectural-planning-platform-spa",
     "requiredMappers": [
       "audience-mapper",
       "org-id-mapper",

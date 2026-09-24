@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://advocate-chambers.local/schemas/render-manifest.schema.json",
-  "title": "Advocate-Chambers Presentation Render Manifest v1",
+  "$id": "https://github.com/CRAJKUMARSINGH/architectural-planning-platform/blob/main/packages/schema/render-manifest.schema.json",
+  "title": "Architectural Planning Platform Presentation Render Manifest v1",
   "description": "Deterministic inputs for a non-authoritative presentation render.",
   "type": "object",
   "additionalProperties": false,

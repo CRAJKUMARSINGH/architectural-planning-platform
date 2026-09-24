@@ -12,15 +12,17 @@ Orientation: North = Bottom (Main Entry), South = Top (Garh)
 """
 import sys
 import math
-sys.path.insert(0, r'e:\Rajkumar\Advocate-Chambers\scripts')
-from traecad_engine import *
 from pathlib import Path
+
+_HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(_HERE.parent / "scripts"))
+from traecad_engine import *
 import fitz
 
 # ======================================================================
 # PROJECT CONFIG
 # ======================================================================
-out_dir = Path(r'e:\Rajkumar\Advocate-Chambers\Jamuniya-Shaktawat')
+out_dir = _HERE
 (out_dir / 'CAD').mkdir(parents=True, exist_ok=True)
 (out_dir / 'PDF').mkdir(parents=True, exist_ok=True)
 

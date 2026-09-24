@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://advocate-chambers.dev/schemas/ai-suggestions.v1.json",
+  "$id": "https://github.com/CRAJKUMARSINGH/architectural-planning-platform/schemas/ai-suggestions.v1.json",
   "title": "AI Suggestions",
   "description": "Proactive AI-generated design suggestions",
   "type": "object",

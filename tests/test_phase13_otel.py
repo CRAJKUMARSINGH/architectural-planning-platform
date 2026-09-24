@@ -91,7 +91,7 @@ class Phase13OtelConfigTests(unittest.TestCase):
         try:
             os.environ.pop("OTEL_SERVICE_NAME", None)
             config = OtelConfig.from_env()
-            self.assertEqual(config.service_name, "advocate-chambers-api")
+            self.assertEqual(config.service_name, "architectural-planning-platform-api")
         finally:
             os.environ.clear()
             os.environ.update(original)

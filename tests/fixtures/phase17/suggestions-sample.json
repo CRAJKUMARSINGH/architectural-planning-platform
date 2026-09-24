@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "phase17.suggestions-input.v1",
+  "description": "Bar Association Banswara — Schematic Design v1 (triggers known heuristic rules)",
+  "id": "proj-banswara-test-001",
+  "orientation": "main-entrance-south-98ft",
+  "brief": {
+    "spaceProgram": [
+      {"name": "Chamber Hall", "targetArea": 800, "priority": "must-have"},
+      {"name": "Library", "targetArea": 400, "priority": "must-have"},
+      {"name": "Advocate Chambers (Units)", "targetArea": 4800, "priority": "must-have"},
+      {"name": "Conference Room", "targetArea": 300, "priority": "must-have"},
+      {"name": "Pantry", "targetArea": 80, "priority": "nice-to-have"}
+    ],
+    "maxBudget": 4500000,
+    "constraints": [
+      "Main entrance on 98-ft south wall",
+      "Min 12 advocate chambers",
+      "Setback 10 ft all sides",
+      "Total covered area >= 7500 sq ft"
+    ],
+    "preferences": [
+      "South-facing daylight preferred for all occupied rooms",
+      "Accessible ramp to porch required"
+    ]
+  },
+  "version": {
+    "id": "ver-schematic-v1",
+    "totalArea": 6800,
+    "estimatedCost": 5200000,
+    "zones": [
+      {
+        "zoneName": "Chamber Hall",
+        "type": "assembly",
+        "area": 560,
+        "windows": 30,
+        "southExposure": true
+      },
+      {
+        "zoneName": "Library",
+        "type": "library",
+        "area": 520,
+        "windows": 10,
+        "southExposure": true
+      },
+      {
+        "zoneName": "Advocate Chambers (Units)",
+        "type": "office",
+        "area": 2800,
+        "windows": 60,
+        "southExposure": true
+      },
+      {
+        "zoneName": "Conference Room",
+        "type": "meeting",
+        "area": 200,
+        "windows": 0,
+        "southExposure": false
+      },
+      {
+        "zoneName": "Main Circulation",
+        "type": "circulation",
+        "area": 600,
+        "windows": 0,
+        "southExposure": false
+      },
+      {
+        "zoneName": "Admin Suite",
+        "type": "office",
+        "area": 400,
+        "windows": 40,
+        "southExposure": true
+      }
+    ]
+  },
+  "expected": {
+    "categoriesProduced": ["program", "daylight", "budget", "circulation", "general"],
+    "minSuggestionCount": 8,
+    "highPriorityCategories": ["program", "budget", "daylight"],
+    "fixtureTriggers": {
+      "programUndersize": ["Chamber Hall", "Advocate Chambers (Units)"],
+      "programOversize": ["Library"],
+      "budgetOver": true,
+      "daylightMissing": ["Conference Room"],
+      "circulationTight": true
+    }
+  }
+}

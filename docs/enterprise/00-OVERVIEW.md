@@ -1,6 +1,6 @@
 # 00 — Executive Overview
 
-## What Advocate-Chambers Already Is
+## What the Architectural Planning Platform Already Is
 
 A hybrid **parametric CAD + architectural planning intelligence** platform:
 

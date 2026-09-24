@@ -1,5 +1,5 @@
 """
-Advocate-Chambers — Repository Pattern (Sketch)
+Architectural Planning Platform — Repository Pattern (Sketch)
 ================================================
 Protocol interfaces for the persistence layer.
 Real implementations using SQLAlchemy/SQLModel are added in E02.

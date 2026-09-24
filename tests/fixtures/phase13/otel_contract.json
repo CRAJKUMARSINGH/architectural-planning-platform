@@ -1,6 +1,6 @@
 {
   "version": "phase13.otel-contract.v1",
-  "description": "OpenTelemetry export configuration contract for Advocate-Chambers",
+  "description": "OpenTelemetry export configuration contract for Architectural Planning Platform",
   "measuredStages": [
     "brief_compilation",
     "quick_validation",

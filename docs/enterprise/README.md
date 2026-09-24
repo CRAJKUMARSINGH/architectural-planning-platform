@@ -1,8 +1,8 @@
 # Enterprise Enrichment Programme — Documentation
 
-This folder contains the full 10-week enterprise enrichment plan for
-**Advocate-Chambers**, sourced from the enrichment package at
-`code-junction/Advocate-Chambers-Enterprise-Enrichment/`.
+This folder contains the full 10-week enterprise enrichment plan for the
+**Architectural Planning Platform**, sourced from the enrichment package at
+`code-junction/Architectural-Planning-Platform-Enterprise-Enrichment/`.
 
 ## Contents
 

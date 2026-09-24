@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/CRAJKUMARSINGH/Advocate-Chambers/blob/main/packages/schema/week23-adversarial-case.schema.json",
+  "$id": "https://github.com/CRAJKUMARSINGH/architectural-planning-platform/blob/main/packages/schema/week23-adversarial-case.schema.json",
   "title": "Week 23 adversarial expansion case",
   "type": "object",
   "additionalProperties": false,

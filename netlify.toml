@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build --workspace=@advocate-chambers/web"
+  command = "npm run build --workspace=@architectural-planning-platform/web"
   publish = "apps/web/dist"
 
 [build.environment]

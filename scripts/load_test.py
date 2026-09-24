@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Advocate-Chambers Performance & Load-Testing Tool — Phase 13 Observability.
+"""Architectural Planning Platform — Performance & Load-Testing Tool — Phase 13 Observability.
 
 Measures latency (p50, p90, p95, p99, max), request throughput (RPS), and error
 rates against core architectural pipeline endpoints (preview, validate, analysis).
@@ -163,7 +163,7 @@ def run_synthetic_pipeline_load(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Advocate-Chambers Load-Test Runner")
+    parser = argparse.ArgumentParser(description="Architectural Planning Platform Load-Test Runner")
     parser.add_argument("--iterations", type=int, default=50, help="Number of iterations per target")
     parser.add_argument("--concurrency", type=int, default=4, help="Thread pool concurrency level")
     parser.add_argument("--output", type=str, default="", help="Optional JSON output path")

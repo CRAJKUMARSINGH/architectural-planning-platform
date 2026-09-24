@@ -18,7 +18,7 @@ Report security issues privately:
 
 1. Email the maintainer directly (see `CODEOWNERS` or GitHub profile).
 2. Use GitHub's private **Security Advisory** feature:  
-   `https://github.com/CRAJKUMARSINGH/Advocate-Chambers/security/advisories/new`
+   `https://github.com/CRAJKUMARSINGH/architectural-planning-platform/security/advisories/new`
 3. Include:
    - Affected component (API, worker, web, Python pipeline)
    - Description of the vulnerability and potential impact

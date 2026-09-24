@@ -1,4 +1,4 @@
-# Advocate-Chambers — top-level Makefile
+# Architectural Planning Platform — top-level Makefile
 # Usage: make <target>
 # On Windows: install make via winget (winget install GnuWin32.Make)
 # or run the equivalent npm scripts documented in CONTRIBUTING.md.
@@ -9,7 +9,7 @@
 # Default target
 help:
 	@echo ""
-	@echo "Advocate-Chambers — available targets"
+	@echo "Architectural Planning Platform — available targets"
 	@echo "--------------------------------------"
 	@echo "  make verify         Full baseline check (lint + typecheck + tests + gate)"
 	@echo "  make lint           Lint Python + TypeScript/Web"
@@ -53,7 +53,7 @@ typecheck:
 # ---------------------------------------------------------------------------
 test-baseline:
 	python -m unittest discover -s tests -p 'test_*.py'
-	npm run validate:week21 || true
+	npm run validate:week21
 
 # ---------------------------------------------------------------------------
 # Quality gate only

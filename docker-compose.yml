@@ -1,4 +1,4 @@
-# Advocate-Chambers — Local Enterprise Stack
+# Architectural Planning Platform — Local Enterprise Stack
 # Usage: docker compose up --build
 #
 # Services: Postgres 16, Redis 7, MinIO (S3-compatible), FastAPI, Worker, Web

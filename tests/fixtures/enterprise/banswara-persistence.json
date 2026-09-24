@@ -1,0 +1,9 @@
+{
+  "projectId": "proj-banswara-bar-association",
+  "organizationId": "org-banswara-bar-association",
+  "name": "Bar Association Hall - Banswara",
+  "units": "inch",
+  "modelStorageKey": "bar-association-hall/standard/model/project.json",
+  "rulePackVersion": "india-preliminary-review.v1",
+  "geometryAuthority": "file-backed Python model"
+}

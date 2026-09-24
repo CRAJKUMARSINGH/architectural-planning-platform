@@ -1,9 +1,9 @@
 apiVersion: 1
 
 providers:
-  - name: 'Advocate-Chambers Dashboards'
+  - name: 'Architectural Planning Platform Dashboards'
     orgId: 1
-    folder: 'Advocate-Chambers'
+    folder: 'Architectural Planning Platform'
     type: file
     disableDeletion: false
     updateIntervalSeconds: 10

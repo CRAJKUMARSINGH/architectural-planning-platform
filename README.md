@@ -1,4 +1,4 @@
-# Advocate-Chambers — Architectural Planning Platform
+# Architectural Planning Platform
 
 ## Implementation Status (September 2026)
 
@@ -19,6 +19,8 @@
 **Test suite: 718+ passed, 0 failed** · TypeScript: 0 errors
 
 See [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) for the roadmap.
+
+See [`docs/FINISHING_GUIDE.md`](docs/FINISHING_GUIDE.md) for setup, verification, and release finishing steps.
 
 ---
 

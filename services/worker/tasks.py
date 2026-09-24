@@ -20,9 +20,9 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(ROOT / "bar-association-hall"))
 
-logger = logging.getLogger("advocate.worker.tasks")
+logger = logging.getLogger("app.worker.tasks")
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./advocate_chambers_local.db")
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./app_local.db")
 
 
 def _get_session():

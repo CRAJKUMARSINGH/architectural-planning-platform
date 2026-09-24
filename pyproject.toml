@@ -1,7 +1,7 @@
 [project]
-name = "advocate-chambers"
+name = "architectural-planning-platform"
 version = "1.0.0"
-description = "Advocate-Chambers / Bar Association Banswara — hybrid React 19.3 + Python parametric CAD platform."
+description = "Architectural Planning Platform / Bar Association Banswara — hybrid React 19.3 + Python parametric CAD platform."
 requires-python = ">=3.11"
 readme = "README.md"
 
@@ -62,7 +62,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["advocate_chambers", "traecad_engine", "drafting_kernel"]
+known-first-party = ["architectural_planning_platform", "traecad_engine", "drafting_kernel"]
 
 [tool.ruff.format]
 quote-style = "double"

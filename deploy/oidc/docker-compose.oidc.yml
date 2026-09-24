@@ -3,7 +3,7 @@ version: '3.8'
 services:
   keycloak-db:
     image: postgres:16-alpine
-    container_name: advocate-chambers-keycloak-db
+    container_name: app-keycloak-db
     environment:
       POSTGRES_DB: ${KEYCLOAK_DB_NAME:-keycloak}
       POSTGRES_USER: ${KEYCLOAK_DB_USER:-keycloak}
@@ -16,11 +16,11 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - advocate-auth-net
+      - app-auth-net
 
   keycloak:
     image: quay.io/keycloak/keycloak:24.0
-    container_name: advocate-chambers-idp
+    container_name: app-idp
     command: start-dev --import-realm
     environment:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
@@ -40,11 +40,11 @@ services:
       keycloak-db:
         condition: service_healthy
     networks:
-      - advocate-auth-net
+      - app-auth-net
 
 volumes:
   keycloak-pgdata:
 
 networks:
-  advocate-auth-net:
+  app-auth-net:
     driver: bridge

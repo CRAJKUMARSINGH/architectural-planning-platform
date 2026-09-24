@@ -1,4 +1,4 @@
-# Contributing to Advocate-Chambers
+# Contributing to Architectural Planning Platform
 
 **Platform:** Hybrid parametric CAD / architectural planning intelligence  
 **Stack:** Python 3.11 (geometry authority) · React 19.3 + Vite (editor) · FastAPI (adapter)
@@ -19,8 +19,8 @@
 ### 1 — Clone & install
 
 ```bash
-git clone https://github.com/CRAJKUMARSINGH/Advocate-Chambers.git
-cd Advocate-Chambers
+git clone https://github.com/CRAJKUMARSINGH/architectural-planning-platform.git
+cd architectural-planning-platform
 
 # Python deps
 pip install -e ".[dev]"
@@ -59,7 +59,7 @@ npm run dev:web
 ## Repository layout
 
 ```
-advocate-chambers/
+architectural-planning-platform/
 ├── apps/web/          React 19.3 + Vite editor
 ├── packages/
 │   ├── schema/        Shared Pydantic ↔ Zod schemas

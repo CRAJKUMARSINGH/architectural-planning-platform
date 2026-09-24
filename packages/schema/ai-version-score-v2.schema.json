@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://advocate-chambers.local/schemas/ai-version-score-v2.schema.json",
+  "$id": "https://github.com/CRAJKUMARSINGH/architectural-planning-platform/blob/main/packages/schema/ai-version-score-v2.schema.json",
   "title": "AI Version Score v2 with Tradeoff Analysis",
   "description": "Schema for AI-powered design-version scoring and tradeoff comparison (Phase 16). Extends ai-version-score.v1 with circulation scoring, letter grades, flags, and the full tradeoff comparison envelope.",
   "type": "object",

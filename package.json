@@ -1,8 +1,8 @@
 {
-  "name": "advocate-chambers",
+  "name": "architectural-planning-platform",
   "private": true,
   "version": "1.0.0",
-  "description": "Advocate-Chambers / Bar Association Banswara — hybrid React 19.3 + Python parametric CAD platform.",
+  "description": "Architectural Planning Platform / Bar Association Banswara — hybrid React 19.3 + Python parametric CAD platform.",
   "workspaces": [
     "apps/*",
     "packages/*",

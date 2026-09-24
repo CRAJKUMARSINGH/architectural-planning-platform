@@ -19,7 +19,7 @@ class JsonFormatter(logging.Formatter):
         log: dict = {
             "ts": self.formatTime(record, "%Y-%m-%dT%H:%M:%S"),
             "level": record.levelname,
-            "service": "advocate-chambers-api",
+            "service": "architectural-planning-platform-api",
             "logger": record.name,
             "msg": record.getMessage(),
         }

@@ -6,7 +6,7 @@
 
 ## Context
 
-Advocate-Chambers combines a rich React editor with a sophisticated Python parametric engine
+The Architectural Planning Platform combines a rich React editor with a sophisticated Python parametric engine
 and NBC/RPwD rule evaluation. There is a natural temptation to move more logic into the
 frontend or into a generic "BIM" layer for perceived interactivity gains.
 

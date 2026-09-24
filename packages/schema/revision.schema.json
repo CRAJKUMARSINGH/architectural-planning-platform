@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://advocate-chambers.local/schemas/revision.schema.json",
-  "title": "Advocate-Chambers Revision Descriptor v1",
+  "$id": "https://github.com/CRAJKUMARSINGH/architectural-planning-platform/blob/main/packages/schema/revision.schema.json",
+  "title": "Architectural Planning Platform Revision Descriptor v1",
   "description": "Immutable metadata describing one canonical model revision.",
   "type": "object",
   "additionalProperties": false,

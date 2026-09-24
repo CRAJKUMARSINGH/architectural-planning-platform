@@ -1,4 +1,4 @@
-# Advocate-Chambers: Future React + CAD Platform Transformation Guide
+# Architectural Planning Platform: Future React + CAD Platform Transformation Guide
 
 **Status:** Future migration plan — do not apply as a blind rewrite  
 **Target baseline:** React 19.3 + TypeScript  
@@ -34,7 +34,7 @@ The browser may propose edits. The Python service decides whether those edits ar
 Add the web platform beside the current drawing code:
 
 ```text
-Advocate-Chambers/
+architectural-planning-platform/
 ├── apps/
 │   └── web/                         # React 19.3 + TypeScript editor
 ├── services/
