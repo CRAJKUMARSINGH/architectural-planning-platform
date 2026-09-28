@@ -7,7 +7,7 @@ readme = "README.md"
 
 [project.optional-dependencies]
 dev = [
-    "ruff==0.16.8",
+    "ruff==0.16.9",
     "mypy==1.13.0",
 ]
 api = [
