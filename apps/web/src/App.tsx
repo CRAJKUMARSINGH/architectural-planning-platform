@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { WorkflowPanel } from './features/workflow';
 import { ArtifactPanel } from './components/ArtifactPanel';
 import { CommandPanel } from './components/CommandPanel';
 import { ProductModePanel } from './components/ProductModePanel';
@@ -251,6 +252,7 @@ function ProjectSetup({ onStart }: { onStart: (draft: ProjectDraft) => void }): 
               <button
                 className="button button--primary"
                 type="button"
+                data-testid="start-working-btn"
                 disabled={!canStart}
                 onClick={() => onStart({
                   mode,
@@ -414,6 +416,7 @@ function LandingPage({ onOpenStudio }: { onOpenStudio: () => void }): React.JSX.
 function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft }): React.JSX.Element {
   const [level, setLevel] = useState<LevelId>('GF');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [studioTab, setStudioTab] = useState<'geometry' | 'workflow'>('geometry');
   const projectId = draft.projectId;
 
   // Mock revision for VersionScoringPanel - in production this would come from the API
@@ -432,8 +435,22 @@ function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft
   return (
     <div className="studio-shell">
       <header className="studio-header">
-        <button className="studio-back" type="button" onClick={onBack}>← Back to overview</button>
+        <button className="studio-back" type="button" onClick={onBack} data-testid="back-btn">← Back to overview</button>
         <div className="studio-title"><BrandMark /><strong>{draft.name}</strong><span>Workspace</span></div>
+        <div className="studio-tabs" style={{ display: 'flex', gap: 0, marginLeft: 16 }}>
+          <button
+            type="button"
+            data-testid="geometry-tab-btn"
+            onClick={() => setStudioTab('geometry')}
+            style={{ padding: '4px 14px', fontSize: 11, fontWeight: studioTab === 'geometry' ? 700 : 400, background: studioTab === 'geometry' ? '#1e293b' : 'transparent', color: studioTab === 'geometry' ? '#fff' : '#94a3b8', border: '1px solid #334155', borderRight: 'none', borderRadius: '4px 0 0 4px', cursor: 'pointer' }}
+          >Geometry</button>
+          <button
+            type="button"
+            data-testid="workflow-tab-btn"
+            onClick={() => setStudioTab('workflow')}
+            style={{ padding: '4px 14px', fontSize: 11, fontWeight: studioTab === 'workflow' ? 700 : 400, background: studioTab === 'workflow' ? '#3b82f6' : 'transparent', color: studioTab === 'workflow' ? '#fff' : '#94a3b8', border: '1px solid #334155', borderRadius: '0 4px 4px 0', cursor: 'pointer' }}
+          >✦ Workflow</button>
+        </div>
         <div className="studio-revision"><span className="status-dot" /> Revision 1 · Preliminary review</div>
       </header>
       {(draft.narration || draft.files.length > 0) && (
@@ -444,28 +461,38 @@ function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft
         </div>
       )}
       <div className="studio-body">
-        <aside className="studio-sidebar">
-          <ProductModePanel />
-          <ProjectLevelSelector level={level} onChange={setLevel} />
-          <ZoneCanvas
+        {studioTab === 'workflow' ? (
+          <WorkflowPanel
             projectId={projectId}
-            currentRevision={1}
-            authorId="browser-user"
+            projectName={draft.name}
+            initialBrief={draft.narration}
           />
-          <VersionScoringPanel
-            projectId={projectId}
-            currentRevision={mockRevision}
-          />
-          <ValidationPanel projectId={projectId} level={level} />
-          <ArtifactPanel projectId={projectId} level={level} />
-        </aside>
-        <main className="studio-viewport">
-          <Viewport2D projectId={projectId} level={level} selectedId={selectedId} onSelect={setSelectedId} />
-        </main>
-        <aside className="studio-sidebar studio-sidebar--right">
-          <PropertyInspector projectId={projectId} level={level} selectedId={selectedId} />
-          <CommandPanel projectId={projectId} level={level} selectedId={selectedId} />
-        </aside>
+        ) : (
+          <>
+            <aside className="studio-sidebar">
+              <ProductModePanel />
+              <ProjectLevelSelector level={level} onChange={setLevel} />
+              <ZoneCanvas
+                projectId={projectId}
+                currentRevision={1}
+                authorId="browser-user"
+              />
+              <VersionScoringPanel
+                projectId={projectId}
+                currentRevision={mockRevision}
+              />
+              <ValidationPanel projectId={projectId} level={level} />
+              <ArtifactPanel projectId={projectId} level={level} />
+            </aside>
+            <main className="studio-viewport">
+              <Viewport2D projectId={projectId} level={level} selectedId={selectedId} onSelect={setSelectedId} />
+            </main>
+            <aside className="studio-sidebar studio-sidebar--right">
+              <PropertyInspector projectId={projectId} level={level} selectedId={selectedId} />
+              <CommandPanel projectId={projectId} level={level} selectedId={selectedId} />
+            </aside>
+          </>
+        )}
       </div>
     </div>
   );

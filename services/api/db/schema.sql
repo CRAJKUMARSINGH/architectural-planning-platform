@@ -218,3 +218,84 @@ INSERT INTO memberships (organization_id, user_id, role)
 VALUES ('00000000-0000-0000-0000-000000000001',
         '00000000-0000-0000-0000-000000000002', 'owner')
 ON CONFLICT (organization_id, user_id) DO NOTHING;
+
+-- ---------------------------------------------------------------------------
+-- Workflow tables — Archi Copilot integration
+-- (brief → canvas → score → suggest → export)
+-- Canvas blocks are concept-level only; promote to geometry via a Job.
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS brief_analyses (
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id          UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    brief_text          TEXT NOT NULL,
+    summary             TEXT NOT NULL,
+    space_program       JSONB NOT NULL DEFAULT '[]',
+    constraints         JSONB NOT NULL DEFAULT '[]',
+    opportunities       JSONB NOT NULL DEFAULT '[]',
+    open_questions      JSONB NOT NULL DEFAULT '[]',
+    provenance          JSONB NOT NULL DEFAULT '{}',
+    model_version       TEXT NOT NULL DEFAULT 'gemini-2.5-flash',
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
+    created_by_user_id  UUID REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS concept_versions (
+    id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id            UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    brief_analysis_id     UUID REFERENCES brief_analyses(id) ON DELETE SET NULL,
+    name                  TEXT NOT NULL,
+    floors                JSONB NOT NULL DEFAULT '["Ground Floor"]',
+    blocks                JSONB NOT NULL DEFAULT '[]',
+    overall_score         DOUBLE PRECISION,
+    program_fit_score     DOUBLE PRECISION,
+    daylight_score        DOUBLE PRECISION,
+    budget_fit_score      DOUBLE PRECISION,
+    ai_commentary         TEXT,
+    promoted_revision_id  UUID REFERENCES revisions(id) ON DELETE SET NULL,
+    created_at            TIMESTAMPTZ NOT NULL DEFAULT now(),
+    created_by_user_id    UUID REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS copilot_suggestions (
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id          UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    category            TEXT NOT NULL
+                            CHECK (category IN ('program','site','daylight',
+                                                'budget','circulation','general')),
+    text                TEXT NOT NULL,
+    priority            TEXT NOT NULL DEFAULT 'medium',
+    status              TEXT NOT NULL DEFAULT 'new'
+                            CHECK (status IN ('new','accepted','dismissed')),
+    suggestion_hash     TEXT,
+    provenance          JSONB NOT NULL DEFAULT '{}',
+    model_version       TEXT NOT NULL DEFAULT 'gemini-2.5-flash',
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS scoring_results (
+    id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id            UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    revision_id           UUID NOT NULL UNIQUE REFERENCES revisions(id) ON DELETE CASCADE,
+    brief_analysis_id     TEXT,
+    overall_score         INTEGER NOT NULL CHECK (overall_score BETWEEN 0 AND 100),
+    program_fit           INTEGER NOT NULL CHECK (program_fit BETWEEN 0 AND 100),
+    daylight_score        INTEGER NOT NULL CHECK (daylight_score BETWEEN 0 AND 100),
+    budget_fit            INTEGER NOT NULL CHECK (budget_fit BETWEEN 0 AND 100),
+    commentary            TEXT NOT NULL,
+    zone_scores           JSONB NOT NULL DEFAULT '[]',
+    provenance            JSONB NOT NULL DEFAULT '{}',
+    model_version         TEXT NOT NULL DEFAULT 'gemini-2.5-flash',
+    created_at            TIMESTAMPTZ NOT NULL DEFAULT now(),
+    created_by_user_id    UUID REFERENCES users(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_brief_analyses_project
+    ON brief_analyses(project_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_concept_versions_project
+    ON concept_versions(project_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_copilot_suggestions_project
+    ON copilot_suggestions(project_id, status, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_scoring_results_project
+    ON scoring_results(project_id);

@@ -32,6 +32,7 @@ from services.api.routes.v1_health import ready as readiness_probe
 from services.api.routes.v1_presentation import router as presentation_router
 from services.api.routes.v1_projects import router as projects_router
 from services.api.routes.v1_ai import router as ai_router
+from services.api.routes.v1_workflow import router as workflow_router
 
 ROOT = Path(__file__).resolve().parents[2]
 BA_HALL = ROOT / "bar-association-hall"
@@ -182,6 +183,7 @@ app.include_router(collaboration_public_router, prefix="/api")
 app.include_router(presentation_router, prefix="/api")
 app.include_router(delivery_router, prefix="/api")
 app.include_router(ai_router, prefix="/api")
+app.include_router(workflow_router, prefix="/api")
 app.add_api_route("/ready", readiness_probe, methods=["GET"], tags=["meta"])
 app.add_api_route("/metrics", metrics_probe, methods=["GET"], tags=["meta"])
 

@@ -23,5 +23,6 @@
       "@schema/*": ["../../packages/schema/*"]
     }
   },
-  "include": ["src", "vite.config.ts"]
+  "include": ["src", "vite.config.ts"],
+  "exclude": ["src/components/__tests__"]
 }

@@ -89,7 +89,7 @@ export function VersionScoringPanel({ projectId, currentRevision, onScoreComplet
   // State management
   const [briefAnalysis, setBriefAnalysis] = useState<BriefAnalysisResult | null>(null);
   const [scoringResult, setScoringResult] = useState<VersionScoreResult | null>(null);
-  const [selectedRevision, setSelectedRevision] = useState<Revision>(currentRevision);
+  const [selectedRevision] = useState<Revision>(currentRevision);
   const [error, setError] = useState<string | null>(null);
   const [scoreHistory, setScoreHistory] = useState<Array<{
     revisionId: string;

@@ -22,7 +22,7 @@ const FindingSchema = z.object({
   severity: z.enum(['BLOCKER', 'ERROR', 'WARNING', 'INFO']),
   message: z.string(),
   objectIds: z.array(z.string()).default([]),
-  evidence: z.record(z.unknown()).default({}),
+  evidence: z.record(z.string(), z.unknown()).default({}),
   professionalReviewRequired: z.boolean().default(false),
 });
 

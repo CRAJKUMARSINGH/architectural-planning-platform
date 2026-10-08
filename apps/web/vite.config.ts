@@ -13,6 +13,7 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     proxy: {
+      '/api': 'http://localhost:8000',
       '/health': 'http://localhost:8000',
       '/projects': 'http://localhost:8000',
       '/validate': 'http://localhost:8000',
