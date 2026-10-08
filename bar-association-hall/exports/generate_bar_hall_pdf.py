@@ -25,24 +25,55 @@ import math
 from pathlib import Path
 
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import A1, landscape
+from reportlab.lib.pagesizes import A1, A3, A4, landscape
 from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Table, TableStyle
+
+# ── Mixed paper sizes by sheet type ──────────────────────────────────────────
+# Drawing sheets (A-00 to A-05) use A1 landscape — full-size plotter output.
+# Schedule / spec sheets (A-06 to A-09) use A3/A4 — desk-printer friendly.
+SHEET_CONFIG = {
+    'A-00': ('cover',     A1),   # Cover / project summary
+    'A-01': ('site',      A1),   # Site plan
+    'A-02': ('plan',      A1),   # Ground floor plan
+    'A-03': ('plan',      A1),   # First floor plan (Rev P03)
+    'A-04': ('elevation', A1),   # Front elevation
+    'A-05': ('section',   A1),   # Section A-A
+    'A-06': ('schedule',  A3),   # Door & window schedule + balcony detail
+    'A-07': ('schedule',  A3),   # Sanitary ware schedule
+    'A-08': ('specs',     A4),   # Specifications & materials
+    'A-09': ('schedule',  A3),   # Area statement
+}
 
 # ── Output path ──────────────────────────────────────────────────────────────
 OUT_DIR = Path(__file__).resolve().parent / "pdf"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 OUT_PDF = OUT_DIR / "BAR_ASSOCIATION_COMPLETE.pdf"
 
-# ── Page geometry ─────────────────────────────────────────────────────────────
-PW, PH = landscape(A1)          # 841 × 594 mm → points
-MARGIN = 18 * mm
-TITLE_H = 70 * mm               # bottom title block height
-DRAW_X = MARGIN
-DRAW_Y = MARGIN + TITLE_H
-DRAW_W = PW - 2 * MARGIN
-DRAW_H = PH - 2 * MARGIN - TITLE_H
+# ── Page geometry helpers (recalculated per sheet) ────────────────────────────
+MARGIN  = 18 * mm
+TITLE_H = 70 * mm   # bottom title block height
+
+def _page_geom(pagesize: tuple) -> dict:
+    """Return draw-zone metrics for a given landscape pagesize."""
+    pw, ph = landscape(pagesize)
+    return {
+        "PW": pw, "PH": ph,
+        "DRAW_X": MARGIN,
+        "DRAW_Y": MARGIN + TITLE_H,
+        "DRAW_W": pw - 2 * MARGIN,
+        "DRAW_H": ph - 2 * MARGIN - TITLE_H,
+    }
+
+# Default geometry (A1 landscape) — used by drawing sheets
+_A1 = _page_geom(A1)
+PW     = _A1["PW"]
+PH     = _A1["PH"]
+DRAW_X = _A1["DRAW_X"]
+DRAW_Y = _A1["DRAW_Y"]
+DRAW_W = _A1["DRAW_W"]
+DRAW_H = _A1["DRAW_H"]
 
 # ── Colour palette ────────────────────────────────────────────────────────────
 C_BLACK   = colors.HexColor("#0f172a")
@@ -67,21 +98,26 @@ STATUS        = "PRELIMINARY REVIEW ONLY — NOT FOR CONSTRUCTION"
 
 # ── Shared drawing primitives ─────────────────────────────────────────────────
 
-def _border(c: canvas.Canvas) -> None:
+def _border(c: canvas.Canvas, pw: float = None, ph: float = None) -> None:
     """Outer and inner ISO border lines."""
+    pw = pw or PW
+    ph = ph or PH
     c.setStrokeColor(C_BLACK)
     c.setLineWidth(2.5)
-    c.rect(MARGIN, MARGIN, PW - 2 * MARGIN, PH - 2 * MARGIN)
+    c.rect(MARGIN, MARGIN, pw - 2 * MARGIN, ph - 2 * MARGIN)
     c.setLineWidth(0.5)
-    c.rect(MARGIN + 3, MARGIN + 3, PW - 2 * MARGIN - 6, PH - 2 * MARGIN - 6)
+    c.rect(MARGIN + 3, MARGIN + 3, pw - 2 * MARGIN - 6, ph - 2 * MARGIN - 6)
 
 
 def _title_block(c: canvas.Canvas, sheet_no: str, sheet_title: str,
-                 sheet_type: str, scale: str = "1:100") -> None:
+                 sheet_type: str, scale: str = "1:100",
+                 pw: float = None, ph: float = None) -> None:
     """ISO 7200-style title block at page bottom."""
+    pw = pw or PW
+    ph = ph or PH
     bx = MARGIN
     by = MARGIN
-    bw = PW - 2 * MARGIN
+    bw = pw - 2 * MARGIN
     bh = TITLE_H
 
     # Background
@@ -92,7 +128,7 @@ def _title_block(c: canvas.Canvas, sheet_no: str, sheet_title: str,
 
     # Vertical dividers
     div1 = bx + 230 * mm
-    div2 = PW - MARGIN - 70 * mm
+    div2 = pw - MARGIN - 70 * mm
     c.line(div1, by, div1, by + bh)
     c.line(div2, by, div2, by + bh)
 
@@ -136,13 +172,13 @@ def _title_block(c: canvas.Canvas, sheet_no: str, sheet_title: str,
     c.setFillColor(C_BLACK)
     c.rect(div2, by, bw - (div2 - bx), bh, fill=0, stroke=1)
     c.setFont("Helvetica-Bold", 28)
-    c.drawCentredString((div2 + PW - MARGIN) / 2, by + bh - 24 * mm, sheet_no)
+    c.drawCentredString((div2 + pw - MARGIN) / 2, by + bh - 24 * mm, sheet_no)
     c.setFont("Helvetica-Bold", 9)
-    c.drawCentredString((div2 + PW - MARGIN) / 2, by + bh - 32 * mm, "SHEET NO.")
+    c.drawCentredString((div2 + pw - MARGIN) / 2, by + bh - 32 * mm, "SHEET NO.")
     c.setFont("Helvetica", 8)
     c.setFillColor(C_DARK)
-    c.drawCentredString((div2 + PW - MARGIN) / 2, by + 12 * mm, f"{REV}  (APPROVED)")
-    c.drawCentredString((div2 + PW - MARGIN) / 2, by + 6 * mm, DOC_DATE)
+    c.drawCentredString((div2 + pw - MARGIN) / 2, by + 12 * mm, f"{REV}  (APPROVED)")
+    c.drawCentredString((div2 + pw - MARGIN) / 2, by + 6 * mm, DOC_DATE)
 
 
 def _section_heading(c: canvas.Canvas, x: float, y: float,
@@ -1030,33 +1066,67 @@ def _sheet_a09_area(c: canvas.Canvas) -> None:
 # ── Main PDF builder ──────────────────────────────────────────────────────────
 
 def build_pdf() -> Path:
+    """Build a multi-page PDF where each sheet uses its configured page size.
+
+    Drawing sheets (A-00 to A-05) are A1 landscape.
+    Schedule/spec sheets (A-06 to A-09) are A3 or A4 landscape — desk-printer
+    friendly while the construction drawings stay full-size plotter output.
+    """
+    # Map sheet IDs to generator functions
+    sheet_fns = {
+        'A-00': _sheet_a00_cover,
+        'A-01': _sheet_a01_site,
+        'A-02': _sheet_a02_gf,
+        'A-03': _sheet_a03_ff,
+        'A-04': _sheet_a04_elevation,
+        'A-05': _sheet_a05_section,
+        'A-06': _sheet_a06_door_schedule,
+        'A-07': _sheet_a07_sanitary,
+        'A-08': _sheet_a08_spec,
+        'A-09': _sheet_a09_area,
+    }
+
+    # ReportLab requires the canvas to be created with a default page size;
+    # we use setPageSize() before each page to switch sizes mid-document.
     c = canvas.Canvas(str(OUT_PDF), pagesize=landscape(A1))
 
-    sheets = [
-        _sheet_a00_cover,
-        _sheet_a01_site,
-        _sheet_a02_gf,
-        _sheet_a03_ff,
-        _sheet_a04_elevation,
-        _sheet_a05_section,
-        _sheet_a06_door_schedule,
-        _sheet_a07_sanitary,
-        _sheet_a08_spec,
-        _sheet_a09_area,
-    ]
-    for i, fn in enumerate(sheets):
-        fn(c)
-        if i < len(sheets) - 1:
+    for i, (sheet_id, (sheet_type, pagesize)) in enumerate(SHEET_CONFIG.items()):
+        pw, ph = landscape(pagesize)
+        c.setPageSize((pw, ph))
+
+        # Inject per-page geometry into module-level globals so all
+        # _sheet_* functions (which reference PW/PH/DRAW_* globals) pick
+        # up the correct values for this page.
+        global PW, PH, DRAW_X, DRAW_Y, DRAW_W, DRAW_H
+        PW, PH   = pw, ph
+        DRAW_X   = MARGIN
+        DRAW_Y   = MARGIN + TITLE_H
+        DRAW_W   = pw - 2 * MARGIN
+        DRAW_H   = ph - 2 * MARGIN - TITLE_H
+
+        sheet_fns[sheet_id](c)
+
+        size_label = {A1: "A1", A3: "A3", A4: "A4"}.get(pagesize, "?")
+        print(f"  [{i+1:02d}/10]  {sheet_id}  ({size_label} landscape)  — {sheet_type}")
+
+        if i < len(SHEET_CONFIG) - 1:
             c.showPage()
 
     c.save()
-    print(f"✓  PDF saved: {OUT_PDF}  ({len(sheets)} sheets)")
+    print(f"\n✓  PDF saved: {OUT_PDF}  (10 sheets, mixed A1/A3/A4)")
     return OUT_PDF
 
 
 if __name__ == "__main__":
     print("Bar Association Hall — PDF Package Generator  (Rev P03)")
     print("=" * 56)
+    print("Sheet config:")
+    for sid, (stype, ps) in SHEET_CONFIG.items():
+        size_lbl = {A1: "A1", A3: "A3", A4: "A4"}.get(ps, "?")
+        print(f"  {sid}  {stype:<12}  {size_lbl} landscape")
+    print()
     build_pdf()
     print("\nOpen the PDF in any viewer to review all 10 sheets.")
-    print("Print on A1 plotter at 1:1 for construction-set output.")
+    print("A1 sheets → print on plotter at 1:1")
+    print("A3 sheets → print on desk printer at 1:1")
+    print("A4 sheet  → print on desk printer at 1:1")
