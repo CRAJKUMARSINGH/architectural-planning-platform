@@ -1,5 +1,37 @@
 # Bar Association Hall — Drawing Set
 
+> ## ⚠️ MANDATORY DECLARATION — READ BEFORE USING THESE FILES
+>
+> ### The "Sketches vs. Architectural Drawings" Bug — What Went Wrong and Why It Must Never Recur
+>
+> **The failure:** An earlier version of this export pipeline generated schematic room rectangles
+> with presentation labels and packaged them as if they were architectural drawings. Sheets were
+> titled "FLOOR PLAN", "ELEVATION", "SECTION" — but the geometry was invented, uncoordinated,
+> and unsupported by any measured model, opening schedule, structural grid, or professional review.
+>
+> **The root cause:** The code contained no distinction between *a shape on a page* and
+> *an architectural drawing*. A rectangle labelled "LIBRARY" is not a library. A box labelled
+> "BALCONY 1.5m" is not a balcony detail. The pipeline had zero checks for:
+> - Model-to-drawing traceability (every line must come from a verified model entity)
+> - Schedule cross-referencing (every door tag must exist in the opening schedule)
+> - Dimension completeness (every room must carry chain dimensions, not just a label)
+> - Professional-review sign-off before the word "architectural" is used
+>
+> **The non-negotiable rule going forward:**
+>
+> > **A drawing produced by this codebase MUST NOT be described as architectural,
+> > coordinated, approved, construction-ready, or submission-ready unless ALL of the
+> > following are true:**
+> > 1. Every geometric element traces to a verified entry in `preliminary_plans.json` or a successor model file.
+> > 2. Every opening tag (D1–D6, W1–W3) has a corresponding row in the door/window schedule.
+> > 3. All rooms carry chain dimensions and overall building extents.
+> > 4. The sheet carries the correct status stamp: `PRELIMINARY REVIEW ONLY — NOT FOR CONSTRUCTION`.
+> > 5. A registered architect has reviewed and countersigned before any stamp is upgraded.
+>
+> **Enforcement:** The `generate_bar_hall_pdf.py` script prints `PRELIMINARY REVIEW ONLY`
+> on every sheet. Any commit that removes or downgrades this stamp without a signed
+> architect's approval letter in the repo will be rejected at code review.
+
 **Project**: Bar Association Hall, District Court Complex, Banswara, Rajasthan, India
 **Revision**: P03 — First Floor Correction (Balcony + Ladies Advocate Room)
 **Date**: 2026-10-08

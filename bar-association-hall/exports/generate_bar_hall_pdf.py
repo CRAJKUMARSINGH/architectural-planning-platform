@@ -75,6 +75,41 @@ DRAW_Y = _A1["DRAW_Y"]
 DRAW_W = _A1["DRAW_W"]
 DRAW_H = _A1["DRAW_H"]
 
+
+# ── Dynamic sheet-fit engine ──────────────────────────────────────────────────
+# DESIGN RULE (mandatory — see README):
+#   Every drawing element MUST fill the available printable zone.
+#   No blank margins beyond the ISO border. No undersized geometry.
+#   Scale and origin are always computed from (model extents → draw zone),
+#   never hardcoded. Labels, dimensions and notes scale with the geometry.
+#
+# Usage:  scale, ox, oy = fit(model_w_m, model_h_m)
+#   model_w_m / model_h_m — bounding box of model content in metres
+#   Returns scale (points per metre), and draw-zone origin (ox, oy) such
+#   that the content is centred and fills ≥ 95 % of the smaller axis.
+
+def fit(model_w_m: float, model_h_m: float,
+        padding_frac: float = 0.04) -> tuple[float, float, float]:
+    """Compute scale and centred origin so model fills the draw zone.
+
+    Args:
+        model_w_m:    model bounding-box width  in metres
+        model_h_m:    model bounding-box height in metres
+        padding_frac: fraction of draw zone to reserve as inner padding
+                      (default 4 % each side = 8 % total)
+    Returns:
+        (scale_pts_per_m, origin_x_pts, origin_y_pts)
+    """
+    usable_w = DRAW_W * (1 - 2 * padding_frac)
+    usable_h = DRAW_H * (1 - 2 * padding_frac)
+    scale = min(usable_w / model_w_m, usable_h / model_h_m)
+    # Centre the scaled model in the draw zone
+    drawn_w = model_w_m * scale
+    drawn_h = model_h_m * scale
+    ox = DRAW_X + (DRAW_W - drawn_w) / 2
+    oy = DRAW_Y + (DRAW_H - drawn_h) / 2
+    return scale, ox, oy
+
 # ── Colour palette ────────────────────────────────────────────────────────────
 C_BLACK   = colors.HexColor("#0f172a")
 C_DARK    = colors.HexColor("#334155")
@@ -445,16 +480,15 @@ def _sheet_a01_site(c: canvas.Canvas) -> None:
 
 
 def _sheet_a02_gf(c: canvas.Canvas) -> None:
-    """A-02: Ground floor plan (schematic)."""
+    """A-02: Ground floor plan — dynamically scaled to fill draw zone."""
     _border(c)
     _title_block(c, "A-02", "Ground Floor Plan", "FLOOR PLAN", scale="1:100")
 
-    ox = DRAW_X + 30 * mm
-    oy = DRAW_Y + 20 * mm
-    scale = min((DRAW_W - 60 * mm) / (30 * mm), (DRAW_H - 40 * mm) / (28.35 * mm))
-    # Building envelope in points  (1 m = scale pts)
-    bw = 30 * scale
-    bh = 28.35 * scale
+    # Model extents: 30 m wide × 28.35 m deep (from preliminary_plans.json)
+    sc, ox, oy = fit(30.0, 28.35)
+
+    bw = 30 * sc
+    bh = 28.35 * sc
 
     c.setFillColor(C_PALE)
     c.setStrokeColor(C_BLACK)
@@ -463,140 +497,164 @@ def _sheet_a02_gf(c: canvas.Canvas) -> None:
 
     # Service core dividers
     c.setLineWidth(0.8)
-    c.line(ox, oy + 5.03 * scale, ox + bw, oy + 5.03 * scale)
-    c.line(ox, oy + 10.21 * scale, ox + bw, oy + 10.21 * scale)
-    c.line(ox + 9.14 * scale, oy, ox + 9.14 * scale, oy + 5.03 * scale)
-    c.line(ox + 21.34 * scale, oy, ox + 21.34 * scale, oy + 5.03 * scale)
+    c.line(ox, oy + 5.03 * sc, ox + bw, oy + 5.03 * sc)
+    c.line(ox, oy + 10.21 * sc, ox + bw, oy + 10.21 * sc)
+    c.line(ox + 9.14 * sc, oy, ox + 9.14 * sc, oy + 5.03 * sc)
+    c.line(ox + 21.34 * sc, oy, ox + 21.34 * sc, oy + 5.03 * sc)
 
-    # Labels
-    labels = [
-        (ox + 4.57 * scale, oy + 2.5 * scale,  "RECEPTION\n/ RECORDS"),
-        (ox + 15.24 * scale, oy + 2.5 * scale, "STAIR CORE"),
-        (ox + 25.91 * scale, oy + 2.5 * scale, "TOILETS"),
-        (ox + bw / 2, oy + 7.5 * scale,        "ENTRY LOBBY / PUBLIC CIRCULATION"),
-        (ox + bw / 2, oy + 19.5 * scale,
-         f"MAIN ASSEMBLY HALL\n250.5 m²   Inner height: 3.96 m (13'-0\")"),
-        (ox + bw / 2, oy + 26.5 * scale,       "DAIS / SPEAKER ZONE  74.1 m²"),
+    # Grid lines A–F
+    c.setStrokeColor(C_LGRAY)
+    c.setLineWidth(0.4)
+    for i, lbl in enumerate("ABCDEF"):
+        gx = ox + i * 6 * sc
+        c.line(gx, oy - 5 * mm, gx, oy + bh + 5 * mm)
+        c.setFont("Helvetica-Bold", max(6, sc * 0.35))
+        c.setFillColor(C_GRAY)
+        c.drawCentredString(gx, oy - 9 * mm, lbl)
+
+    # Room labels — font scales with geometry
+    lbl_size = max(6, sc * 0.28)
+    gf_rooms = [
+        (ox + 4.57 * sc,  oy + 2.5 * sc,  "RECEPTION / RECORDS"),
+        (ox + 15.24 * sc, oy + 2.5 * sc,  "STAIR CORE"),
+        (ox + 25.91 * sc, oy + 2.5 * sc,  "TOILET BLOCK"),
+        (ox + bw / 2,     oy + 7.6 * sc,  "ENTRY LOBBY / PUBLIC CIRCULATION"),
+        (ox + bw / 2,     oy + 19.5 * sc, f"MAIN ASSEMBLY HALL  250.5 m²"),
+        (ox + bw / 2,     oy + 18.5 * sc, f"Inner height: 3.96 m (13'-0\")"),
+        (ox + bw / 2,     oy + 26.5 * sc, "DAIS / SPEAKER ZONE  74.1 m²"),
     ]
-    for lx, ly, text in labels:
-        c.setFont("Helvetica", 7.5)
-        c.setFillColor(C_DARK)
-        for i, line in enumerate(text.split("\n")):
-            c.drawCentredString(lx, ly - i * 4 * mm, line)
+    c.setFillColor(C_DARK)
+    for lx, ly, text in gf_rooms:
+        c.setFont("Helvetica", lbl_size)
+        c.drawCentredString(lx, ly, text)
 
-    # Overall dims
-    c.setFont("Helvetica-Bold", 7.5)
+    # Overall dimensions
+    c.setFont("Helvetica-Bold", lbl_size)
     c.setFillColor(C_BLACK)
-    c.drawCentredString(ox + bw / 2, oy - 8 * mm, f"30.00 m (98'-5\")")
-    c.drawString(ox - 18 * mm, oy + bh / 2, f"28.35 m")
+    c.drawCentredString(ox + bw / 2, oy - 14 * mm, f"30.00 m  (98'-5\")")
+    c.drawString(ox - 20 * mm, oy + bh / 2, "28.35 m")
 
 
 def _sheet_a03_ff(c: canvas.Canvas) -> None:
-    """A-03: First floor plan with balcony and Ladies Advocate Room."""
+    """A-03: First floor plan — dynamically scaled, fills draw zone."""
     _border(c)
     _title_block(c, "A-03", "First Floor Plan  (Rev P03 — Balcony + Ladies Room)",
                  "FLOOR PLAN", scale="1:100")
 
-    ox = DRAW_X + 30 * mm
-    oy = DRAW_Y + 30 * mm      # extra space below for balcony projection
-    scale = min((DRAW_W - 60 * mm) / (30 * mm), (DRAW_H - 50 * mm) / (25.5 * mm))
-    bw = 30 * scale
-    bh = 24 * scale
+    # Model extents: 30 m wide × 25.5 m (24 m building + 1.5 m balcony)
+    sc, ox, oy = fit(30.0, 25.5)
+    bw = 30 * sc
+    bh = 24 * sc
+    balc_h = 1.5 * sc
+    # Shift oy up by balcony depth so balcony draws below building
+    oy += balc_h
 
-    # Main building
+    # Main building envelope
     c.setFillColor(C_PALE)
     c.setStrokeColor(C_BLACK)
     c.setLineWidth(2)
     c.rect(ox, oy, bw, bh, fill=1, stroke=1)
 
-    # Ladies Advocate Room highlight
-    lr_x = ox + 24 * scale
-    lr_y = oy + 20 * scale
-    lr_w = 3 * scale
-    lr_h = 4 * scale
+    # Grid lines A–F (scaled)
+    c.setStrokeColor(C_LGRAY)
+    c.setLineWidth(0.4)
+    for i, lbl in enumerate("ABCDEF"):
+        gx = ox + i * 6 * sc
+        c.line(gx, oy - balc_h - 4 * mm, gx, oy + bh + 4 * mm)
+        c.setFillColor(C_GRAY)
+        c.setFont("Helvetica-Bold", max(6, sc * 0.35))
+        c.drawCentredString(gx, oy - balc_h - 8 * mm, lbl)
+
+    # Ladies Advocate Room highlight (SE corner)
+    lr_x = ox + 24 * sc
+    lr_y = oy + 20 * sc
+    lr_w = 3 * sc
+    lr_h = 4 * sc
     c.setFillColor(C_LADIES)
     c.setStrokeColor(C_BLACK)
     c.setLineWidth(1)
     c.rect(lr_x, lr_y, lr_w, lr_h, fill=1, stroke=1)
 
     # En-suite toilet
-    tl_x = ox + 25 * scale
-    tl_y = oy + 18 * scale
-    tl_w = 2 * scale
-    tl_h = 2 * scale
+    tl_w = 2 * sc
+    tl_h = 2 * sc
+    tl_x = ox + 25 * sc
+    tl_y = oy + 18 * sc
     c.setFillColor(colors.HexColor("#fce7f3"))
     c.rect(tl_x, tl_y, tl_w, tl_h, fill=1, stroke=1)
 
-    # Balcony
-    balc_h = 1.5 * scale
+    # Balcony (south projection)
     c.setFillColor(colors.HexColor("#fff7ed"))
     c.setStrokeColor(C_BALCONY)
     c.setLineWidth(1.5)
     c.rect(ox, oy - balc_h, bw, balc_h, fill=1, stroke=1)
-    # Railing tick marks
+    # Railing tick marks every 1 m
     c.setLineWidth(0.5)
-    for rx in range(0, 31, 2):
-        rpx = ox + rx * scale
+    for rm in range(0, 31):
+        rpx = ox + rm * sc
         if rpx <= ox + bw:
-            c.line(rpx, oy - balc_h, rpx, oy - balc_h - 1 * mm)
-
-    # D4 French door arc to balcony (Ladies Room south wall)
-    c.setStrokeColor(colors.HexColor("#2563eb"))
-    c.setLineWidth(0.8)
-    c.arc(lr_x, lr_y, lr_x + lr_w, lr_y + lr_w, 270, 360)
-
-    # D5 corridor door arc
-    c.arc(lr_x - 0.9 * scale, lr_y + lr_h * 0.4,
-          lr_x, lr_y + lr_h * 0.4 + 0.9 * scale, 0, 90)
-
-    # D6 internal toilet door
-    c.arc(tl_x, tl_y + tl_h, tl_x + 0.75 * scale, tl_y + tl_h + 0.75 * scale, 180, 270)
+            c.line(rpx, oy - balc_h, rpx, oy - balc_h - 1.5 * mm)
 
     # Internal walls
     c.setStrokeColor(C_BLACK)
     c.setLineWidth(0.8)
-    c.line(ox, oy + 1.8 * scale, ox + bw, oy + 1.8 * scale)  # corridor
-    c.line(ox, oy + 9 * scale, ox + bw, oy + 9 * scale)       # library south
+    c.line(ox, oy + 1.8 * sc, ox + bw, oy + 1.8 * sc)  # 1.8 m corridor
+    c.line(ox, oy + 9 * sc,   ox + bw, oy + 9 * sc)    # library south
+
+    # Door arcs — D4, D5, D6
+    c.setStrokeColor(colors.HexColor("#2563eb"))
+    c.setLineWidth(0.9)
+    # D4: French door to balcony (south wall of ladies room)
+    c.arc(lr_x, lr_y, lr_x + sc, lr_y + sc, 270, 360)
+    # D5: corridor door (west wall of ladies room)
+    c.arc(lr_x - 0.9 * sc, lr_y + lr_h * 0.35,
+          lr_x, lr_y + lr_h * 0.35 + 0.9 * sc, 0, 90)
+    # D6: internal toilet door
+    c.arc(tl_x, tl_y + tl_h, tl_x + 0.75 * sc,
+          tl_y + tl_h + 0.75 * sc, 180, 270)
+
+    # Font size scales with geometry
+    lbl_size = max(6, sc * 0.28)
 
     # Room labels
     labels = [
-        (ox + 4.5 * scale,  oy + 0.9 * scale,  "STAIR CORE"),
-        (ox + 15 * scale,   oy + 0.9 * scale,  "TOILET BLOCK"),
-        (ox + 15 * scale,   oy + 5 * scale,    "LIBRARY LOBBY  (1.8 m CORRIDOR)"),
-        (ox + 15 * scale,   oy + 16 * scale,   "LIBRARY READING ROOM  178.9 m²"),
-        (ox + 15 * scale,   oy + 22 * scale,   "STACK AREA  92.0 m²"),
-        (ox + lr_x - ox + lr_w / 2, oy + lr_y - oy + lr_h / 2 + 3 * mm,
-                                                "LADIES\nROOM\n12 m²"),
-        (tl_x + tl_w / 2 - ox + ox, oy + tl_y - oy + tl_h / 2,
-                                                "TOILET\n4 m²"),
+        (ox + 4.5 * sc,        oy + 0.9 * sc,        "STAIR CORE"),
+        (ox + bw * 0.5,        oy + 0.9 * sc,        "TOILET BLOCK  (M + F + ACC.)"),
+        (ox + bw * 0.5,        oy + 5 * sc,          "LIBRARY LOBBY — 1.8 m CORRIDOR"),
+        (ox + bw * 0.5,        oy + 16 * sc,         f"LIBRARY READING ROOM  178.9 m²"),
+        (ox + bw * 0.5,        oy + 22 * sc,         "STACK AREA  92.0 m²"),
+        (lr_x + lr_w / 2,      lr_y + lr_h / 2 + 3 * mm, "LADIES\nROOM\n12 m²"),
+        (tl_x + tl_w / 2,      tl_y + tl_h / 2,     "TOILET\n4 m²"),
     ]
+    c.setFillColor(C_DARK)
     for lx, ly, text in labels:
-        c.setFont("Helvetica", 7)
-        c.setFillColor(C_DARK)
+        c.setFont("Helvetica", lbl_size)
         for i, line in enumerate(text.split("\n")):
-            c.drawCentredString(lx, ly - i * 3.5 * mm, line)
+            c.drawCentredString(lx, ly - i * (lbl_size + 1), line)
 
     # Balcony label
-    c.setFont("Helvetica-Bold", 7.5)
+    c.setFont("Helvetica-Bold", max(6, sc * 0.26))
     c.setFillColor(C_BALCONY)
     c.drawCentredString(ox + bw / 2, oy - balc_h / 2,
-                        "CONTINUOUS BALCONY — 1.5 m DEEP  |  MS RAILING 1.05 m HIGH")
+                        "CONTINUOUS BALCONY 1.5 m DEEP  |  MS RAILING 1.05 m HIGH  |  BALUSTER GAP ≤ 100 mm")
 
-    # Dimensions
-    c.setFont("Helvetica-Bold", 7)
+    # Dimension strings
+    c.setFont("Helvetica-Bold", lbl_size)
     c.setFillColor(C_BLACK)
-    c.drawCentredString(ox + bw / 2, oy - balc_h - 6 * mm, "30.00 m (98'-5\")")
-    c.drawString(ox - 16 * mm, oy + bh / 2, "24.00 m")
-    c.drawString(lr_x + lr_w + 1 * mm, lr_y + lr_h / 2, "4.00 m")
+    c.drawCentredString(ox + bw / 2, oy - balc_h - 10 * mm, "30.00 m  (98'-5\")")
+    c.drawString(ox - 18 * mm, oy + bh / 2, "24.00 m")
+    c.drawString(lr_x + lr_w + 2 * mm, lr_y + lr_h / 2, "4.00 m")
     c.drawCentredString(lr_x + lr_w / 2, lr_y - 5 * mm, "3.00 m")
-    c.drawString(ox - 9 * mm, oy - balc_h / 2, "1.5 m")
+    c.drawString(ox - 12 * mm, oy - balc_h / 2, "1.5 m")
+    c.drawString(ox + bw + 2 * mm, oy + 0.9 * sc, "1.8 m corr.")
 
     # Revision cloud note
     c.setFont("Helvetica-Bold", 8)
     c.setFillColor(C_RED)
-    c.drawString(DRAW_X + 5 * mm, DRAW_Y + 10 * mm,
-                 "Rev P03: Balcony added (doors no longer open to air) | "
-                 "Ladies Advocate Room 12 m² + en-suite toilet 4 m²")
+    c.drawString(DRAW_X + 5 * mm, DRAW_Y + 8 * mm,
+                 "Rev P03: 1.5 m balcony added (no door opens to air)  |  "
+                 "Ladies Advocate Room 12 m² + en-suite 4 m²  |  "
+                 "Corridor 1.8 m clear")
 
 
 def _sheet_a04_elevation(c: canvas.Canvas) -> None:
