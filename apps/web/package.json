@@ -25,6 +25,9 @@
     "typescript": "^7.0.2",
     "vite": "^8.3.0"
   },
+  "overrides": {
+    "source-map-js": "1.2.2"
+  },
   "engines": {
     "node": ">=20.0.0"
   }

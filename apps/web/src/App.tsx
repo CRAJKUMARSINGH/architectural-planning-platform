@@ -9,6 +9,8 @@ import { ValidationPanel } from './components/ValidationPanel';
 import { Viewport2D } from './components/Viewport2D';
 import { VersionScoringPanel } from './components/VersionScoringPanel';
 import { ZoneCanvas } from './components/ZoneCanvas';
+import { FloorplanEditor } from './components/FloorplanEditor';
+import { FloorplanGeneratorPanel } from './components/FloorplanGeneratorPanel';
 import './App.css';
 
 type LevelId = 'GF' | 'FF';
@@ -416,7 +418,7 @@ function LandingPage({ onOpenStudio }: { onOpenStudio: () => void }): React.JSX.
 function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft }): React.JSX.Element {
   const [level, setLevel] = useState<LevelId>('GF');
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [studioTab, setStudioTab] = useState<'geometry' | 'workflow'>('geometry');
+  const [studioTab, setStudioTab] = useState<'geometry' | 'workflow' | 'floorplan'>('geometry');
   const projectId = draft.projectId;
 
   // Mock revision for VersionScoringPanel - in production this would come from the API
@@ -448,8 +450,14 @@ function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft
             type="button"
             data-testid="workflow-tab-btn"
             onClick={() => setStudioTab('workflow')}
-            style={{ padding: '4px 14px', fontSize: 11, fontWeight: studioTab === 'workflow' ? 700 : 400, background: studioTab === 'workflow' ? '#3b82f6' : 'transparent', color: studioTab === 'workflow' ? '#fff' : '#94a3b8', border: '1px solid #334155', borderRadius: '0 4px 4px 0', cursor: 'pointer' }}
+            style={{ padding: '4px 14px', fontSize: 11, fontWeight: studioTab === 'workflow' ? 700 : 400, background: studioTab === 'workflow' ? '#3b82f6' : 'transparent', color: studioTab === 'workflow' ? '#fff' : '#94a3b8', border: '1px solid #334155', borderRight: 'none', borderRadius: '0', cursor: 'pointer' }}
           >✦ Workflow</button>
+          <button
+            type="button"
+            data-testid="floorplan-tab-btn"
+            onClick={() => setStudioTab('floorplan')}
+            style={{ padding: '4px 14px', fontSize: 11, fontWeight: studioTab === 'floorplan' ? 700 : 400, background: studioTab === 'floorplan' ? '#2e5c62' : 'transparent', color: studioTab === 'floorplan' ? '#fff' : '#94a3b8', border: '1px solid #334155', borderRadius: '0 4px 4px 0', cursor: 'pointer' }}
+          >🏠 Floorplan</button>
         </div>
         <div className="studio-revision"><span className="status-dot" /> Revision 1 · Preliminary review</div>
       </header>
@@ -467,6 +475,27 @@ function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft
             projectName={draft.name}
             initialBrief={draft.narration}
           />
+        ) : studioTab === 'floorplan' ? (
+          <>
+            <aside className="studio-sidebar">
+              <FloorplanGeneratorPanel 
+                projectId={projectId} 
+              />
+            </aside>
+            <main className="studio-viewport">
+              <FloorplanEditor 
+                projectId={projectId} 
+                level={level}
+                editable={true}
+              />
+            </main>
+            <aside className="studio-sidebar studio-sidebar--right">
+              <div style={{ padding: 16, fontSize: 12, color: '#65717a' }}>
+                <strong>Floorplan Properties</strong>
+                <p style={{ marginTop: 8 }}>Select a room to view its properties and edit dimensions.</p>
+              </div>
+            </aside>
+          </>
         ) : (
           <>
             <aside className="studio-sidebar">
