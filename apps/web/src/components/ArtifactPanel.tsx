@@ -25,12 +25,7 @@ export function ArtifactPanel({ projectId, level }: Props): ReactElement {
       const res = await fetch('/generate', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          projectId,
-          pipeline: 'refined',
-          level,
-          sheetSize: 'A4',
-        }),
+        body: JSON.stringify({ projectId, pipeline: 'refined', level, sheetSize: 'A4' }),
       });
       const data = (await res.json()) as { jobId: string; status: string };
       return data;
@@ -50,19 +45,22 @@ export function ArtifactPanel({ projectId, level }: Props): ReactElement {
 
   useEffect(() => {
     void jobQuery.refetch();
-  }, [jobId]);  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [jobId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const progress = jobQuery.data?.progress ?? 0;
 
   return (
-    <section>
+    <section aria-label="Artifacts and generation jobs">
       <h2 style={{ margin: '0 0 8px 0', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1.2, color: '#65717a' }}>
         Artifacts / Jobs
       </h2>
 
+      {/* WCAG 4.1.2: type="button" required; aria-busy signals loading state */}
       <button
+        type="button"
         onClick={() => start.mutate()}
         disabled={start.isPending || jobQuery.isFetching}
+        aria-busy={start.isPending}
         style={{
           width: '100%',
           padding: '10px 12px',
@@ -83,11 +81,18 @@ export function ArtifactPanel({ projectId, level }: Props): ReactElement {
 
       {jobId && (
         <div style={{ fontSize: 11, color: '#65717a', marginBottom: 8 }}>
-          job: <code>{jobId}</code>
+          Job: <code>{jobId}</code>
         </div>
       )}
+
+      {/* WCAG 4.1.2: role="progressbar" with aria value attributes */}
       {jobId && (
         <div
+          role="progressbar"
+          aria-valuenow={progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={`Generation progress: ${progress}%`}
           style={{
             height: 6,
             borderRadius: 999,
@@ -110,11 +115,13 @@ export function ArtifactPanel({ projectId, level }: Props): ReactElement {
       {jobQuery.data?.status === 'done' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {jobQuery.data.artifactIds.map((aid) => (
+            /* WCAG 2.4.6 / 1.1.1: descriptive aria-label replaces emoji-only text */
             <a
               key={aid}
               href={`/artifacts/${aid}`}
               target="_blank"
               rel="noreferrer"
+              aria-label={`Download artifact ${aid}`}
               style={{
                 padding: '8px 10px',
                 borderRadius: 6,
@@ -126,7 +133,7 @@ export function ArtifactPanel({ projectId, level }: Props): ReactElement {
                 fontWeight: 600,
               }}
             >
-              ⬇ {aid}
+              <span aria-hidden="true">⬇ </span>{aid}
             </a>
           ))}
         </div>
@@ -137,7 +144,7 @@ export function ArtifactPanel({ projectId, level }: Props): ReactElement {
           The Python CAD engine produces:
           <ul style={{ margin: '6px 0 0 16px', padding: 0 }}>
             <li>R2018 DXF (ezdxf) · A4 Portrait 90°</li>
-            <li>Archival PDF (PyMuPDF fitted · 10mm margin)</li>
+            <li>Archival PDF (PyMuPDF fitted · 10 mm margin)</li>
             <li>A2 Landscape review set (reportlab)</li>
           </ul>
         </div>

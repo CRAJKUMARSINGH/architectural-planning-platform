@@ -139,21 +139,28 @@ export function ConceptCanvas({
       {/* Floor tabs */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, padding: '6px 10px 0', background: '#fff', borderBottom: '1px solid #e2e8f0' }}>
         {floors.map(f => (
-          <div key={f} onClick={() => onActiveFloorChange(f)}
-            style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: '4px 4px 0 0', cursor: 'pointer', fontSize: 11, fontFamily: 'monospace',
-              background: f === activeFloor ? '#f8fafc' : 'transparent',
-              border: f === activeFloor ? '1px solid #e2e8f0' : '1px solid transparent',
-              borderBottom: 'none', fontWeight: f === activeFloor ? 700 : 400,
-            }}>
-            {f}
+          <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={f === activeFloor}
+              onClick={() => onActiveFloorChange(f)}
+              style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: '4px 4px 0 0', cursor: 'pointer', fontSize: 11, fontFamily: 'monospace',
+                background: f === activeFloor ? '#f8fafc' : 'transparent',
+                border: f === activeFloor ? '1px solid #e2e8f0' : '1px solid transparent',
+                borderBottom: 'none', fontWeight: f === activeFloor ? 700 : 400,
+              }}>
+              {f}
+            </button>
             {!readonly && floors.length > 1 && (
-              <button onClick={e => { e.stopPropagation(); removeFloor(f); }}
+              <button type="button" onClick={e => { e.stopPropagation(); removeFloor(f); }}
+                aria-label={`Remove ${f}`}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', fontSize: 12, padding: 0, lineHeight: 1 }}>×</button>
             )}
           </div>
         ))}
         {!readonly && (
-          <button onClick={addFloor}
+          <button type="button" onClick={addFloor}
             style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 11, color: '#94a3b8', padding: '3px 8px', fontFamily: 'monospace' }}>
             + Floor
           </button>
@@ -165,13 +172,15 @@ export function ConceptCanvas({
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, padding: '6px 10px', background: '#fff', borderBottom: '1px solid #e2e8f0', alignItems: 'center' }}>
           <span style={{ fontSize: 11, color: '#94a3b8', fontFamily: 'monospace', marginRight: 2 }}>Add:</span>
           {ZONE_TYPES.map(zt => (
-            <button key={zt} onClick={() => addBlock(zt)}
+            <button key={zt} type="button" onClick={() => addBlock(zt)}
+              aria-label={`Add ${zt} zone`}
               style={{ padding: '2px 8px', fontSize: 11, borderRadius: 4, cursor: 'pointer', fontWeight: 600, border: `1px solid ${ZONE_COLORS[zt].border}`, background: ZONE_COLORS[zt].bg, color: ZONE_COLORS[zt].text }}>
               {zt}
             </button>
           ))}
           <div style={{ marginLeft: 'auto' }}>
-            <button onClick={() => setSnapOn(s => !s)}
+            <button type="button" onClick={() => setSnapOn(s => !s)}
+              aria-pressed={snapOn}
               style={{ padding: '2px 8px', fontSize: 11, borderRadius: 4, cursor: 'pointer', fontFamily: 'monospace', border: '1px solid', borderColor: snapOn ? '#3b82f6' : '#e2e8f0', background: snapOn ? '#eff6ff' : 'transparent', color: snapOn ? '#1d4ed8' : '#94a3b8' }}>
               ⊞ Snap {snapOn ? 'ON' : 'OFF'}
             </button>
@@ -224,7 +233,10 @@ export function ConceptCanvas({
 
               {!readonly && sel && !ed && (
                 <>
-                  <button onPointerDown={e => { e.stopPropagation(); deleteBlock(block.id); }}
+                  <button
+                    type="button"
+                    onPointerDown={e => { e.stopPropagation(); deleteBlock(block.id); }}
+                    aria-label={`Delete ${block.label} zone`}
                     style={{ position: 'absolute', top: -12, right: -12, width: 20, height: 20, borderRadius: '50%', background: '#ef4444', border: '2px solid #fff', color: '#fff', cursor: 'pointer', fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 20 }}>
                     ×
                   </button>

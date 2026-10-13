@@ -439,21 +439,33 @@ function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft
       <header className="studio-header">
         <button className="studio-back" type="button" onClick={onBack} data-testid="back-btn">← Back to overview</button>
         <div className="studio-title"><BrandMark /><strong>{draft.name}</strong><span>Workspace</span></div>
-        <div className="studio-tabs" style={{ display: 'flex', gap: 0, marginLeft: 16 }}>
+        <div role="tablist" aria-label="Studio view" className="studio-tabs" style={{ display: 'flex', gap: 0, marginLeft: 16 }}>
           <button
             type="button"
+            role="tab"
+            id="tab-geometry"
+            aria-controls="tabpanel-geometry"
+            aria-selected={studioTab === 'geometry'}
             data-testid="geometry-tab-btn"
             onClick={() => setStudioTab('geometry')}
             style={{ padding: '4px 14px', fontSize: 11, fontWeight: studioTab === 'geometry' ? 700 : 400, background: studioTab === 'geometry' ? '#1e293b' : 'transparent', color: studioTab === 'geometry' ? '#fff' : '#94a3b8', border: '1px solid #334155', borderRight: 'none', borderRadius: '4px 0 0 4px', cursor: 'pointer' }}
           >Geometry</button>
           <button
             type="button"
+            role="tab"
+            id="tab-workflow"
+            aria-controls="tabpanel-workflow"
+            aria-selected={studioTab === 'workflow'}
             data-testid="workflow-tab-btn"
             onClick={() => setStudioTab('workflow')}
             style={{ padding: '4px 14px', fontSize: 11, fontWeight: studioTab === 'workflow' ? 700 : 400, background: studioTab === 'workflow' ? '#3b82f6' : 'transparent', color: studioTab === 'workflow' ? '#fff' : '#94a3b8', border: '1px solid #334155', borderRight: 'none', borderRadius: '0', cursor: 'pointer' }}
           >✦ Workflow</button>
           <button
             type="button"
+            role="tab"
+            id="tab-floorplan"
+            aria-controls="tabpanel-floorplan"
+            aria-selected={studioTab === 'floorplan'}
             data-testid="floorplan-tab-btn"
             onClick={() => setStudioTab('floorplan')}
             style={{ padding: '4px 14px', fontSize: 11, fontWeight: studioTab === 'floorplan' ? 700 : 400, background: studioTab === 'floorplan' ? '#2e5c62' : 'transparent', color: studioTab === 'floorplan' ? '#fff' : '#94a3b8', border: '1px solid #334155', borderRadius: '0 4px 4px 0', cursor: 'pointer' }}
@@ -470,13 +482,15 @@ function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft
       )}
       <div className="studio-body">
         {studioTab === 'workflow' ? (
-          <WorkflowPanel
-            projectId={projectId}
-            projectName={draft.name}
-            initialBrief={draft.narration}
-          />
+          <div role="tabpanel" id="tabpanel-workflow" aria-labelledby="tab-workflow" style={{ display: 'contents' }}>
+            <WorkflowPanel
+              projectId={projectId}
+              projectName={draft.name}
+              initialBrief={draft.narration}
+            />
+          </div>
         ) : studioTab === 'floorplan' ? (
-          <>
+          <div role="tabpanel" id="tabpanel-floorplan" aria-labelledby="tab-floorplan" style={{ display: 'contents' }}>
             <aside className="studio-sidebar">
               <FloorplanGeneratorPanel 
                 projectId={projectId} 
@@ -495,9 +509,9 @@ function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft
                 <p style={{ marginTop: 8 }}>Select a room to view its properties and edit dimensions.</p>
               </div>
             </aside>
-          </>
+          </div>
         ) : (
-          <>
+          <div role="tabpanel" id="tabpanel-geometry" aria-labelledby="tab-geometry" style={{ display: 'contents' }}>
             <aside className="studio-sidebar">
               <ProductModePanel />
               <ProjectLevelSelector level={level} onChange={setLevel} />
@@ -520,7 +534,7 @@ function StudioView({ onBack, draft }: { onBack: () => void; draft: ProjectDraft
               <PropertyInspector projectId={projectId} level={level} selectedId={selectedId} />
               <CommandPanel projectId={projectId} level={level} selectedId={selectedId} />
             </aside>
-          </>
+          </div>
         )}
       </div>
     </div>

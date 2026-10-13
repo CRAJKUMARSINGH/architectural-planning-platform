@@ -8,19 +8,19 @@ interface Props {
 }
 
 const SAMPLE_SELECTION: Record<string, { kind: string; props: [string, string][] }> = {
-  'GF-01': { kind: 'space (assembly lobby)', props: [['Size', "30' × 8'"], ['Finish', 'public'], ['D-tag', 'D-MAIN 2×4-0']] },
-  'GF-02': { kind: 'space (private office)', props: [['Size', "15' × 8.5'"], ['Finish', 'service'], ['D-tag', 'D-GF-02 3-0']] },
-  'GF-03': { kind: 'space (service)', props: [['Size', "15' × 8.5'"], ['Fixtures M', '5 urinals · 2 WCs'], ['Fixtures F', '3 WCs']] },
-  'GF-04': { kind: 'space (assembly hall)', props: [['Size', "46' × 44.5'"], ['Finish', 'public'], ['Seating', 'chairs only — no tables']] },
-  'GF-05': { kind: 'space (chamber)', props: [['Size', "16' × 12'"], ['Attached WC', '9\' × 6\' (54 sft)'], ['Area total', '246 sft']] },
-  'GF-06': { kind: 'space (chamber)', props: [['Size', "15' × 12'"], ['Attached WC', '9\' × 6\' (54 sft)'], ['Area total', '234 sft']] },
-  'GF-STAIR': { kind: 'stair (dog-leg 180°)', props: [['Compartment', "9'-0\" W × 33'-0\" L"], ['Risers', '2×13 = 26 @ 6.85"'], ['Treads', '12" with 1.5" nosing']] },
+  'GF-01':   { kind: 'space (assembly lobby)',  props: [['Size', "30′ × 8′"],   ['Finish', 'public'],  ['D-tag', 'D-MAIN 2×4-0']] },
+  'GF-02':   { kind: 'space (private office)',  props: [['Size', "15′ × 8.5′"], ['Finish', 'service'], ['D-tag', 'D-GF-02 3-0']] },
+  'GF-03':   { kind: 'space (service)',         props: [['Size', "15′ × 8.5′"], ['Fixtures M', '5 urinals · 2 WCs'], ['Fixtures F', '3 WCs']] },
+  'GF-04':   { kind: 'space (assembly hall)',   props: [['Size', "46′ × 44.5′"], ['Finish', 'public'], ['Seating', 'chairs only — no tables']] },
+  'GF-05':   { kind: 'space (chamber)',         props: [['Size', "16′ × 12′"],  ['Attached WC', "9′ × 6′ (54 sft)"], ['Area total', '246 sft']] },
+  'GF-06':   { kind: 'space (chamber)',         props: [['Size', "15′ × 12′"],  ['Attached WC', "9′ × 6′ (54 sft)"], ['Area total', '234 sft']] },
+  'GF-STAIR':{ kind: 'stair (dog-leg 180°)',    props: [['Compartment', "9′-0″ W × 33′-0″ L"], ['Risers', '2×13 = 26 @ 6.85″'], ['Treads', '12″ with 1.5″ nosing']] },
 };
 
 export function PropertyInspector({ projectId, level, selectedId }: Props): ReactElement {
   const empty = !selectedId;
+  const info  = selectedId ? SAMPLE_SELECTION[selectedId] : undefined;
 
-  const info = selectedId ? SAMPLE_SELECTION[selectedId] : undefined;
   const mutate = useMutation({
     mutationFn: async () => {
       const res = await fetch('/health', { method: 'GET' });
@@ -29,7 +29,8 @@ export function PropertyInspector({ projectId, level, selectedId }: Props): Reac
   });
 
   return (
-    <section style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    /* WCAG 1.3.1: section needs accessible name */
+    <section aria-label="Property inspector" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <h2 style={{ margin: 0, fontSize: 12, textTransform: 'uppercase', letterSpacing: 1.2, color: '#65717a' }}>
         Property Inspector
       </h2>
@@ -51,7 +52,9 @@ export function PropertyInspector({ projectId, level, selectedId }: Props): Reac
             <div style={{ fontSize: 11, color: '#65717a', marginBottom: 4 }}>
               <code>{selectedId}</code> · {info?.kind ?? 'object'}
             </div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+            {/* WCAG 1.3.1: table needs caption for screen readers */}
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }} aria-label={`Properties of ${selectedId}`}>
+              <caption className="sr-only">Properties of {selectedId}</caption>
               <tbody>
                 {(info?.props ?? []).map(([k, v]) => (
                   <tr key={k}>
@@ -74,9 +77,12 @@ export function PropertyInspector({ projectId, level, selectedId }: Props): Reac
         </ul>
       </div>
 
+      {/* WCAG 4.1.2: type="button" required */}
       <button
+        type="button"
         onClick={() => mutate.mutate()}
         disabled={mutate.isPending}
+        aria-busy={mutate.isPending}
         style={{
           marginTop: 'auto',
           padding: '10px 12px',
@@ -92,7 +98,7 @@ export function PropertyInspector({ projectId, level, selectedId }: Props): Reac
         {mutate.isPending
           ? 'Ping API…'
           : mutate.data
-            ? `API online · rev ${mutate.data.version}`
+            ? `API online · rev ${(mutate.data as { version?: string }).version ?? '—'}`
             : `Ping FastAPI /health (${projectId} · ${level})`}
       </button>
     </section>

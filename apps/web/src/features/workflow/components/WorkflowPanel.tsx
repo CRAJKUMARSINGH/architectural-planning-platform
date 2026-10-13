@@ -152,10 +152,10 @@ export function WorkflowPanel({ projectId, projectName, initialBrief = '', initi
 
       {/* ── LEFT: Brief + Analysis ─────────────────────────────────────── */}
       <div style={panelBase}>
-        <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0' }}>
-          <button style={tabBtn(leftTab === 'brief')} onClick={() => setLeftTab('brief')}>Brief</button>
-          <button style={{ ...tabBtn(leftTab === 'analysis'), position: 'relative' }} onClick={() => setLeftTab('analysis')}>
-            Analysis {analysis && <span style={{ ...pill('#10b981'), marginLeft: 4, fontSize: 8 }}>✓</span>}
+        <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0' }} role="tablist" aria-label="Brief and analysis tabs">
+          <button type="button" role="tab" aria-selected={leftTab === 'brief'} style={tabBtn(leftTab === 'brief')} onClick={() => setLeftTab('brief')}>Brief</button>
+          <button type="button" role="tab" aria-selected={leftTab === 'analysis'} style={{ ...tabBtn(leftTab === 'analysis'), position: 'relative' }} onClick={() => setLeftTab('analysis')}>
+            Analysis {analysis && <span style={{ ...pill('#10b981'), marginLeft: 4, fontSize: 8 }} aria-label="Complete">✓</span>}
           </button>
         </div>
 
@@ -187,7 +187,8 @@ export function WorkflowPanel({ projectId, projectName, initialBrief = '', initi
                   </label>
                 ))}
               </div>
-              <button onClick={handleAnalyze} disabled={analyzing || !briefText.trim()}
+              <button type="button" onClick={handleAnalyze} disabled={analyzing || !briefText.trim()}
+                aria-busy={analyzing}
                 style={{ padding: '9px 0', background: analyzing ? '#94a3b8' : '#3b82f6', color: '#fff', border: 'none', borderRadius: 6, cursor: analyzing || !briefText.trim() ? 'not-allowed' : 'pointer', fontSize: 12, fontWeight: 700, marginTop: 4 }}>
                 {analyzing ? '⟳ Analyzing...' : analysis ? '↺ Re-analyze with AI' : '✦ Analyze Brief with AI'}
               </button>
@@ -208,7 +209,7 @@ export function WorkflowPanel({ projectId, projectName, initialBrief = '', initi
                   {analysis.spaceProgram.length > 0 && (
                     <div>
                       <div style={{ fontSize: 11, fontWeight: 700, color: '#475569', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Space Program</div>
-                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }} aria-label="Space program">
                         <thead><tr style={{ background: '#f1f5f9' }}><th style={{ textAlign: 'left', padding: '4px 6px', fontWeight: 600 }}>Space</th><th style={{ textAlign: 'right', padding: '4px 6px', fontWeight: 600 }}>SQM</th></tr></thead>
                         <tbody>
                           {analysis.spaceProgram.map((item, i) => (
@@ -268,13 +269,15 @@ export function WorkflowPanel({ projectId, projectName, initialBrief = '', initi
               {creatingVersion ? '…' : '💾 Save'}
             </button>
           </form>
-          <button onClick={handleExport} disabled={isExporting}
+          <button type="button" onClick={handleExport} disabled={isExporting}
+            aria-busy={isExporting}
             style={{ padding: '4px 12px', fontSize: 11, fontWeight: 700, background: '#0f172a', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer' }}>
             {isExporting ? '…' : '↓ Export'}
           </button>
           {exportMsg && <span style={{ fontSize: 11, color: '#10b981' }}>{exportMsg}</span>}
-          <button onClick={handlePromote} disabled={isPromoting || !blocks.length}
+          <button type="button" onClick={handlePromote} disabled={isPromoting || !blocks.length}
             title="Queue a geometry Job from this concept canvas. Requires architect review before becoming authoritative."
+            aria-busy={isPromoting}
             style={{ padding: '4px 12px', fontSize: 11, fontWeight: 700, background: blocks.length ? '#7c3aed' : '#e2e8f0', color: blocks.length ? '#fff' : '#94a3b8', border: 'none', borderRadius: 4, cursor: blocks.length ? 'pointer' : 'not-allowed', marginLeft: 4 }}>
             {isPromoting ? '…' : '⬆ Promote'}
           </button>
@@ -284,10 +287,10 @@ export function WorkflowPanel({ projectId, projectName, initialBrief = '', initi
 
       {/* ── RIGHT: Versions + Suggestions ──────────────────────────────── */}
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: '#fff', borderLeft: '1px solid #e2e8f0' }}>
-        <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', flexShrink: 0 }}>
-          <button style={tabBtn(rightTab === 'versions')} onClick={() => setRightTab('versions')}>Versions</button>
-          <button style={{ ...tabBtn(rightTab === 'suggestions'), position: 'relative' }} onClick={() => setRightTab('suggestions')}>
-            AI Insights {newSuggestions.length > 0 && <span style={{ ...pill('#3b82f6'), marginLeft: 4, fontSize: 8 }}>{newSuggestions.length}</span>}
+        <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', flexShrink: 0 }} role="tablist" aria-label="Versions and AI insights tabs">
+          <button type="button" role="tab" aria-selected={rightTab === 'versions'} style={tabBtn(rightTab === 'versions')} onClick={() => setRightTab('versions')}>Versions</button>
+          <button type="button" role="tab" aria-selected={rightTab === 'suggestions'} style={{ ...tabBtn(rightTab === 'suggestions'), position: 'relative' }} onClick={() => setRightTab('suggestions')}>
+            AI Insights {newSuggestions.length > 0 && <span style={{ ...pill('#3b82f6'), marginLeft: 4, fontSize: 8 }} aria-label={`${newSuggestions.length} new`}>{newSuggestions.length}</span>}
           </button>
         </div>
 
@@ -302,19 +305,20 @@ export function WorkflowPanel({ projectId, projectName, initialBrief = '', initi
                 <div key={v.id} style={{ border: `2px solid ${activeVersionId === v.id ? '#3b82f6' : '#e2e8f0'}`, borderRadius: 8, overflow: 'hidden', background: activeVersionId === v.id ? '#eff6ff' : '#fff' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderBottom: '1px solid #f1f5f9', background: '#f8fafc' }}>
                     <div>
-                      <div onClick={() => loadVersion(v)} style={{ fontSize: 12, fontWeight: 700, cursor: 'pointer', color: '#1e293b' }}>{v.name}</div>
+                      <button type="button" onClick={() => loadVersion(v)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#1e293b', fontSize: 12, fontWeight: 700, padding: 0, textAlign: 'left' }}>{v.name}</button>
                       <div style={{ fontSize: 9, color: '#94a3b8', fontFamily: 'monospace', textTransform: 'uppercase' }}>
                         {new Date(v.createdAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: 4 }}>
-                      <button onClick={() => loadVersion(v)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3b82f6', fontSize: 14 }}>⊞</button>
-                      <button onClick={() => doDeleteVersion(v.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 14 }}>✕</button>
+                      <button type="button" onClick={() => loadVersion(v)} aria-label={`Load version ${v.name}`} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3b82f6', fontSize: 14 }}>⊞</button>
+                      <button type="button" onClick={() => doDeleteVersion(v.id)} aria-label={`Delete version ${v.name}`} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 14 }}>✕</button>
                     </div>
                   </div>
                   <div style={{ padding: '8px 10px' }}>
                     {v.overallScore === null ? (
-                      <button onClick={() => doScoreVersion(v.id)} disabled={scoring}
+                      <button type="button" onClick={() => doScoreVersion(v.id)} disabled={scoring}
+                        aria-busy={scoring}
                         style={{ width: '100%', padding: '6px 0', fontSize: 11, fontWeight: 700, background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 4, cursor: 'pointer', color: '#475569' }}>
                         {scoring ? '⟳ Scoring…' : '✦ Score with AI'}
                       </button>
@@ -336,7 +340,8 @@ export function WorkflowPanel({ projectId, projectName, initialBrief = '', initi
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <button onClick={() => doGenerate()} disabled={generating}
+              <button type="button" onClick={() => doGenerate()} disabled={generating}
+                aria-busy={generating}
                 style={{ width: '100%', padding: '9px 0', fontSize: 12, fontWeight: 700, background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 6, cursor: generating ? 'not-allowed' : 'pointer' }}>
                 {generating ? '⟳ Generating…' : '✦ Refresh AI Ideas'}
               </button>
@@ -348,9 +353,11 @@ export function WorkflowPanel({ projectId, projectName, initialBrief = '', initi
                     <span style={{ ...pill(s.category === 'budget' ? '#7c3aed' : s.category === 'daylight' ? '#d97706' : s.category === 'program' ? '#1d4ed8' : '#475569'), fontSize: 9 }}>{s.category}</span>
                     {s.status === 'new' && (
                       <div style={{ display: 'flex', gap: 4 }}>
-                        <button onClick={() => doUpdateSuggestion({ id: s.id, status: 'accepted' })}
+                        <button type="button" onClick={() => doUpdateSuggestion({ id: s.id, status: 'accepted' })}
+                          aria-label="Accept suggestion"
                           style={{ background: '#d1fae5', border: '1px solid #6ee7b7', borderRadius: 4, cursor: 'pointer', padding: '2px 6px', fontSize: 11, color: '#065f46' }}>✓</button>
-                        <button onClick={() => doUpdateSuggestion({ id: s.id, status: 'dismissed' })}
+                        <button type="button" onClick={() => doUpdateSuggestion({ id: s.id, status: 'dismissed' })}
+                          aria-label="Dismiss suggestion"
                           style={{ background: '#fee2e2', border: '1px solid #fca5a5', borderRadius: 4, cursor: 'pointer', padding: '2px 6px', fontSize: 11, color: '#991b1b' }}>✕</button>
                       </div>
                     )}

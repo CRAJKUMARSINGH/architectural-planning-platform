@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useId } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 interface Room {
@@ -55,6 +55,7 @@ export function FloorplanEditor({
   const [draggingRoom, setDraggingRoom] = useState<Room | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const svgRef = useRef<SVGSVGElement>(null);
+  const titleId = useId();
 
   const { data: floorplan, isLoading, error } = useQuery<FloorplanData>({
     queryKey: ['floorplan', projectId, level],
@@ -175,7 +176,7 @@ export function FloorplanEditor({
 
   if (isLoading) {
     return (
-      <div style={{ 
+      <div role="status" aria-label="Loading floorplan" style={{ 
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center', 
@@ -183,14 +184,14 @@ export function FloorplanEditor({
         fontSize: 14,
         color: '#65717a'
       }}>
-        Generating floorplan...
+        Generating floorplan…
       </div>
     );
   }
 
   if (error || !floorplan) {
     return (
-      <div style={{ 
+      <div role="alert" style={{ 
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center', 
@@ -207,7 +208,8 @@ export function FloorplanEditor({
   const buildingDepth = floorplan.building.depth * SCALE;
 
   return (
-    <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'auto' }}>
+    /* WCAG 1.3.1: landmark region with accessible name */
+    <div role="region" aria-label="Floorplan editor" style={{ width: '100%', height: '100%', position: 'relative', overflow: 'auto' }}>
       <div style={{ 
         position: 'absolute', 
         top: 12, 
@@ -229,10 +231,13 @@ export function FloorplanEditor({
         </div>
       </div>
 
+      {/* WCAG 1.1.1: role="img" + <title> as first child + aria-labelledby */}
       <svg
         ref={svgRef}
         viewBox={`0 0 ${buildingWidth + 40} ${buildingDepth + 40}`}
         preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-labelledby={titleId}
         style={{
           width: '100%',
           height: '100%',
@@ -243,6 +248,9 @@ export function FloorplanEditor({
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       >
+        <title id={titleId}>
+          {level} floorplan — {floorplan.building.width}′ × {floorplan.building.depth}′, {floorplan.rooms.length} rooms
+        </title>
         <defs>
           <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
             <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#eef4f4" strokeWidth="0.8" />
@@ -268,7 +276,23 @@ export function FloorplanEditor({
           const height = room.dimensions.depth * SCALE;
 
           return (
-            <g key={room.id}>
+            /* WCAG 2.1.1: room groups are interactive — need role + keyboard handler */
+            <g
+              key={room.id}
+              role="button"
+              tabIndex={0}
+              aria-label={`${getRoomLabel(room)}, ${room.dimensions.width}′ × ${room.dimensions.depth}′${selectedRoom?.id === room.id ? ', selected' : ''}`}
+              aria-pressed={selectedRoom?.id === room.id}
+              onClick={(e) => { e.stopPropagation(); setSelectedRoom(room); onRoomSelect?.(room); }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedRoom(selectedRoom?.id === room.id ? null : room);
+                  onRoomSelect?.(selectedRoom?.id === room.id ? null : room);
+                }
+              }}
+              style={{ outline: 'none' }}
+            >
               {/* Room rectangle */}
               <rect
                 x={x}
@@ -281,11 +305,6 @@ export function FloorplanEditor({
                 rx={2}
                 style={{ cursor: editable ? 'move' : 'pointer' }}
                 onMouseDown={(e) => handleMouseDown(room, e)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedRoom(room);
-                  onRoomSelect?.(room);
-                }}
               />
 
               {/* Room label */}

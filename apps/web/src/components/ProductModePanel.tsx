@@ -91,8 +91,10 @@ export function ProductModePanel(): ReactElement {
         {modes.map((item) => (
           <button
             key={item.id}
+            type="button"
             onClick={() => setMode(item.id)}
             title={item.description}
+            aria-pressed={mode === item.id}
             style={{
               border: mode === item.id ? '1px solid #2e5c62' : '1px solid #d6dde0',
               background: mode === item.id ? '#eaf4f3' : '#ffffff',
@@ -124,8 +126,10 @@ export function ProductModePanel(): ReactElement {
             style={{ resize: 'vertical', border: '1px solid #c7d0d4', borderRadius: 5, padding: 8, fontSize: 11, fontFamily: 'inherit' }}
           />
           <button
+            type="button"
             onClick={() => compile.mutate(brief)}
             disabled={compile.isPending || !brief.trim()}
+            aria-busy={compile.isPending}
             style={{ border: '1px solid #2e5c62', background: '#2e5c62', color: '#ffffff', borderRadius: 5, padding: '8px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}
           >
             {compile.isPending ? 'Compiling brief…' : 'Compile brief'}
