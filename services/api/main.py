@@ -33,6 +33,7 @@ from services.api.routes.v1_presentation import router as presentation_router
 from services.api.routes.v1_projects import router as projects_router
 from services.api.routes.v1_ai import router as ai_router
 from services.api.routes.v1_workflow import router as workflow_router
+from services.api.routes.v1_floorplan import router as floorplan_router
 
 ROOT = Path(__file__).resolve().parents[2]
 BA_HALL = ROOT / "bar-association-hall"
@@ -40,6 +41,9 @@ SCHEMA_PATH = ROOT / "packages" / "schema" / "project-v2.schema.json"
 
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(BA_HALL))
+
+import logging as _log  # noqa: E402
+_logger = _log.getLogger(__name__)
 
 try:
     import traecad_engine  # noqa: F401  — authoritative geometry engine
@@ -165,9 +169,18 @@ def validate_auth_configuration() -> None:
     """Reject unsafe auth settings before accepting any API traffic."""
     assert_auth_configuration()
 
+import os as _os
+
+# ---------------------------------------------------------------------------
+# CORS — origins are loaded from CORS_ALLOW_ORIGINS (comma-separated) so each
+# environment can tighten the list.  The localhost fallback is local-dev only.
+# ---------------------------------------------------------------------------
+_raw_origins = _os.environ.get("CORS_ALLOW_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
+_allowed_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=_allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -184,6 +197,7 @@ app.include_router(presentation_router, prefix="/api")
 app.include_router(delivery_router, prefix="/api")
 app.include_router(ai_router, prefix="/api")
 app.include_router(workflow_router, prefix="/api")
+app.include_router(floorplan_router, prefix="/api")
 app.add_api_route("/ready", readiness_probe, methods=["GET"], tags=["meta"])
 app.add_api_route("/metrics", metrics_probe, methods=["GET"], tags=["meta"])
 
@@ -472,7 +486,8 @@ def analysis(level: str | None = None) -> dict[str, Any]:
         coordination = week56_enrichment_report(canonical)
         enriched = week78_enrichment_report(canonical)
     except Exception as exc:  # pragma: no cover - surfaced as an API diagnostic
-        raise HTTPException(status_code=500, detail=f"analysis failed: {exc}") from exc
+        _logger.exception("analysis failed: %s", exc)
+        raise HTTPException(status_code=500, detail="Analysis engine error") from exc
 
     selected_level = level if level in {"GF", "FF"} else None
     spaces = [
@@ -588,7 +603,8 @@ def command_endpoint(req: CommandPreviewRequest) -> dict[str, Any]:
             preview["canonicalModelUnchanged"] = False
         return preview
     except Exception as exc:  # pragma: no cover - surfaced as an API diagnostic
-        raise HTTPException(status_code=500, detail=f"brief command failed: {exc}") from exc
+        _logger.exception("brief command failed: %s", exc)
+        raise HTTPException(status_code=500, detail="Brief command engine error") from exc
 
 
 @app.get("/performance", tags=["product"])
@@ -601,7 +617,8 @@ def performance() -> dict[str, Any]:
 
         return performance_counters(load_canonical_model())
     except Exception as exc:  # pragma: no cover - surfaced as an API diagnostic
-        raise HTTPException(status_code=500, detail=f"performance counters failed: {exc}") from exc
+        _logger.exception("performance counters failed: %s", exc)
+        raise HTTPException(status_code=500, detail="Performance counters engine error") from exc
 
 
 @app.post("/import/recognize", tags=["import"])
@@ -621,7 +638,8 @@ def import_recognize(req: ImportRecognizeRequest) -> dict[str, Any]:
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except Exception as exc:  # pragma: no cover
-        raise HTTPException(status_code=500, detail=f"import recognition failed: {exc}") from exc
+        _logger.exception("import recognition failed: %s", exc)
+        raise HTTPException(status_code=500, detail="Import recognition engine error") from exc
 
 
 @app.get("/views/synchronized", tags=["views"])
@@ -634,7 +652,8 @@ def synchronized_views() -> dict[str, Any]:
 
         return build_synchronized_views(load_canonical_model())
     except Exception as exc:  # pragma: no cover
-        raise HTTPException(status_code=500, detail=f"synchronized views failed: {exc}") from exc
+        _logger.exception("synchronized views failed: %s", exc)
+        raise HTTPException(status_code=500, detail="Synchronized views engine error") from exc
 
 
 @app.get("/sheet-standard", tags=["export"])
@@ -647,7 +666,8 @@ def sheet_standard() -> dict[str, Any]:
 
         return build_sheet_report(load_canonical_model())
     except Exception as exc:  # pragma: no cover
-        raise HTTPException(status_code=500, detail=f"sheet standard failed: {exc}") from exc
+        _logger.exception("sheet standard failed: %s", exc)
+        raise HTTPException(status_code=500, detail="Sheet standard engine error") from exc
 
 
 @app.get("/furnishing/catalog", tags=["furnishing"])

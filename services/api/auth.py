@@ -126,9 +126,14 @@ def _decode_jwt(token: str) -> dict:
             options={"require": ["exp", "sub"]},
         )
     except Exception as exc:
+        # Do NOT leak internal JWT library errors to clients — log them
+        # server-side and return a generic 401 so implementation details
+        # (algorithm, key format, issuer URL) stay private.
+        import logging as _logging
+        _logging.getLogger(__name__).debug("JWT decode error: %s", exc)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Invalid token: {exc}",
+            detail="Invalid or expired token",
             headers={"WWW-Authenticate": "Bearer"},
         ) from exc
 
@@ -181,11 +186,16 @@ def get_current_user(
             external_auth_id=str(payload["sub"]),
         )
     except PermissionError as exc:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc)) from exc
+        # Log reason server-side; return a generic 403 to the client.
+        import logging as _logging
+        _logging.getLogger(__name__).info("Token access denied: %s", exc)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied") from exc
     except (KeyError, ValueError) as exc:
+        import logging as _logging
+        _logging.getLogger(__name__).debug("Token payload invalid: %s", exc)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Token payload invalid: {exc}",
+            detail="Token payload invalid",
         ) from exc
 
 

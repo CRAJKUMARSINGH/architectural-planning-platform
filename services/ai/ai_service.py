@@ -78,9 +78,9 @@ class AIService:
             try:
                 genai.configure(api_key=self.api_key)
                 self.model = genai.GenerativeModel(self.model_name)
-                logger.info(f"AI service initialized with model: {self.model_name}")
+                logger.info("AI service initialized with model: %s", self.model_name)
             except Exception as e:
-                logger.error(f"Failed to initialize Gemini model: {e}")
+                logger.error("Failed to initialize Gemini model: %s", e)
                 self.available = False
         else:
             if not sdk_present:
@@ -120,12 +120,12 @@ class AIService:
                 "context_keys": list(context.keys())
             }
             
-            logger.info(f"Brief analysis completed with {len(analysis.space_program)} space program items")
+            logger.info("Brief analysis completed with %d space program items", len(analysis.space_program))
             return analysis
             
         except Exception as e:
-            logger.error(f"Brief analysis failed: {e}")
-            raise RuntimeError(f"Brief analysis failed: {e}") from e
+            logger.error("Brief analysis failed: %s", e)
+            raise RuntimeError("Brief analysis failed") from e
     
     def score_version(self, version_data: dict[str, Any], brief_analysis: BriefAnalysisResult) -> VersionScoreResult:
         """Score a design version against the brief analysis.
@@ -158,12 +158,12 @@ class AIService:
                 "brief_analysis_id": brief_analysis.provenance.get("timestamp")
             }
             
-            logger.info(f"Version scoring completed: overall={scoring.overall_score}")
+            logger.info("Version scoring completed: overall=%d", scoring.overall_score)
             return scoring
             
         except Exception as e:
-            logger.error(f"Version scoring failed: {e}")
-            raise RuntimeError(f"Version scoring failed: {e}") from e
+            logger.error("Version scoring failed: %s", e)
+            raise RuntimeError("Version scoring failed") from e
     
     def generate_suggestions(self, project_data: dict[str, Any], categories: list[str] | None = None) -> SuggestionResult:
         """Generate proactive design suggestions with heuristic fallback.
@@ -391,7 +391,7 @@ Generate 2-3 suggestions per category if applicable. Focus on practical, impleme
                 open_questions=data.get("openQuestions", [])
             )
         except Exception as e:
-            logger.error(f"Failed to parse brief analysis: {e}")
+            logger.error("Failed to parse brief analysis: %s", e)
             # Return a minimal valid result on parse failure
             return BriefAnalysisResult(
                 summary="Analysis parsing failed",
@@ -416,7 +416,7 @@ Generate 2-3 suggestions per category if applicable. Focus on practical, impleme
                 zone_scores=data.get("zoneScores", [])
             )
         except Exception as e:
-            logger.error(f"Failed to parse version scoring: {e}")
+            logger.error("Failed to parse version scoring: %s", e)
             return VersionScoreResult(
                 overall_score=50,
                 program_fit=50,
@@ -437,7 +437,7 @@ Generate 2-3 suggestions per category if applicable. Focus on practical, impleme
                 categories=[]
             )
         except Exception as e:
-            logger.error(f"Failed to parse suggestions: {e}")
+            logger.error("Failed to parse suggestions: %s", e)
             return SuggestionResult(
                 suggestions=[],
                 categories=[]

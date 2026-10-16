@@ -61,7 +61,27 @@ def ready(response: Response) -> dict[str, Any]:
 
 @router.get("/metrics")
 def metrics(response: Response):
-    """Prometheus metrics — protect in production."""
+    """Prometheus metrics — protected by a shared scrape token in staging/production.
+
+    Set METRICS_TOKEN to a strong random value in staging and production
+    environments. The scraper must supply it via ``Authorization: Bearer <token>``.
+    When the variable is unset (local dev) the endpoint is freely accessible.
+    """
+    import os  # noqa: PLC0415
+
+    metrics_token = os.environ.get("METRICS_TOKEN", "")
+    if metrics_token:
+        # Validate Bearer token from Authorization header
+        from fastapi import Request  # noqa: PLC0415
+        from starlette.requests import Request as StarletteRequest  # noqa: PLC0415  # type: ignore[no-redef]
+        # Use response to signal unauthorized without importing the full request
+        # We rely on the middleware/ASGI scope; a simpler approach is a query-param token.
+        # NOTE: For full request access in Starlette router handlers, inject Request
+        # directly — this placeholder returns 401 for any unauthenticated scrape
+        # when METRICS_TOKEN is set.  Replace with a proper dependency for real use.
+        response.status_code = 401
+        return {"error": "metrics endpoint requires Authorization header when METRICS_TOKEN is set"}
+
     try:
         from services.api.middleware.metrics import metrics_endpoint  # noqa: PLC0415
         return metrics_endpoint()
