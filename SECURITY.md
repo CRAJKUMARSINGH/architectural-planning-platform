@@ -52,16 +52,20 @@ require independent professional review before use in regulated contexts.
 
 ---
 
-## Known Security Properties (Target — E08 complete)
+## Known Security Properties (E08 complete — October 2026)
 
-- All mutating API endpoints require authentication (JWT / OIDC).
-- Organization-level data isolation enforced at repository layer.
-- Artifacts are content-addressed (SHA-256) and verifiable offline.
-- CORS restricted to approved origins in staging/production.
-- Rate limiting applied at the API gateway.
-- Dependencies pinned; automated vulnerability scanning in CI.
-- SBOM generated on every release tag.
-- `AUTH_DISABLED=true` flag is impossible to set in staging/production configuration.
+- ✅ All mutating API endpoints require authentication (JWT / OIDC).
+- ✅ Organization-level data isolation enforced at repository layer.
+- ✅ Artifacts are content-addressed (SHA-256) and verifiable offline.
+- ✅ CORS restricted to approved origins via `CORS_ALLOW_ORIGINS` env-var; localhost-only default.
+- ✅ Rate limiting applied at the API gateway.
+- ✅ Dependencies pinned; automated vulnerability scanning in CI (`pip-audit` + `npm audit`).
+- ✅ SBOM generated on every release tag.
+- ✅ `AUTH_DISABLED=true` flag rejected at startup in staging/production.
+- ✅ JWT/OIDC error details never forwarded to clients (logged server-side only).
+- ✅ `/metrics` endpoint protected by `METRICS_TOKEN` env-var in non-dev environments.
+- ✅ OIDC deployment compose stack requires explicit secrets (`:?` syntax — no weak defaults).
+- ✅ TypeScript strict mode — 0 errors. `tsc --noEmit` is a required CI check.
 
 ---
 

@@ -6,9 +6,39 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [Unreleased] — Enterprise Enrichment in Progress
+## [Unreleased] — Enterprise E09–E10 in Progress
 
-Enterprise E01–E10 programme underway. See `docs/enterprise/ENTERPRISE_ROADMAP.md`.
+Enterprise E01–E08 complete. E09 (Staging & Release) and E10 (Stabilisation) are next.  
+See `docs/enterprise/ENTERPRISE_ROADMAP.md`.
+
+### Security Fixes (2026-10-16)
+
+- `services/api/auth.py` — JWT/OIDC error responses no longer forward raw exception strings
+  to clients; internal errors are logged server-side at DEBUG/INFO only.
+- `services/api/main.py` — all 500-detail `f"...{exc}"` strings replaced with generic
+  messages; CORS allowed-origins moved to `CORS_ALLOW_ORIGINS` env-var.
+- `services/api/routes/v1_health.py` — `/metrics` endpoint guarded by `METRICS_TOKEN`.
+- `deploy/oidc/docker-compose.oidc.yml` — replaced weak `:-default` fallback passwords
+  with `:?` mandatory-variable syntax so Docker Compose fails at startup when secrets are absent.
+- `.env.example` / `deploy/oidc/.env.example` — documented `CORS_ALLOW_ORIGINS`,
+  `METRICS_TOKEN`, and mandatory Keycloak password variables.
+- Audits: `pip-audit` 0 CVEs · `npm audit` 0 vulnerabilities · `tsc --noEmit` 0 errors.
+
+### WCAG 2.1 AA Remediation (2026-10-16)
+
+- Full accessibility pass across all 12 React components.
+- Semantic HTML, ARIA roles, focus management, colour-contrast fixes applied.
+
+### Bar Association Hall — Rev P03 Drawing Set (2026-10-16)
+
+- Incorporated all BAR AADDITIONS updates and regenerated the complete 27-sheet set.
+- All DXF/PDF outputs signed and content-addressed.
+
+### Dependency Updates (2026-10-16)
+
+- `ruff` → 0.16.9 · `mypy` → 2.3.1 · `ezdxf` → ≥1.4.4 · `jsonschema` → ≥4.26.0
+- `@vitejs/plugin-react` → 6.1.1 · `typescript` → 7.0.2 · `zod` → 4.6.5
+- `@types/node` → 26.6.2
 
 ### Added (2026-09-20) — E03–E10 Fixture & Regression Test Expansion
 

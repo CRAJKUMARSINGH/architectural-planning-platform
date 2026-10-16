@@ -38,40 +38,29 @@ A "finished" state for this repository should mean all of the following are true
 7. Release tagging can produce a reviewable package and GitHub release artifacts.
 8. Documentation clearly tells a contributor how to run, validate, and ship the project.
 
-## 3. Planned repository rename
+## 3. Repository rename — complete
 
-The selected future repo name is:
+The GitHub repository has been renamed to:
 
 ```text
 architectural-planning-platform
 ```
 
-When you apply the rename on GitHub, update these items together:
+The rename is complete. All remote URLs, documentation, and CI references should
+already use `architectural-planning-platform`. If you find any remaining references
+to the old `Advocate-Chambers` name in docs or scripts, update them.
 
-1. repository name on GitHub
-2. local clone folder name
-3. README title and opening description
-4. any badges, URLs, screenshots, or docs that still say `Advocate-Chambers`
-5. release notes and any downstream scripts that assume the old folder name
-
-Recommended transition rule:
-
-- keep product and domain wording such as "Advocate Chambers" and "Bar Association Hall" where they refer to the project content
-- use `architectural-planning-platform` when referring to the repository as software
-
-Example rename flow:
+To verify your local clone is pointing to the renamed remote:
 
 ```bash
-# after renaming the GitHub repository
-git remote set-url origin https://github.com/CRAJKUMARSINGH/architectural-planning-platform.git
+git remote -v
+# Should show: https://github.com/CRAJKUMARSINGH/architectural-planning-platform.git
 ```
 
-If you want local folder naming to match the new repo:
+If the URL still shows the old name, update it:
 
 ```bash
-cd ..
-mv Advocate-Chambers architectural-planning-platform
-cd architectural-planning-platform
+git remote set-url origin https://github.com/CRAJKUMARSINGH/architectural-planning-platform.git
 ```
 
 ## 4. Prerequisites
@@ -100,24 +89,13 @@ docker compose version
 From a new machine:
 
 ```bash
-# current repository name
-git clone https://github.com/CRAJKUMARSINGH/Advocate-Chambers.git
-cd Advocate-Chambers
-
-# Python dependencies
-pip install -e ".[api,dev]"
-
-# Node workspace dependencies
-npm install
-```
-
-After the repository is renamed, the equivalent future clone flow should become:
-
-```bash
 git clone https://github.com/CRAJKUMARSINGH/architectural-planning-platform.git
 cd architectural-planning-platform
 
+# Python dependencies
 pip install -e ".[dev]"
+
+# Node workspace dependencies
 npm install
 ```
 
@@ -347,7 +325,7 @@ The repository can be handed off as "finished enough to use and continue" when:
 - the reference planning package remains intact
 - CI and release workflows match the actual repo layout
 - the professional-review boundary remains explicit in docs and outputs
-- the planned repository name `architectural-planning-platform` is either fully adopted or clearly documented as a pending rename
+- the repository is named `architectural-planning-platform` (complete as of October 2026)
 
 ## 16. Minimal maintainer workflow
 
@@ -428,18 +406,19 @@ All outputs from this platform are preliminary planning material. Construction r
 
 ### Deferred repository rename
 
-The GitHub repository will be renamed to `architectural-planning-platform` when the team is ready. Until then, maintain both names in documentation as documented in section 3 of this guide.
+The GitHub repository has been renamed to `architectural-planning-platform`. This item is complete.
 
 ## 18. Recommended next cleanup items
 
-If you want to improve polish after adding this guide, these are the highest-value follow-ups:
+If you want to improve polish, these are the highest-value follow-ups (updated 2026-10-16):
 
-1. Rename the GitHub repository to `architectural-planning-platform`.
-2. Confirm whether every `week*` script still reflects the current status text in the docs.
-3. Add a short "quick release" section to `README.md`.
+1. ~~Rename the GitHub repository to `architectural-planning-platform`.~~ **Done.**
+2. Complete E09: add request body size limits, rate limiting, security headers, and SBOM CI automation.
+3. Complete E10: run multi-project load scenario, tag `v1.0.0-enterprise-candidate`.
 4. Decide whether large CAD/PDF assets should stay in the main repo or move to a release/archive strategy.
 5. Add one documented "golden path" contributor script for Linux and one for Windows.
 6. Set up `GEMINI_API_KEY` as a GitHub Actions secret to enable full AI endpoint testing in CI.
+7. Implement Phase 18 (Client Presentation & Export Workflow) — the next domain phase.
 
 ---
 
