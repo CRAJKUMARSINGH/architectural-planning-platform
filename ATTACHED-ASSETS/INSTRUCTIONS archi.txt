@@ -1,0 +1,33 @@
+ORIGINAL INSTRUCTION (2026):
+================================================================================
+https://github.com/CRAJKUMARSINGH/architectural-planning-platform
+https://github.com/CRAJKUMARSINGH/Archi-Copilot
+
+I started six months ago for architectural drawing of specific projects and the whole
+development journey is at >>>>>>> https://github.com/CRAJKUMARSINGH/architectural-planning-platform
+The experience was so motivating >>> I drafted a unique AI based architectural tool for all
+sort of projects with totally different perspective <>>> which is available at >>>
+https://github.com/CRAJKUMARSINGH/Archi-Copilot >>>
+Now I wish to integrate whole work in one >>> is it feasible? will it improve product quality?
+If both are positive responses >>> guide how to?
+================================================================================
+
+STATUS: ✅ ACTIONED — 2026-09-25
+
+The Archi Copilot repository has been fully integrated into the Architectural Planning
+Platform. See docs/INTEGRATION_STATUS.md for the complete 6-step integration record.
+
+Summary of what was done:
+  1. DB migration — workflow tables (brief_analyses, concept_versions, copilot_suggestions,
+     scoring_results) added to the PostgreSQL schema.
+  2. Python API routes — 12 workflow endpoints added in services/api/routes/v1_workflow.py
+  3. React components migrated — apps/web/src/features/workflow/ (ConceptCanvas,
+     WorkflowPanel, brief analysis, version scoring, suggestions panels)
+  4. WorkflowPanel wired into StudioView — Geometry / Workflow tab switcher in App.tsx
+  5. Promote-to-Model — explicit confirmation dialog → POST /api/v1/projects/{id}/jobs
+  6. Archi Copilot Node.js server retired — superseded by Platform's Python backend.
+
+The Archi Copilot OpenAPI spec is preserved at: Archi Copilot/lib/api-spec/openapi.yaml
+The RETIRED notice is at: Archi Copilot/artifacts/api-server/RETIRED.md
+
+This file is kept for historical provenance only.
