@@ -1,5 +1,5 @@
 matplotlib>=3.11.2
-ezdxf>=1.4.4
+ezdxf>=1.4.5
 reportlab>=5.0.1
 pypdf>=6.19.0
 jsonschema>=4.26.0
