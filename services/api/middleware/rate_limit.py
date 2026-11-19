@@ -5,6 +5,7 @@ In production, replace backing store with Redis via slowapi or similar.
 """
 from __future__ import annotations
 
+import os
 import time
 from collections import defaultdict, deque
 from typing import Callable
@@ -13,17 +14,20 @@ from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
-# Requests per window per IP
-RATE_LIMIT: int = 120       # requests
-WINDOW_SECONDS: int = 60    # per minute
+ENV: str = os.environ.get("ENV", "development")
+
+# Requests per window per IP — tunable per environment.
+RATE_LIMIT: int = int(os.environ.get("RATE_LIMIT_REQUESTS", "120"))       # requests
+WINDOW_SECONDS: int = int(os.environ.get("RATE_LIMIT_WINDOW_SECONDS", "60"))    # per minute
 
 _ip_windows: dict[str, deque] = defaultdict(deque)
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
-        # Skip rate limiting for health / metrics
-        if request.url.path in ("/health", "/ready", "/metrics"):
+        # Skipped for health / metrics, and for local dev/test runs where the
+        # guard would only add noise (mirrors the HSTS gating in security_headers).
+        if ENV in ("development", "test") or request.url.path in ("/health", "/ready", "/metrics"):
             return await call_next(request)
 
         ip = request.client.host if request.client else "unknown"

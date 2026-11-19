@@ -20,6 +20,7 @@ help:
 	@echo "  make quality-gate   Run quality gate script only"
 	@echo "  make adversarial    Run adversarial fixture suite (weeks 22+23)"
 	@echo "  make performance    Run performance benchmark smoke"
+	@echo "  make staging-smoke  Smoke-test a deployed staging stack (BASE_URL=...)"
 	@echo "  make clean          Remove Python bytecode and output caches"
 	@echo ""
 
@@ -93,7 +94,10 @@ clean:
 # ---------------------------------------------------------------------------
 # Docker / Compose helpers (E09)
 # ---------------------------------------------------------------------------
-.PHONY: docker-build docker-up docker-staging docker-down
+.PHONY: docker-build docker-up docker-staging docker-down staging-smoke
+
+staging-smoke:
+	python scripts/enterprise/staging_smoke.py --base-url $(BASE_URL)
 
 docker-build:
 	docker compose build

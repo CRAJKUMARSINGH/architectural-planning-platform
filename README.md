@@ -16,10 +16,10 @@
 | 17 | Proactive Suggestions (heuristic + Gemini) | ✅ Done |
 | **18** | **Client Presentation & Export Workflow** | **📋 Next** |
 | E01–E08 | Enterprise enrichment (hygiene → security) | ✅ Done |
-| E09 | Staging & Release Process | 📋 Planned |
+| E09 | Staging & Release Process | 🔄 In Progress |
 | E10 | Stabilisation & Enterprise Candidate | 📋 Planned |
 
-**Test suite: 718+ passed, 0 failed** · TypeScript: 0 errors · npm audit: 0 vulns · pip-audit: 0 CVEs
+**Test suite: 791 passed, 3 skipped, 0 failed** · TypeScript: 0 errors · npm audit: 0 vulns · pip-audit: 0 CVEs
 
 See [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) for the roadmap.  
 See [`docs/FINISHING_GUIDE.md`](docs/FINISHING_GUIDE.md) for setup, verification, and release finishing steps.
@@ -134,7 +134,7 @@ Enterprise enrichment documentation is in [`docs/enterprise/`](docs/enterprise/)
 | E06 | API & Frontend Hardening | ✅ Done |
 | E07 | Observability | ✅ Done |
 | E08 | Security Hardening | ✅ Done |
-| E09 | Staging & Release | 📋 Planned |
+| E09 | Staging & Release | 🔄 In Progress |
 | E10 | Stabilisation | 📋 Planned |
 
 ### Security posture (E08 complete — October 2026)

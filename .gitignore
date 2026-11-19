@@ -23,3 +23,12 @@ app_local.db
 # Nested duplicate repository — stale subfolder, not tracked
 Advocate-Chambers/
 Advocate-Chambers-verification-hardening/
+
+# Retired Archi-Copilot reference app — kept locally for the OpenAPI spec only
+Archi Copilot/.local/
+
+# Local tooling caches
+.pytest_cache/
+.hypothesis/
+.ruff_cache/
+test-results/

@@ -1,0 +1,242 @@
+{
+  "project": "Bar-Association-Hall",
+  "tier": 2,
+  "individual_sheets_expected": 26,
+  "pdfs_checked": [
+    {
+      "file": "A-00-cover-sheet-&-sheet-index.pdf",
+      "exists": true,
+      "size_kb": 4.81,
+      "pass": true
+    },
+    {
+      "file": "A-01-general-notes-&-abbreviations.pdf",
+      "exists": true,
+      "size_kb": 6.09,
+      "pass": true
+    },
+    {
+      "file": "A-001-proposed-site-layout-plan.pdf",
+      "exists": true,
+      "size_kb": 15.02,
+      "pass": true
+    },
+    {
+      "file": "A-101-ground-floor-architectural-plan.pdf",
+      "exists": true,
+      "size_kb": 16.06,
+      "pass": true
+    },
+    {
+      "file": "A-102-first-floor-architectural-plan.pdf",
+      "exists": true,
+      "size_kb": 15.84,
+      "pass": true
+    },
+    {
+      "file": "A-111-gf-reflected-ceiling-plan.pdf",
+      "exists": true,
+      "size_kb": 7.99,
+      "pass": true
+    },
+    {
+      "file": "A-112-ff-reflected-ceiling-plan.pdf",
+      "exists": true,
+      "size_kb": 8.16,
+      "pass": true
+    },
+    {
+      "file": "A-201-south-elevation.pdf",
+      "exists": true,
+      "size_kb": 4.48,
+      "pass": true
+    },
+    {
+      "file": "A-202-east-elevation-\u2014-main-entrance.pdf",
+      "exists": true,
+      "size_kb": 4.87,
+      "pass": true
+    },
+    {
+      "file": "A-203-north-elevation.pdf",
+      "exists": true,
+      "size_kb": 4.6,
+      "pass": true
+    },
+    {
+      "file": "A-204-west-elevation.pdf",
+      "exists": true,
+      "size_kb": 4.46,
+      "pass": true
+    },
+    {
+      "file": "A-251-key-interior-elevations-(typicals).pdf",
+      "exists": true,
+      "size_kb": 6.07,
+      "pass": true
+    },
+    {
+      "file": "A-301-longitudinal-section-a-a.pdf",
+      "exists": true,
+      "size_kb": 5.63,
+      "pass": true
+    },
+    {
+      "file": "A-302-cross-section-b-b-(entry-+-balcony).pdf",
+      "exists": true,
+      "size_kb": 5.32,
+      "pass": true
+    },
+    {
+      "file": "A-401-door-schedule-+-window-schedule.pdf",
+      "exists": true,
+      "size_kb": 7.97,
+      "pass": true
+    },
+    {
+      "file": "A-402-finishes-schedule-+-area-statement.pdf",
+      "exists": true,
+      "size_kb": 7.94,
+      "pass": true
+    },
+    {
+      "file": "A-501-enlarged-toilet-details-(gents-+-ladies).pdf",
+      "exists": true,
+      "size_kb": 4.65,
+      "pass": true
+    },
+    {
+      "file": "A-502-typical-details-dpc---jamb---chajja---join.pdf",
+      "exists": true,
+      "size_kb": 135.21,
+      "pass": true
+    },
+    {
+      "file": "A-503-typical-details-flooring---skirting---dado.pdf",
+      "exists": true,
+      "size_kb": 5.16,
+      "pass": true
+    },
+    {
+      "file": "A-504-typical-details-terrace---balcony-waterpro.pdf",
+      "exists": true,
+      "size_kb": 8.11,
+      "pass": true
+    },
+    {
+      "file": "A-601-stair-+-balcony-details.pdf",
+      "exists": true,
+      "size_kb": 5.01,
+      "pass": true
+    },
+    {
+      "file": "S-001-general-structural-notes-+-member-schedule.pdf",
+      "exists": true,
+      "size_kb": 5.46,
+      "pass": true
+    },
+    {
+      "file": "S-101-gf-column-&-grid-layout-plan.pdf",
+      "exists": true,
+      "size_kb": 9.0,
+      "pass": true
+    },
+    {
+      "file": "S-102-ff-column-&-grid-layout-plan.pdf",
+      "exists": true,
+      "size_kb": 9.1,
+      "pass": true
+    },
+    {
+      "file": "E-101-composite-electrical-plan-(gf).pdf",
+      "exists": true,
+      "size_kb": 13.17,
+      "pass": true
+    },
+    {
+      "file": "P-101-composite-plumbing-&-drainage-plan-(gf).pdf",
+      "exists": true,
+      "size_kb": 6.85,
+      "pass": true
+    }
+  ],
+  "dxfs_checked": [
+    {
+      "file": "A-101-ground-floor-architectural-plan.dxf",
+      "exists": true,
+      "size_kb": 36.71,
+      "pass": true
+    },
+    {
+      "file": "A-102-first-floor-architectural-plan.dxf",
+      "exists": true,
+      "size_kb": 37.36,
+      "pass": true
+    },
+    {
+      "file": "A-301-Longitudinal-Section.dxf",
+      "exists": true,
+      "size_kb": 19.51,
+      "pass": true
+    },
+    {
+      "file": "A-302-Cross-Section.dxf",
+      "exists": true,
+      "size_kb": 19.51,
+      "pass": true
+    },
+    {
+      "file": "S-101-gf-column-&-grid-layout-plan.dxf",
+      "exists": true,
+      "size_kb": 36.73,
+      "pass": true
+    },
+    {
+      "file": "S-102-ff-column-&-grid-layout-plan.dxf",
+      "exists": true,
+      "size_kb": 37.37,
+      "pass": true
+    }
+  ],
+  "master_pdf": {
+    "file": "Bar-Association-Professional-Master-Set.pdf",
+    "exists": true,
+    "size_kb": 308.94,
+    "pages": 26,
+    "aspect": 1.4142863262472587,
+    "pass": true
+  },
+  "aspect_check": {
+    "target_ratio": 1.41429,
+    "tolerance": 0.08,
+    "samples_measured": [
+      1.4143,
+      1.4143,
+      1.4143,
+      1.4143,
+      1.4143,
+      1.4143
+    ],
+    "pass": true
+  },
+  "breakdown": {
+    "architectural": 21,
+    "structural": 3,
+    "mep": 2,
+    "total": 26,
+    "pass": true
+  },
+  "manifest": {
+    "path": "E:\\Rajkumar\\architectural-planning-platform\\bar-association-hall\\exports\\professional_manifest.json",
+    "sheets_count": null,
+    "sheets_expected": 26
+  },
+  "master_sha256_prefix": "43661cdf74b4efcf",
+  "sign_off": {
+    "passed": true,
+    "failures": [],
+    "warnings": [
+      "manifest sheets count: None (expected 26)"
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+================================================================================
+BAR ASSOCIATION HALL, BANSWARA — PROFESSIONAL DRAWING SET (27 SHEETS)
+Issued: 09-OCT-2026  ·  Rev P03  ·  PRELIMINARY REVIEW ONLY / NOT FOR CONSTRUCTION
+Incorporated updates per BAR AADDITIONS (Ladies Advocate + Ladies Toilet + Balcony)
+================================================================================
+
+ARCHITECTURAL — 18 SHEETS (exports/PDF/):
+  A-00   Cover + 27-Row Sheet Index
+  A-01   General Notes & Abbreviations · Codes & Compliance Matrix
+  A-001  Site Layout Plan — L-shape Plot, 6 Parking, RWH 10KL, Septic+Soak, Boundary
+  A-101  Ground Floor Plan — Ladies Advocate Room (NEW) + Ladies Toilet (NEW)
+  A-102  First Floor Plan — Covered Balcony 12'×8' over East Porch (NEW)
+  A-111  GF Reflected Ceiling Plan — LED / Fan / AC Grilles / Smoke / Exit + POP
+  A-112  FF Reflected Ceiling Plan — Reading / Stack / Computer Ceiling Fixtures
+  A-201…A-204    4-Side Elevations (South / East / North / West) + Materials Legend
+  A-251  Interior Elevations — Dais / Reception / Librarian / Stack / Ladies Vanity
+  A-301  Longitudinal Section A-A (Assembly + Dais + Reading + Stair + Stack)
+  A-302  Cross Section B-B (Main Entry + Porch + Balcony cut, NEW balcony structure)
+  A-401  Door Schedule D01…D35  +  Window Schedule W01…W29
+  A-402  Finishes Schedule (15 rows) + Area Statement + FAR 1.62 + Compliance 12-rows
+  A-501  Enlarged Toilet Details — Gents 3-WC/3-U / Ladies 4-WC + Dressing + Riser
+  A-502  Typical Details — DPC / Door-Window Jamb / Plinth / Control Joint / Chajja
+  A-503  Typical Details — Vitrified / Kota / Toilet Floor / Skirting / Dado / Coping
+  A-504  Typical Details — Terrace WR (6-layer APP) / Balcony / Chajja / Outlet / Parapet / Slab Joint
+  A-601  Stair Details (Plan + Section) + Balcony Slab / SS-304 Railing / Support Col
+
+STRUCTURAL — 3 SHEETS:
+  S-001  General Structural Notes (14 rows) + Column-Beam-Slab Schedule + Load Comb
+  S-101  GF Column & Grid Layout — 23 Columns (C-01…C-23 + C-P1/P2) · Beams · A..P × 1..10
+  S-102  FF Column & Grid Layout — 25 Columns (C-01…C-23 + C-08A) · North extension
+
+MEP — 2 SHEETS:
+  E-101  GF Electrical Composite — LT 3-Phase 415V · Lighting / Power / Data / Smoke / Exit · DB-1/2/3 schedule
+  P-101  GF Plumbing & Drainage — WC / Urinal / Basin / Sink / Dispenser · Soil R-1/2 + Rain R-4 → RWH
+
+DXF EXPORTS (exports/CAD/):  6 files — A-101 / A-102 / A-301 / A-302 / S-101 / S-102
+  DXF layers: A-WALL / A-DOOR / A-WINDOW / A-STAIR / A-PORCH / A-BALCONY / S-GRID / S-COLUMN
+
+BAR AADDITIONS — FULFILLED UPDATES (this revision P03):
+   1. Exclusive Ladies Advocate Room (GF-06, 12'-0" × 4'-0") + Ladies Toilet (GF-05, 12'×16'-6") with dressing
+   2. Covered Balcony (FF-11, 12'-0" × 8'-0") cantilevered over Main East Entrance Porch; SS-304 3'-6" railing
+   3. Full Door / Window / Finish / Area / FAR / Compliance schedules with 12 NBC-IS code refs
+   4. 4 Elevations (vertical 7-stage dims, horizontal 5 dims, materials legend)
+   5. 2 Sections — Longitudinal A-A + Cross B-B (porch/balcony cut) with 6 callouts each
+   6. Enlarged construction details — Toilets (A-501), 18 Typical sections (A-502/503/504), Stair + Balcony (A-601)
+   7. Site Plan (A-001), RCP × 2 (A-111/112), Interior Elevations × 5 (A-251)
+   8. Structural (S-001 GSN + S-101/102 grids), Electrical E-101, Plumbing P-101
+
+Compliance references: NBC 2016 Parts 2/3/4/5/8/9/10/11/12
+                      IS 456 · IS 1893 · IS 875 · IS 1077 · IS 737 · IS 12896 · IS 14811
+                      IS 1172 · IS 732 · IS 13920 · ISO 5457 · ISO 7200 · IS 7409 (APP membrane)
+================================================================================

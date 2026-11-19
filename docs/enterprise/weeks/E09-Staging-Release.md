@@ -19,9 +19,9 @@ versioned artifacts + quality-gate summary + SBOM automatically.
 - [ ] Confirm `docker compose up --build` brings up full working stack end-to-end
 
 ### 2. Request hardening (deferred from E08)
-- [ ] Add request body size limit middleware to FastAPI (`app.add_middleware(...)`)
-- [ ] Add IP-level rate limiting (e.g. `slowapi` or nginx upstream limit)
-- [ ] Add security response headers:
+- [x] Add request body size limit middleware to FastAPI (`app.add_middleware(...)`) — `services/api/middleware/body_limit.py`
+- [x] Add IP-level rate limiting (e.g. `slowapi` or nginx upstream limit) — `services/api/middleware/rate_limit.py`
+- [x] Add security response headers:
   - `X-Content-Type-Options: nosniff`
   - `X-Frame-Options: DENY`
   - `Strict-Transport-Security: max-age=63072000; includeSubDomains`
@@ -29,8 +29,8 @@ versioned artifacts + quality-gate summary + SBOM automatically.
   - `Permissions-Policy`
 
 ### 3. SBOM in CI
-- [ ] Add `syft` or `cyclonedx-bom` to CI release workflow
-- [ ] Attach SBOM JSON to every GitHub Release created from a `v*` tag
+- [x] Add `syft` or `cyclonedx-bom` to CI release workflow — `anchore/sbom-action` in `.github/workflows/release.yml`
+- [x] Attach SBOM JSON to every GitHub Release created from a `v*` tag
 - [ ] Verify SBOM includes both Python and Node dependency trees
 
 ### 4. Semantic release automation
@@ -39,13 +39,13 @@ versioned artifacts + quality-gate summary + SBOM automatically.
 - [ ] Attach quality-gate report + adversarial summary + SBOM as release assets
 
 ### 5. Staging smoke test
-- [ ] Document and script a staging smoke test:
+- [x] Document and script a staging smoke test:
   - `GET /health` → 200
   - `GET /ready` → 200 (Postgres + Redis green)
   - `POST /api/v1/projects/` → 401 (no token)
   - `POST /api/v1/projects/` with valid JWT → 201
   - `POST /api/v1/projects/{id}/commands/preview` → returns findings
-- [ ] Add this as a `make staging-smoke` target
+- [x] Add this as a `make staging-smoke` target
 - [ ] Run it in CI against the staging Docker stack after deploy
 
 ### 6. Environment promotion checklist
@@ -60,5 +60,5 @@ versioned artifacts + quality-gate summary + SBOM automatically.
 | `docker compose up` brings up working multi-service stack | ⬜ |
 | Tagged release produces versioned artifacts + quality-gate + SBOM | ⬜ |
 | Staging can run full adversarial suite against realistic fixtures | ⬜ |
-| Security headers present on all API responses | ⬜ |
-| Request size + rate limits enforced | ⬜ |
+| Security headers present on all API responses | ✅ |
+| Request size + rate limits enforced | ✅ |

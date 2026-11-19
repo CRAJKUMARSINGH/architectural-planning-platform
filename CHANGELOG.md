@@ -8,8 +8,31 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased] — Enterprise E09–E10 in Progress
 
-Enterprise E01–E08 complete. E09 (Staging & Release) and E10 (Stabilisation) are next.  
+Enterprise E01–E08 complete. E09 (Staging & Release) largely delivered — request
+hardening, SBOM + semantic release workflow, and a staging smoke test are in place;
+image-digest pinning and a blue/green deployment skeleton remain. E10 (Stabilisation)
+is next.  
 See `docs/enterprise/ENTERPRISE_ROADMAP.md`.
+
+### E09 — Request Hardening (2026-11-17)
+
+- `services/api/main.py` — registered `BodySizeLimitMiddleware`, `RateLimitMiddleware`,
+  and `SecurityHeadersMiddleware`. The latter two already existed but were never wired
+  into the app, so no security headers or rate limits were actually applied.
+- `services/api/middleware/body_limit.py` — new request body size guard (HTTP 413,
+  default 5 MiB, configurable via `MAX_REQUEST_BODY_BYTES`).
+- `services/api/middleware/rate_limit.py` — window/limit are now configurable
+  (`RATE_LIMIT_REQUESTS`, `RATE_LIMIT_WINDOW_SECONDS`) and the guard is skipped in
+  `development`/`test` environments.
+- `services/api/middleware/security_headers.py` — added `Content-Security-Policy`;
+  fixed a `MutableHeaders.pop()` crash that made the middleware unusable.
+- `scripts/enterprise/staging_smoke.py` + `make staging-smoke` — automated staging
+  smoke test (`/health`, `/ready`, unauthenticated 401, authenticated 201).
+- `tests/test_e09_request_hardening.py` — 9 tests covering headers, body limit,
+  rate limit, and security headers on 413/429 responses.
+- `services/api/routes/v1_floorplan.py` and `services/floorplan_generator/` — added
+  to version control; `services/api/main.py` imports them at module scope, so their
+  absence from the repository broke a fresh clone.
 
 ### Security Fixes (2026-10-16)
 

@@ -1,6 +1,7 @@
 """Security headers + CORS hardening middleware — E08 Security Hardening."""
 from __future__ import annotations
 
+import contextlib
 import os
 from typing import Callable
 
@@ -15,6 +16,8 @@ SECURITY_HEADERS = {
     "X-XSS-Protection": "1; mode=block",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Permissions-Policy": "geolocation=(), microphone=(), camera=()",
+    # Strict API policy — this service returns JSON only, never browsable HTML.
+    "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'; base-uri 'none'",
 }
 
 if ENV not in ("development", "test"):
@@ -28,5 +31,6 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         for k, v in SECURITY_HEADERS.items():
             response.headers[k] = v
         # Never leak internal details in error responses
-        response.headers.pop("server", None)
+        with contextlib.suppress(KeyError):
+            del response.headers["server"]
         return response

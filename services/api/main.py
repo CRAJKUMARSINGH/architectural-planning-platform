@@ -21,6 +21,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, ConfigDict
 
 from services.api.auth import assert_auth_configuration
+from services.api.middleware.body_limit import BodySizeLimitMiddleware
+from services.api.middleware.rate_limit import RateLimitMiddleware
+from services.api.middleware.security_headers import SecurityHeadersMiddleware
 from services.api.routes.v1_collaboration import (
     public_router as collaboration_public_router,
     router as collaboration_router,
@@ -185,6 +188,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ---------------------------------------------------------------------------
+# E09 — request hardening.  add_middleware() puts the newest middleware
+# outermost, so registering security headers last guarantees they are present
+# on every response, including the 413/429 short-circuits below.
+# ---------------------------------------------------------------------------
+app.add_middleware(BodySizeLimitMiddleware)
+app.add_middleware(RateLimitMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
 
 # Versioned API routers.  The legacy prototype endpoints below remain
 # available for the editor transition, while new work uses the authenticated
